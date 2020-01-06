@@ -1,0 +1,23 @@
+{
+  "name": "gestor-empresarial",
+  "version": "1.0.0",
+  "description": "Sistema gestor para microempreendedor individual",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabianoww/gestor-empresarial.git"
+  },
+  "author": "Fabiano Oliveira",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/fabianoww/gestor-empresarial/issues"
+  },
+  "homepage": "https://github.com/fabianoww/gestor-empresarial#readme",
+  "dependencies": {
+    "electron": "^7.1.7"
+  }
+}
