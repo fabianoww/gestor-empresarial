@@ -39,6 +39,16 @@ body {
     width: 190px;
 }
 
+.selected-menu {
+    background-color: #a3f805;
+    color: #242A22 !important;
+}
+
+.selected-menu:hover {
+    background-color: #a3f805 !important;
+    cursor: auto !important;
+}
+
 #content {
     background-color: #F9F9F9;
     flex-grow: 1;

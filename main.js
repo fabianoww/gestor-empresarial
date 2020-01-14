@@ -9,7 +9,8 @@ app.on('ready', () => {
         height,  
         webPreferences: {
             nodeIntegration: true
-        } 
+        },
+        show: false
     });
 
     /*
@@ -19,6 +20,9 @@ app.on('ready', () => {
     */
 
     mainWindow.loadURL(`file://${__dirname}/app/main.html`);
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
+    });
 });
 
 app.on('window-all-closed', () => {
