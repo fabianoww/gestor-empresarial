@@ -1,7 +1,8 @@
-
 /* Main */
 body {
     margin: 0px;
+    font-family: 'Roboto', sans-serif;
+    color: #485544;
 }
 
 #container {
@@ -15,28 +16,62 @@ body {
 }
 
 #vertical-menu {
+    display: flex;
+    flex-direction: column;
     background-color: #242A22;
     width: 200px;
     box-shadow: -1em 0 1em 1em black;
     z-index: 10;
 }
 
-#vertical-menu div {
+#menu-items {
+    flex-grow: 1;
+}
+
+#menu-items div {
     color: #a3f805;
     font-weight: bold;
     opacity: .85;
-    padding: 30px 10px;
+    padding: 0px 10px;
 }
 
-#vertical-menu div:hover {
+#menu-items div:hover {
     background-color: #485544;
     cursor: pointer;
 }
 
-#vertical-menu hr {
+#menu-items i {
+    font-size: 25px;
+    line-height: 80px;
+}
+
+.menu-label {
+    display: inline-block;
+    font-size: 18px;
+}
+
+#menu-items hr {
     border-color: #a3f805;
     opacity: .85;
     width: 190px;
+}
+
+#menu-slider {
+    color: #a3f805;
+    font-size: 25px;
+    padding: 10px;
+    opacity: .85;
+    text-align: center;
+}
+
+#menu-slider:hover {
+    background-color: #485544;
+    cursor: pointer;
+}
+
+#menu-slider:active {
+    background-color: #a3f805;
+    color: #242A22 !important;
 }
 
 .selected-menu {
@@ -49,10 +84,78 @@ body {
     cursor: auto !important;
 }
 
+.menu-icon {
+    width: 50px;
+    text-align: center;
+}
+
 #content {
+    position: relative;
     background-color: #F9F9F9;
     flex-grow: 1;
-    padding: 20px;
+}
+
+.floating-action-button {
+    position: absolute;
+    background-color: #a3f805;
+    bottom: 15px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    text-align: center;
+    line-height: 50px;
+    font-weight: bold;
+    font-size: 2em;
+    box-shadow: 10px 10px 40px 0px #4d4d4d;
+}
+
+.floating-action-button:hover {
+    cursor: pointer;
+    box-shadow: 10px 10px 30px 0px #4d4d4d;
+}
+
+.floating-filter-button {
+    position: absolute;
+    background-color: #a3f805;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    border-radius: 25px;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    font-size: 1em;
+    box-shadow: 10px 10px 40px 0px #4d4d4d;
+}
+
+.floating-filter-button:hover {
+    cursor: pointer;
+    box-shadow: 10px 10px 30px 0px #4d4d4d;
+}
+
+.crud-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 80px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    padding: 5px 10px 5px 10px;
+}
+
+td {
+    padding: 5px 10px 5px 10px;
+    border-bottom: 1px solid #485544;
 }
 
 /* Dashboard */

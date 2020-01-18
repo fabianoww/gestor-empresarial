@@ -4,38 +4,29 @@
     <meta charset="UTF-8">
     <title>Gestor Empresarial</title>
     <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="container">
         <div id="vertical-menu">
-            <div id="menu-dashboard">
-                Dashboard
+            <div id="menu-items">
+                <div id="menu-dashboard"><i class="fas fa-chart-bar menu-icon"></i><span class="menu-label">Dashboard</span></div><hr/>
+                <div id="menu-despesas"><i class="fas fa-money-bill-wave menu-icon"></i><span class="menu-label">Despesas</span class="menu-label"></div><hr/>
+                <div id="menu-vendas"><i class="fas fa-hand-holding-usd menu-icon"></i><span class="menu-label">Vendas</span class="menu-label"></div><hr/>
+                <div id="menu-produtos"><i class="fas fa-boxes menu-icon"></i><span class="menu-label">Produtos</span></div><hr/>
+                <div id="menu-insumos"><i class="fas fa-lightbulb menu-icon"></i><span class="menu-label">Insumos</span class="menu-label"></div><hr/>
+                <div id="menu-configuracoes"><i class="fas fa-cog menu-icon"></i><span class="menu-label">Configurações</span class="menu-label"></div>
             </div>
-            <hr/>
-            <div id="menu-despesas">
-                Despesas
-            </div>
-            <hr/>
-            <div id="menu-vendas">
-                Vendas
-            </div>
-            <hr/>
-            <div id="menu-produtos">
-                Produtos
-            </div>
-            <hr/>
-            <div id="menu-insumos">
-                Insumos
-            </div>
-            <hr/>
-            <div id="menu-configuracoes">
-                Configurações
+            <div id="menu-slider">
+                <i id="menu-slider-left" class="fas fa-angle-left"></i>
+                <i id="menu-slider-right" class="fas fa-angle-right" style="display: none;"></i id="menu-slider-right">
             </div>
         </div>
         <div id="content"></div>
     </div>
 
 
-    <script>require('./service/renderer')</script>
+    <script>require('./renderer/mainRenderer')</script>
 </body>
 </html>

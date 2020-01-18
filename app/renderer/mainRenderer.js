@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('fs');
 
 let dashboard = null;
 let despesas = null;
@@ -12,6 +12,9 @@ let menuVendas = document.querySelector('#menu-vendas');
 let menuProdutos = document.querySelector('#menu-produtos');
 let menuInsumos = document.querySelector('#menu-insumos');
 let menuConfiguracoes = document.querySelector('#menu-configuracoes');
+let toggleMenu = document.querySelector('#menu-slider');
+
+let menuExpandido = true;
 
 window.onload = () => {
     menuDashboard.click();
@@ -45,6 +48,7 @@ menuDespesas.addEventListener('click' ,function () {
         fs.readFile(`${__dirname}/../view/despesas.html`, (err, data) => {
             despesas = data;
             document.getElementById('content').innerHTML = despesas;
+            require('./despesasRenderer.js');
         });
     }
     menuDespesas.className = 'selected-menu';
@@ -100,4 +104,22 @@ menuConfiguracoes.addEventListener('click' ,function () {
         });
     }
     menuConfiguracoes.className = 'selected-menu';
+});
+
+toggleMenu.addEventListener('click' ,function () {
+    let labels = document.querySelectorAll('.menu-label');
+    labels.forEach(label => {
+        label.style.display = menuExpandido ? "none" : "inline-block"; 
+    });
+
+    let spacers = document.querySelectorAll('#menu-items hr');
+    spacers.forEach(spacer => {
+        spacer.style.width = menuExpandido ? "60px" : "";
+    });
+
+    document.querySelector('#vertical-menu').style.width = menuExpandido ? "70px" : "";
+    document.querySelector('#menu-slider-left').style.display = menuExpandido ? 'none' : 'block';
+    document.querySelector('#menu-slider-right').style.display = menuExpandido ? 'block' : 'none';
+
+    menuExpandido = !menuExpandido;
 });
