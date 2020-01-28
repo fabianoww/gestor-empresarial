@@ -2,13 +2,11 @@ const fs = require('fs');
 
 let dashboard = null;
 let despesas = null;
-let vendas = null;
 let produtos = null;
 let insumos = null;
 let configuracoes = null;
 let menuDashboard = document.querySelector('#menu-dashboard');
-let menuDespesas = document.querySelector('#menu-despesas');
-let menuVendas = document.querySelector('#menu-vendas');
+let menuFluxoCaixa = document.querySelector('#menu-fluxo-caixa');
 let menuProdutos = document.querySelector('#menu-produtos');
 let menuInsumos = document.querySelector('#menu-insumos');
 let menuConfiguracoes = document.querySelector('#menu-configuracoes');
@@ -40,31 +38,18 @@ menuDashboard.addEventListener('click' ,function () {
     menuDashboard.className = 'selected-menu';
 });
 
-menuDespesas.addEventListener('click' ,function () {
+menuFluxoCaixa.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (despesas) {
         document.getElementById('content').innerHTML = despesas;
     } else {
-        fs.readFile(`${__dirname}/../view/despesas.html`, (err, data) => {
+        fs.readFile(`${__dirname}/../view/fluxoCaixa.html`, (err, data) => {
             despesas = data;
             document.getElementById('content').innerHTML = despesas;
-            require('./despesasRenderer.js');
+            require('./fluxoCaixaRenderer.js');
         });
     }
-    menuDespesas.className = 'selected-menu';
-});
-
-menuVendas.addEventListener('click' ,function () {
-    clearSelectedMenu();
-    if (vendas) {
-        document.getElementById('content').innerHTML = vendas;
-    } else {
-        fs.readFile(`${__dirname}/../view/vendas.html`, (err, data) => {
-            vendas = data;
-            document.getElementById('content').innerHTML = vendas;
-        });
-    }
-    menuVendas.className = 'selected-menu';
+    menuFluxoCaixa.className = 'selected-menu';
 });
 
 menuProdutos.addEventListener('click' ,function () {

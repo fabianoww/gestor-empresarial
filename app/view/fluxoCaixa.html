@@ -1,0 +1,84 @@
+<div id="fluxo-caixa-panel" class="crud-panel">
+    <h2>Fluxo de Caixa</h2>
+    <table>
+        <tr>
+            <th style="text-align: left;">Descrição</th>
+            <th style="text-align: left;">Tipo</th>
+            <th style="text-align: left;">Data</th>
+            <th style="text-align: right;">Valor</th>
+        </tr>
+        <tr>
+            <td>Valor 1</td>
+            <td>Valor 2</td>
+            <td>Valor 3</td>
+            <td style="text-align: right;">Valor 4</td>
+        </tr>
+        <tr>
+            <td>Valor 1</td>
+            <td>Valor 2</td>
+            <td>Valor 3</td>
+            <td style="text-align: right;">Valor 4</td>
+        </tr>
+        <tr>
+            <td>Valor 1</td>
+            <td>Valor 2</td>
+            <td>Valor 3</td>
+            <td style="text-align: right;">Valor 4</td>
+        </tr>
+        <tr>
+            <td>Valor 1</td>
+            <td>Valor 2</td>
+            <td>Valor 3</td>
+            <td style="text-align: right;">Valor 4</td>
+        </tr>
+        <tr>
+            <td>Valor 1</td>
+            <td>Valor 2</td>
+            <td>Valor 3</td>
+            <td style="text-align: right;">Valor 4</td>
+        </tr>
+        <tr>
+            <td>Valor 1</td>
+            <td>Valor 2</td>
+            <td>Valor 3</td>
+            <td style="text-align: right;">Valor 4</td>
+        </tr>
+    </table>
+</div>
+
+<div id="filter-caixa-btn" class="floating-filter-button"><i class="fas fa-filter"></i></div>
+<div id="action-caixa-btn" class="floating-action-button"><i class="fas fa-plus"></i></div>
+
+<div id="fluxo-caixa-form-panel" class="crud-form-panel">
+    <h4 id="titulo-form"></h4>
+    <br>
+    <p>
+        <label>
+            <input name="tipoFluxo" type="radio" checked />
+            <span>Receita</span>
+        </label>
+        <label>
+            <input name="tipoFluxo" type="radio" />
+            <span>Despesa</span>
+        </label>
+    </p>
+    <div class="input-field col s6">
+        <input id="valor" type="text" class="validate">
+        <label for="valor">Valor</label>
+    </div>
+    <div class="input-field col s6">
+        <input id="campo2" type="text" class="validate">
+        <label for="campo2">Campo 2</label>
+    </div>
+    <div class="input-field col s6">
+        <input id="data" type="text" class="datepicker">
+        <label for="data">Data</label>
+    </div>
+    
+    <div class="input-field col s12">
+        <textarea id="observacoes" class="materialize-textarea"></textarea>
+        <label for="observacoes">Observações</label>
+    </div>
+</div>
+
+<script>require('./renderer/fluxoCaixaRenderer')</script>

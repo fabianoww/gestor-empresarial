@@ -106,8 +106,9 @@ body {
     text-align: center;
     line-height: 50px;
     font-weight: bold;
-    font-size: 2em;
+    font-size: 1.5em;
     box-shadow: 10px 10px 40px 0px #4d4d4d;
+    z-index: 200;
 }
 
 .floating-action-button:hover {
@@ -126,8 +127,9 @@ body {
     text-align: center;
     line-height: 30px;
     font-weight: bold;
-    font-size: 1em;
+    font-size: .7em;
     box-shadow: 10px 10px 40px 0px #4d4d4d;
+    z-index: 100;
 }
 
 .floating-filter-button:hover {
@@ -156,6 +158,20 @@ th {
 td {
     padding: 5px 10px 5px 10px;
     border-bottom: 1px solid #485544;
+}
+
+.crud-form-panel {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    width: 300px;
+    overflow-y: auto;
+    z-index: 150;
+    display: none;
+    padding: 20px;
+    box-shadow: 1em 0 1em 1em black;
+    background-color: #F9F9F9;
 }
 
 /* Dashboard */
