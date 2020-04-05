@@ -5,11 +5,15 @@ let despesas = null;
 let produtos = null;
 let insumos = null;
 let configuracoes = null;
+let encomendas = null;
+let fornecedores = null;
 let menuDashboard = document.querySelector('#menu-dashboard');
 let menuFluxoCaixa = document.querySelector('#menu-fluxo-caixa');
 let menuProdutos = document.querySelector('#menu-produtos');
 let menuInsumos = document.querySelector('#menu-insumos');
 let menuConfiguracoes = document.querySelector('#menu-configuracoes');
+let menuEncomendas = document.querySelector('#menu-encomendas');
+let menuFornecedores = document.querySelector('#menu-fornecedores');
 let toggleMenu = document.querySelector('#menu-slider');
 
 let menuExpandido = true;
@@ -89,6 +93,32 @@ menuConfiguracoes.addEventListener('click' ,function () {
         });
     }
     menuConfiguracoes.className = 'selected-menu';
+});
+
+menuEncomendas.addEventListener('click' ,function () {
+    clearSelectedMenu();
+    if (encomendas) {
+        document.getElementById('content').innerHTML = encomendas;
+    } else {
+        fs.readFile(`${__dirname}/../view/encomendas.html`, (err, data) => {
+            encomendas = data;
+            document.getElementById('content').innerHTML = encomendas;
+        });
+    }
+    menuEncomendas.className = 'selected-menu';
+});
+
+menuFornecedores.addEventListener('click' ,function () {
+    clearSelectedMenu();
+    if (fornecedores) {
+        document.getElementById('content').innerHTML = fornecedores;
+    } else {
+        fs.readFile(`${__dirname}/../view/fornecedores.html`, (err, data) => {
+            fornecedores = data;
+            document.getElementById('content').innerHTML = fornecedores;
+        });
+    }
+    menuFornecedores.className = 'selected-menu';
 });
 
 toggleMenu.addEventListener('click' ,function () {
