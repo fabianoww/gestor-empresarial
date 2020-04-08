@@ -188,3 +188,9 @@ td {
     flex-grow: 1;
     margin: 10px;
 }
+
+/* Toasts */
+
+.toastErro {
+    background-color: #f44340 !important;
+}

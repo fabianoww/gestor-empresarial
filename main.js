@@ -1,5 +1,5 @@
 const { app, BrowserWindow, screen }  = require('electron');
-const initDBDao = require('./app/dao/initDBDao');
+const dbDao = require('./app/dao/dbDao');
 
 let mainWindow = null;
 app.on('ready', () => {
@@ -16,14 +16,8 @@ app.on('ready', () => {
 
     // TODO Exibir splash screen
 
-    /*
-    let templateMenu = templateGenerator.geraMenuPrincipalTemplate(app);
-    let menuPrincipal = Menu.buildFromTemplate(templateMenu);
-    Menu.setApplicationMenu(menuPrincipal);
-    */
-
     // Inicializando banco de dados
-    initDBDao.startDB();
+    dbDao.initDB();
 
     // Carregando tela principal
     mainWindow.loadURL(`file://${__dirname}/app/main.html`);
@@ -33,6 +27,5 @@ app.on('ready', () => {
 });
 
 app.on('window-all-closed', () => {
-    initDBDao.closeDB();
     app.quit();
 });

@@ -1,3 +1,21 @@
-<div id="insumos-panel" style="background-color: wheat;">
-    Olá! eu sou os insumos!
+<div id="insumos-panel" class="crud-panel">
+    <h2>Insumos</h2>
+    <table id="insumos-table">
+        <tr>
+            <th style="width: 70px;">ID</th>
+            <th style="text-align: left;">Descrição</th>
+        </tr>
+    </table>
+</div>
+
+<div id="filter-insumo-btn" class="floating-filter-button"><i class="fas fa-filter"></i></div>
+<div id="action-insumo-btn" class="floating-action-button"><i class="fas fa-plus"></i></div>
+
+<div id="insumo-form-panel" class="crud-form-panel">
+    <h5 id="titulo-form"></h5>
+    <div class="input-field col s6">
+        <input id="desc" type="text" class="validate" max="200" required>
+        <label for="desc">Descrição</label>
+        <span class="helper-text" data-error="Informe uma descrição de até 200 caracteres"></span>
+    </div>
 </div>

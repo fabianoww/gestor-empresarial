@@ -37,6 +37,7 @@ menuDashboard.addEventListener('click' ,function () {
         fs.readFile(`${__dirname}/../view/dashboard.html`, (err, data) => {
             dashboard = data;
             document.getElementById('content').innerHTML = dashboard;
+            require('./dashboardRenderer.js');
         });
     }
     menuDashboard.className = 'selected-menu';
@@ -64,6 +65,7 @@ menuProdutos.addEventListener('click' ,function () {
         fs.readFile(`${__dirname}/../view/produtos.html`, (err, data) => {
             produtos = data;
             document.getElementById('content').innerHTML = produtos;
+            require('./produtosRenderer.js');
         });
     }
     menuProdutos.className = 'selected-menu';
@@ -77,6 +79,7 @@ menuInsumos.addEventListener('click' ,function () {
         fs.readFile(`${__dirname}/../view/insumos.html`, (err, data) => {
             insumos = data;
             document.getElementById('content').innerHTML = insumos;
+            require('./insumosRenderer.js');
         });
     }
     menuInsumos.className = 'selected-menu';
@@ -90,6 +93,7 @@ menuConfiguracoes.addEventListener('click' ,function () {
         fs.readFile(`${__dirname}/../view/configuracoes.html`, (err, data) => {
             configuracoes = data;
             document.getElementById('content').innerHTML = configuracoes;
+            require('./configuracoesRenderer.js');
         });
     }
     menuConfiguracoes.className = 'selected-menu';
@@ -103,6 +107,7 @@ menuEncomendas.addEventListener('click' ,function () {
         fs.readFile(`${__dirname}/../view/encomendas.html`, (err, data) => {
             encomendas = data;
             document.getElementById('content').innerHTML = encomendas;
+            require('./encomendasRenderer.js');
         });
     }
     menuEncomendas.className = 'selected-menu';

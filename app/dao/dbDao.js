@@ -2,21 +2,50 @@ const sqlite3 = require('sqlite3');
 
 var db;
 
-exports.startDB = function() {
+exports.initDB = function() {
+    startDB();
+    db.serialize(function() {
+        db.all("SELECT name  FROM sqlite_master WHERE type='table'", criarTabelas);
+        closeDB();
+    });
+}
+exports.executeSelectEach = function(query, params, cb) {
+    startDB();
+    db.each(query, params, (err, row) => {
+        if (err) {
+            console.error(err.message);
+            cb(null, err.message);
+            return;
+        }
+        cb(row, null);
+      });
+      
+    closeDB();
+}
+
+exports.executeInsert = function(query, params, cb) {
+    startDB();
+    db.run(query, params, function(err) {
+        if (err) {
+            console.error(err.message);
+            cb(null, err.message);
+            return;
+        }
+        
+        cb(this.lastID, null);
+    });
+    
+    closeDB();
+}
+
+function startDB() {
     db = new sqlite3.Database('./data/database.db');
     console.debug('DB aberto.');
+}
 
-    db.serialize(function() {
-        //db.run("CREATE TABLE teste (id, desc)");
-    
-        //db.run("INSERT INTO Teste VALUES (?, ?)", [1, 'xxxxx']);
-        //db.run("INSERT INTO Teste VALUES (?, ?)", [2, 'xxxxx']);
-        //db.run("INSERT INTO Teste VALUES (?, ?)", [3, 'xxxxx']);
-
-        // Verificando tabelas e criando caso necessário
-        db.all("SELECT name  FROM sqlite_master WHERE type='table'", criarTabelas);
-
-    });
+function closeDB() {
+    db.close();
+    console.debug('DB fechado.');
 }
 
 function criarTabelas(err, rows) {
@@ -205,13 +234,4 @@ function criarTabelas(err, rows) {
                 FOREIGN KEY (id_estoque_insumo) REFERENCES estoque_insumos (id))`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
-}
-
-exports.getDB = function() {
-    return db;
-}
-
-exports.closeDB = function() {
-    db.close();
-    console.debug('DB fechado.');
 }
