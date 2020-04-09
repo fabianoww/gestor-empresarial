@@ -6,10 +6,9 @@ exports.initDB = function() {
     startDB();
     db.serialize(function() {
         db.all("SELECT name  FROM sqlite_master WHERE type='table'", criarTabelas);
-        closeDB();
     });
 }
-exports.executeSelectEach = function(query, params, cb) {
+exports.selectEach = function(query, params, cb) {
     startDB();
     db.each(query, params, (err, row) => {
         if (err) {
@@ -23,7 +22,7 @@ exports.executeSelectEach = function(query, params, cb) {
     closeDB();
 }
 
-exports.executeInsert = function(query, params, cb) {
+exports.execute = function(query, params, cb) {
     startDB();
     db.run(query, params, function(err) {
         if (err) {
@@ -100,7 +99,8 @@ function criarTabelas(err, rows) {
         db.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
-                descricao VARCHAR(200))`);
+                descricao VARCHAR(200),
+                ativo INTEGER NOT NULL DEFAULT 1)`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
 
@@ -234,4 +234,6 @@ function criarTabelas(err, rows) {
                 FOREIGN KEY (id_estoque_insumo) REFERENCES estoque_insumos (id))`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
+    
+    closeDB();
 }

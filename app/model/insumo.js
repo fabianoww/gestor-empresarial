@@ -1,5 +1,6 @@
 class Insumo {
-    constructor(desc) {
+    constructor(id, desc) {
+      this.id = id;
       this.desc = desc;
     }
 }

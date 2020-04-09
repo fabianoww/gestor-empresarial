@@ -160,6 +160,20 @@ td {
     border-bottom: 1px solid #485544;
 }
 
+tr:hover {
+    cursor: pointer;
+    background-color: #f2f2f2;
+}
+.crud-shield {
+    position: fixed;
+    z-index: 150;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    display: none;
+}
+
 .crud-form-panel {
     position: absolute;
     top: 0px;
@@ -167,8 +181,7 @@ td {
     bottom: 0px;
     width: 300px;
     overflow-y: auto;
-    z-index: 150;
-    display: none;
+    z-index: 151;
     padding: 20px;
     box-shadow: 1em 0 1em 1em black;
     background-color: #F9F9F9;
@@ -190,7 +203,56 @@ td {
 }
 
 /* Toasts */
-
 .toastErro {
     background-color: #f44340 !important;
+}
+
+/* Popup */
+.popup-shield {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 10px 10px 40px 0px #4d4d4d;
+    padding: 15px;
+    border-radius: 15px;
+    width: 200px;
+    height: 100px;
+    background-color: #F9F9F9;
+    z-index: 1001;
+}
+
+.popup-titulo {
+    font-weight: bold;
+    text-align: center;
+}
+
+.popup-msg {
+}
+
+.popup-botoes {
+    text-align: center;
+    padding-top: 10px;
+}
+
+.popup-botoes > div {
+    display: inline-block;
+    padding: 10px;
+    margin: 0px 5px 0px 5px;
+    border-radius: 10px;
+    width: 100px;
+    color: #485544;
+    font-weight: bold;
+    background-color: #a3f805;
+    cursor: pointer;
 }
