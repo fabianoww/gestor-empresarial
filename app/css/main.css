@@ -116,6 +116,7 @@ body {
     box-shadow: 10px 10px 30px 0px #4d4d4d;
 }
 
+/*
 .floating-filter-button {
     position: absolute;
     background-color: #a3f805;
@@ -129,13 +130,14 @@ body {
     font-weight: bold;
     font-size: .7em;
     box-shadow: 10px 10px 40px 0px #4d4d4d;
-    z-index: 100;
+    z-index: 200;
 }
 
 .floating-filter-button:hover {
     cursor: pointer;
     box-shadow: 10px 10px 30px 0px #4d4d4d;
 }
+*/
 
 .crud-panel {
     position: absolute;
@@ -164,7 +166,7 @@ tr:hover {
     cursor: pointer;
     background-color: #f2f2f2;
 }
-.crud-shield {
+.shield {
     position: fixed;
     z-index: 150;
     top: 0px;
@@ -174,6 +176,7 @@ tr:hover {
     display: none;
 }
 
+/* Forms */
 .crud-form-panel {
     position: absolute;
     top: 0px;
@@ -255,4 +258,12 @@ tr:hover {
     font-weight: bold;
     background-color: #a3f805;
     cursor: pointer;
+}
+
+/* Filtro */
+.filtro {
+    position: absolute !important;
+    top: 25px;
+    left: 500px;
+    right: 50px;
 }

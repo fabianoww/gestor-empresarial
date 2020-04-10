@@ -56,3 +56,11 @@ exports.closePopup = function(event) {
         elem.remove();
     }
 }
+
+exports.debounce = function(func, wait) {
+    let timer = null;
+    return function() {
+        clearTimeout(timer);
+        timer = setTimeout(func, wait);
+    }
+}

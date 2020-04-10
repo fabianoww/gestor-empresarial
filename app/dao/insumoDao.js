@@ -5,7 +5,6 @@ exports.salvar = function(insumo, cb) {
 }
 
 exports.atualizar = function(insumo, cb) {
-    console.log(insumo);
     dbDao.execute('UPDATE insumo SET descricao = ? WHERE id = ?', [insumo.desc, insumo.id], cb);
 }
 
@@ -13,17 +12,24 @@ exports.remover = function(id, cb) {
     dbDao.execute('UPDATE insumo SET ativo = 0 WHERE id = ?', [id], cb);
 }
 
-exports.carregarInsumos = function(filtroDesc, pagina, tamPagina, cb) {
+exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
     let query = 'SELECT * FROM insumo WHERE ativo = 1 ';
+
+    // Assegurando que string vazia não filtrará resultados
+    filtro = filtro && filtro.trim() != '' ? filtro : null;
     
-    if (filtroDesc && filtroDesc.trim() != '') {
-        console.log(`aplicando filtro nos insumos: ${filtroDesc}`) ;
-        query += 'AND descricao ILIKE \'%?%\' ';
+    if (filtro) {
+        console.log(`Aplicando filtro nos insumos: ${filtro}`) ;
+        query += `
+            AND (
+                id = ?
+                OR descricao LIKE '%' || ? || '%'
+            ) `;
     }
 
     if (pagina != null && tamPagina != null) {
         query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
     }
-
-    dbDao.selectEach(query, filtroDesc ? [filtroDesc] : [], cb);
+    
+    dbDao.selectEach(query, filtro ? [filtro, filtro] : [], cb);
 }

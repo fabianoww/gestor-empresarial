@@ -4,13 +4,15 @@ const uiUtils = require('../utils/uiUtils');
 
 let insumosTable = null;
 let actionButton = null;
-let filterButton = null;
+//let filterButton = null;
 let formPanel = null;
 let formTitle = null;
 let inputDesc = null;
 let inputId = null;
 let toggleForm = false;
 let insumoForm = null;
+//let filtroPanel = null;
+let filtro = null;
 
 // Inicialização da tela
 exports.initTela = initTela;
@@ -18,19 +20,22 @@ exports.initTela = initTela;
 function initTela() {
     insumosTable = document.querySelector('#insumos-table');
     actionButton = document.querySelector('#action-insumo-btn');
-    filterButton = document.querySelector('#filter-insumo-btn');
+    //filterButton = document.querySelector('#filter-insumo-btn');
     formPanel = document.querySelector('#insumo-form-panel');
     formTitle = document.querySelector('#titulo-form');
     inputDesc = document.querySelector('#desc');
     inputId = document.querySelector('#insumo-id');
     insumoForm = document.querySelector('#insumo-form');
+    //filtroPanel = document.querySelector('#insumo-filtro-panel');
+    filtro = document.querySelector('#filtro');
     toggleForm = false;
 
 
     // Adicionando listeners para elementos da tela
     formPanel.addEventListener('click', fecharFormClick);
     actionButton.addEventListener('click', actionclick);
-    filterButton.addEventListener('click', filtroClick);
+    //filterButton.addEventListener('click', filtroClick);
+    filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
 
     atualizarTela();
 }
@@ -41,7 +46,7 @@ function atualizarTela() {
         insumosTable.deleteRow(1);
     }
 
-    insumoDao.carregarInsumos(null, 0, 10, (registro, err) => {
+    insumoDao.carregarInsumos(filtro.value, 0, 10, (registro, err) => {
         if (registro) {
             let id = registro.id;
             let desc = registro.descricao;
@@ -58,7 +63,6 @@ function atualizarTela() {
         }
 
         if (err) {
-            console.log('555');
             let msgErro = `Ocorreu um erro ao carregar os insumos: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
@@ -173,9 +177,15 @@ function fecharFormClick(event) {
     }
 }
 
-function filtroClick() {
-    console.log('filtro clicado');
+function filtrar() {
+    atualizarTela();
 }
+
+/*
+function filtroClick() {
+    filtroPanel.style.display = 'block';
+}
+*/
 
 function apagar(event) {
     let id = event.target.parentElement.parentElement.children[0].textContent;
