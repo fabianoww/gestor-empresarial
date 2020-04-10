@@ -1,12 +1,19 @@
 const fs = require('fs');
 
 let dashboard = null;
-let despesas = null;
+let dashboardRenderer = null;
+let fluxoCaixa = null;
+let fluxoCaixaRenderer = null;
 let produtos = null;
+let produtosRenderer = null;
 let insumos = null;
+let insumosRenderer = null;
 let configuracoes = null;
+let configuracoesRenderer = null;
 let encomendas = null;
+let encomendasRenderer = null;
 let fornecedores = null;
+let fornecedoresRenderer = null;
 let menuDashboard = document.querySelector('#menu-dashboard');
 let menuFluxoCaixa = document.querySelector('#menu-fluxo-caixa');
 let menuProdutos = document.querySelector('#menu-produtos');
@@ -33,11 +40,13 @@ menuDashboard.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (dashboard) {
         document.getElementById('content').innerHTML = dashboard;
+        dashboardRenderer.initTela();
     } else {
         fs.readFile(`${__dirname}/../view/dashboard.html`, (err, data) => {
             dashboard = data;
             document.getElementById('content').innerHTML = dashboard;
-            require('./dashboardRenderer.js');
+            dashboardRenderer = require('./dashboardRenderer.js');
+            dashboardRenderer.initTela();
         });
     }
     menuDashboard.className = 'selected-menu';
@@ -45,13 +54,15 @@ menuDashboard.addEventListener('click' ,function () {
 
 menuFluxoCaixa.addEventListener('click' ,function () {
     clearSelectedMenu();
-    if (despesas) {
-        document.getElementById('content').innerHTML = despesas;
+    if (fluxoCaixa) {
+        document.getElementById('content').innerHTML = fluxoCaixa;
+        fluxoCaixaRenderer.initTela();
     } else {
         fs.readFile(`${__dirname}/../view/fluxoCaixa.html`, (err, data) => {
-            despesas = data;
-            document.getElementById('content').innerHTML = despesas;
-            require('./fluxoCaixaRenderer.js');
+            fluxoCaixa = data;
+            document.getElementById('content').innerHTML = fluxoCaixa;
+            fluxoCaixaRenderer = require('./fluxoCaixaRenderer.js');
+            fluxoCaixaRenderer.initTela();
         });
     }
     menuFluxoCaixa.className = 'selected-menu';
@@ -61,11 +72,13 @@ menuProdutos.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (produtos) {
         document.getElementById('content').innerHTML = produtos;
+        produtosRenderer.initTela();
     } else {
         fs.readFile(`${__dirname}/../view/produtos.html`, (err, data) => {
             produtos = data;
             document.getElementById('content').innerHTML = produtos;
-            require('./produtosRenderer.js');
+            produtosRenderer = require('./produtosRenderer.js');
+            produtosRenderer.initTela();
         });
     }
     menuProdutos.className = 'selected-menu';
@@ -75,11 +88,13 @@ menuInsumos.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (insumos) {
         document.getElementById('content').innerHTML = insumos;
+        insumosRenderer.initTela();
     } else {
         fs.readFile(`${__dirname}/../view/insumos.html`, (err, data) => {
             insumos = data;
             document.getElementById('content').innerHTML = insumos;
-            require('./insumosRenderer.js');
+            insumosRenderer = require('./insumosRenderer.js');
+            insumosRenderer.initTela();
         });
     }
     menuInsumos.className = 'selected-menu';
@@ -89,11 +104,13 @@ menuConfiguracoes.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (configuracoes) {
         document.getElementById('content').innerHTML = configuracoes;
+        configuracoesRenderer.initTela();
     } else {
         fs.readFile(`${__dirname}/../view/configuracoes.html`, (err, data) => {
             configuracoes = data;
             document.getElementById('content').innerHTML = configuracoes;
-            require('./configuracoesRenderer.js');
+            configuracoesRenderer = require('./configuracoesRenderer.js');
+            configuracoesRenderer.initTela();
         });
     }
     menuConfiguracoes.className = 'selected-menu';
@@ -103,11 +120,13 @@ menuEncomendas.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (encomendas) {
         document.getElementById('content').innerHTML = encomendas;
+        encomendasRenderer.initTela();
     } else {
         fs.readFile(`${__dirname}/../view/encomendas.html`, (err, data) => {
             encomendas = data;
             document.getElementById('content').innerHTML = encomendas;
-            require('./encomendasRenderer.js');
+            encomendasRenderer = require('./encomendasRenderer.js');
+            encomendasRenderer.initTela();
         });
     }
     menuEncomendas.className = 'selected-menu';
@@ -117,10 +136,13 @@ menuFornecedores.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (fornecedores) {
         document.getElementById('content').innerHTML = fornecedores;
+        fornecedoresRenderer.initTela();
     } else {
         fs.readFile(`${__dirname}/../view/fornecedores.html`, (err, data) => {
             fornecedores = data;
             document.getElementById('content').innerHTML = fornecedores;
+            fornecedoresRenderer = require('./fornecedoresRenderer.js');
+            fornecedoresRenderer.initTela();
         });
     }
     menuFornecedores.className = 'selected-menu';
