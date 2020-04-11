@@ -267,3 +267,7 @@ tr:hover {
     left: 500px;
     right: 50px;
 }
+
+.select-dropdown > li > span {
+    color: #485544 !important;
+}

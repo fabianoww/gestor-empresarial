@@ -4,8 +4,8 @@ let dashboard = null;
 let dashboardRenderer = null;
 let fluxoCaixa = null;
 let fluxoCaixaRenderer = null;
-let produtos = null;
-let produtosRenderer = null;
+let estoques = null;
+let estoquesRenderer = null;
 let insumos = null;
 let insumosRenderer = null;
 let configuracoes = null;
@@ -16,7 +16,7 @@ let fornecedores = null;
 let fornecedoresRenderer = null;
 let menuDashboard = document.querySelector('#menu-dashboard');
 let menuFluxoCaixa = document.querySelector('#menu-fluxo-caixa');
-let menuProdutos = document.querySelector('#menu-produtos');
+let menuestoques = document.querySelector('#menu-estoques');
 let menuInsumos = document.querySelector('#menu-insumos');
 let menuConfiguracoes = document.querySelector('#menu-configuracoes');
 let menuEncomendas = document.querySelector('#menu-encomendas');
@@ -68,20 +68,20 @@ menuFluxoCaixa.addEventListener('click' ,function () {
     menuFluxoCaixa.className = 'selected-menu';
 });
 
-menuProdutos.addEventListener('click' ,function () {
+menuestoques.addEventListener('click' ,function () {
     clearSelectedMenu();
-    if (produtos) {
-        document.getElementById('content').innerHTML = produtos;
-        produtosRenderer.initTela();
+    if (estoques) {
+        document.getElementById('content').innerHTML = estoques;
+        estoquesRenderer.initTela();
     } else {
-        fs.readFile(`${__dirname}/../view/produtos.html`, (err, data) => {
-            produtos = data;
-            document.getElementById('content').innerHTML = produtos;
-            produtosRenderer = require('./produtosRenderer.js');
-            produtosRenderer.initTela();
+        fs.readFile(`${__dirname}/../view/estoques.html`, (err, data) => {
+            estoques = data;
+            document.getElementById('content').innerHTML = estoques;
+            estoquesRenderer = require('./estoquesRenderer.js');
+            estoquesRenderer.initTela();
         });
     }
-    menuProdutos.className = 'selected-menu';
+    menuestoques.className = 'selected-menu';
 });
 
 menuInsumos.addEventListener('click' ,function () {
