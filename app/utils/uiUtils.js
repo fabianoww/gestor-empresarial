@@ -64,3 +64,22 @@ exports.debounce = function(func, wait) {
         timer = setTimeout(func, wait);
     }
 }
+
+exports.getRadioValue = function(radioElements) {
+    for (var i = 0, length = radioElements.length; i < length; i++) {
+        if (radioElements[i].checked) {
+          return radioElements[i].value;
+        }
+    }
+
+    return null;
+}
+
+exports.setRadioValue = function(radioElements, novoValor) {
+    for (var i = 0, length = radioElements.length; i < length; i++) {
+        if (radioElements[i].value == novoValor) {
+          radioElements[i].checked = true;
+          return;
+        }
+    }
+}

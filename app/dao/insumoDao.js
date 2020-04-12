@@ -19,7 +19,6 @@ exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
     filtro = filtro && filtro.trim() != '' ? filtro : null;
     
     if (filtro) {
-        console.log(`Aplicando filtro nos insumos: ${filtro}`) ;
         query += `
             AND (
                 id = ?

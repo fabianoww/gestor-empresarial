@@ -34,23 +34,24 @@
                 <span class="helper-text" data-error="Informe um nome de até 200 caracteres"></span>
             </div>
             <div class="input-field col s12" style="margin-bottom: 41px;">
-                <select>
-                    <option value="" disabled selected>Escolha uma opção</option>
-                    <option value="embalagens">Embalagens</option>
-                    <option value="grafica">Gráfica</option>
-                    <option value="molduraria">Molduraria</option>
-                    <option value="outros">Outros</option>
-                    <option value="papelaria">Papelaria</option>
+                <select id="tipo" required>
+                    <option value="">Escolha uma opção</option>
+                    <option value="Embalagens">Embalagens</option>
+                    <option value="Gráfica">Gráfica</option>
+                    <option value="Molduraria">Molduraria</option>
+                    <option value="Outros">Outros</option>
+                    <option value="Papelaria">Papelaria</option>
                 </select>
                 <label>Tipo</label>
+                <span class="helper-text" data-error="Selecione um tipo de fornecedor"></span>
             </div>
             <p>
                 <label style="margin-right: 40px;">
-                    <input name="tipoFornecedor" type="radio" checked />
+                    <input name="tipoFornecedor" type="radio" value="1" checked />
                     <span>Online</span>
                 </label>
                 <label>
-                    <input name="tipoFornecedor" type="radio" />
+                    <input name="tipoFornecedor" type="radio" value="0" />
                     <span>Loja física</span>
                 </label>
             </p>

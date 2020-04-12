@@ -85,7 +85,8 @@ function criarTabelas(err, rows) {
                 online BOOLEAN, 
                 telefone VARCHAR(20), 
                 site VARCHAR(200), 
-                email VARCHAR(100))`);
+                email VARCHAR(100),
+                ativo INTEGER NOT NULL DEFAULT 1)`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
 
