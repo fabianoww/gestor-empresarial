@@ -83,3 +83,28 @@ exports.setRadioValue = function(radioElements, novoValor) {
         }
     }
 }
+
+exports.apenasDigitos = function(event) {
+    if (Number.isNaN(Number.parseInt(event.key))) {
+        event.preventDefault();
+    }
+}
+
+exports.formatarMonetario = function(event) {
+    // Removendo todos os caracteres não numéricos
+    let valor = event.target.value.replace(/\D/g,'');
+
+    if (valor == '') {
+        event.target.value = '';
+        return;
+    }
+
+    valor = valor.length > 2 ? valor.slice(0, valor.length-2) + '.' + valor.slice(valor.length-2, valor.length) : '.' + (valor.length == 1 ? '0' + valor : valor);
+
+    let formatter = new Intl.NumberFormat([], {
+        style: 'currency',
+        currency: 'BRL'
+      });
+    
+    event.target.value = formatter.format(valor);
+}

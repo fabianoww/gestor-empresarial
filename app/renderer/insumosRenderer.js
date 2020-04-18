@@ -1,17 +1,21 @@
 const Insumo  = require('../model/insumo');
 const insumoDao = require('../dao/insumoDao');
+const fornecedorDao = require('../dao/fornecedorDao');
 const uiUtils = require('../utils/uiUtils');
 
 let insumosTable = null;
 let actionButton = null;
-//let filterButton = null;
 let formPanel = null;
 let formTitle = null;
 let inputDesc = null;
 let inputId = null;
 let toggleForm = false;
+let toggleFormEstoque = false;
 let insumoForm = null;
-//let filtroPanel = null;
+let insumoFormEstoque = null;
+let formEstoqueTitle = null;
+let formEstoqueShield = null;
+let formEstoqueFornecedor = null;
 let filtro = null;
 
 // Inicialização da tela
@@ -20,21 +24,44 @@ exports.initTela = initTela;
 function initTela() {
     insumosTable = document.querySelector('#insumos-table');
     actionButton = document.querySelector('#action-insumo-btn');
-    //filterButton = document.querySelector('#filter-insumo-btn');
     formPanel = document.querySelector('#insumo-form-panel');
     formTitle = document.querySelector('#titulo-form');
     inputDesc = document.querySelector('#desc');
     inputId = document.querySelector('#insumo-id');
     insumoForm = document.querySelector('#insumo-form');
-    //filtroPanel = document.querySelector('#insumo-filtro-panel');
+    insumoFormEstoque = document.querySelector('#estoque-form');
+    formTitle = document.querySelector('#titulo-estoque-form');
+    formEstoqueTitle = document.querySelector('#titulo-estoque-form');
+    formEstoqueShield = document.querySelector('#estoque-form-shield');
+    formEstoqueFornecedor = document.querySelector('#estoque-fornecedor');
     filtro = document.querySelector('#filtro');
     toggleForm = false;
 
+    // Inicializando campos de data
+    let elemsData = document.querySelectorAll('.datepicker');
+    M.Datepicker.init(elemsData, {
+        format: 'dd/mm/yyyy',
+        autoClose: true
+    });
+
+    // Inicializando campos select
+    var elemsSelect = document.querySelectorAll('select');
+    M.FormSelect.init(elemsSelect, {});
+
+    // Inicializando campos monetários
+    let elemsCurrency = document.querySelectorAll('.monetario');
+    elemsCurrency.forEach(element => {
+        element.addEventListener('keypress', uiUtils.apenasDigitos);
+        element.addEventListener('keyup', uiUtils.formatarMonetario);
+    });
+
+    // Inicializando campos numéricos
+    let elemsNumericos = document.querySelectorAll('.numerico');
+    elemsNumericos.forEach(element => element.addEventListener('keypress', uiUtils.apenasDigitos));
 
     // Adicionando listeners para elementos da tela
     formPanel.addEventListener('click', fecharFormClick);
     actionButton.addEventListener('click', actionclick);
-    //filterButton.addEventListener('click', filtroClick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
 
     atualizarTela();
@@ -48,17 +75,20 @@ function atualizarTela() {
 
     insumoDao.carregarInsumos(filtro.value, 0, 10, (registro, err) => {
         if (registro) {
-            let id = registro.id;
-            let desc = registro.descricao;
             var row = insumosTable.insertRow();
-            var idCol = row.insertCell();
-            idCol.innerHTML = id;
-            var descCol = row.insertCell();
-            descCol.innerHTML = desc;
+            row.insertCell().innerHTML = registro.id;
+            row.insertCell().innerHTML = registro.descricao;
+            row.insertCell().innerHTML = 'x';
+            row.insertCell().innerHTML = 'x';
+
+            var comprarCol = row.insertCell();
+            comprarCol.innerHTML = `<i class="fas fa-cart-plus"></i>`;
+            comprarCol.addEventListener("click", comprarInsumo);
+
             var deleteCol = row.insertCell();
             deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-
             deleteCol.addEventListener("click", apagar);
+
             row.addEventListener("click", carregarFormEdicao);
         }
 
@@ -88,7 +118,7 @@ function carregarFormEdicao(event) {
     insumoForm.reset();
 
     if (element.nodeName == 'I') {
-        // No click da lixeira, ignorar a abertura do formulario
+        // No click da lixeira ou no carrinho, ignorar a abertura do formulario
         return;
     }
     else if (element.nodeName == 'TD') {
@@ -181,12 +211,6 @@ function filtrar() {
     atualizarTela();
 }
 
-/*
-function filtroClick() {
-    filtroPanel.style.display = 'block';
-}
-*/
-
 function apagar(event) {
     let id = event.target.parentElement.parentElement.children[0].textContent;
     let desc = event.target.parentElement.parentElement.children[1].textContent;
@@ -210,4 +234,70 @@ function apagar(event) {
             }},
             {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
         ]);
+}
+
+function exibirFormularioEstoqueNovo(id, nome) {
+    // Limpando form
+    insumoFormEstoque.reset();
+
+    // Exibir formulário de cadastro
+    formEstoqueTitle.innerHTML = `Compra de ${nome}`;
+    formEstoqueShield.style.display = 'block';
+
+    fornecedorDao.carregarFornecedores(null, null, null, (registro, err) => {
+        if (registro) {
+            let option = document.createElement("option");
+            option.id = registro.id;
+            option.text = registro.nome;
+            formEstoqueFornecedor.add(option);
+            M.FormSelect.init(formEstoqueFornecedor, {});
+        }
+
+        if (err) {
+            let msgErro = `Ocorreu um erro ao carregar os fornecedores: ${err}`;
+            console.error(msgErro);
+            M.toast({html: msgErro,  classes: 'rounded toastErro'});
+        }
+    });
+    //inputDesc.focus();
+}
+
+function comprarInsumo(event) {
+    let element = event.target;
+
+    while (element.nodeName != 'TR') {
+        element = element.parentElement;
+    }
+
+    let idInsumo = element.children[0].textContent;
+    let nomeInsumo = element.children[1].textContent;
+    
+    if (!toggleFormEstoque) {
+        exibirFormularioEstoqueNovo(idInsumo, nomeInsumo);
+    } else {
+        // Verificar validade dos campos
+        /*
+        if (inputDesc.checkValidity()) {
+            let novoInsumo = inputId.value == null || inputId.value.trim() == '';
+
+            if (novoInsumo) {
+                // Salvar
+                inserir(new Insumo(null, inputDesc.value));
+            }
+            else {
+                // Atualizar
+                atualizar(new Insumo(inputId.value, inputDesc.value));
+            }
+        }
+        else {
+            M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
+            return;
+        }
+        */
+    }
+
+    toggleFormEstoque = !toggleFormEstoque;
+
+
+    
 }

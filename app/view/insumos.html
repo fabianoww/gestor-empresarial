@@ -10,12 +10,14 @@
         <tr>
             <th style="width: 70px;">ID</th>
             <th style="text-align: left;">Descrição</th>
+            <th style="text-align: left; width: 100px;">Estoque</th>
+            <th style="text-align: left; width: 100px;">Preço médio</th>
+            <th style="width: 50px;"></th>
             <th style="width: 50px;"></th>
         </tr>
     </table>
 </div>
 
-<!-- <div id="filter-insumo-btn" class="floating-filter-button"><i class="fas fa-filter"></i></div> -->
 <div id="action-insumo-btn" class="floating-action-button"><i class="fas fa-plus"></i></div>
 
 <div id="insumo-form-panel" class="shield">
@@ -28,6 +30,50 @@
                 <input id="desc" type="text" class="validate" max="200" required>
                 <label for="desc">Descrição</label>
                 <span class="helper-text" data-error="Informe uma descrição de até 200 caracteres"></span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="estoque-form-shield" class="shield">
+    <div class="crud-form-panel">
+        <form id="estoque-form">
+            <h5 id="titulo-estoque-form"></h5>
+            <br/>
+            <input id="estoque-insumo-id" type="hidden"/>
+            <div class="input-field col s12">
+                <select id="estoque-fornecedor" required>
+                    <option value="">Escolha um fornecedor</option>
+                </select>
+                <label>Fornecedor</label>
+                <span class="helper-text" data-error="Selecione um fornecedor"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-valor" type="text" class="validate monetario" required>
+                <label for="estoque-valor">Valor da compra (sem o frete)</label>
+                <span class="helper-text" data-error="Informe o valor da compra"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-frete" type="text" class="validate monetario" required>
+                <label for="estoque-frete">Valor do frete</label>
+                <span class="helper-text" data-error="Informe o valor do frete"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-qtde_parcelas" type="text" class="validate numerico" max="2">
+                <label for="estoque-qtde_parcelas">Quantidade de parcelas</label>
+                <span class="helper-text" data-error="A quantidade de parcelas deve ser um número"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-data-compra" type="text" class="datepicker">
+                <label for="estoque-data-compra">Data da compra</label>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-data-debito" type="text" class="datepicker">
+                <label for="estoque-data-debito">Data do débito</label>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-data-entrega" type="text" class="datepicker">
+                <label for="estoque-data-entrega">Data da entrega</label>
             </div>
         </form>
     </div>

@@ -116,29 +116,6 @@ body {
     box-shadow: 10px 10px 30px 0px #4d4d4d;
 }
 
-/*
-.floating-filter-button {
-    position: absolute;
-    background-color: #a3f805;
-    top: 15px;
-    right: 15px;
-    width: 30px;
-    height: 30px;
-    border-radius: 25px;
-    text-align: center;
-    line-height: 30px;
-    font-weight: bold;
-    font-size: .7em;
-    box-shadow: 10px 10px 40px 0px #4d4d4d;
-    z-index: 200;
-}
-
-.floating-filter-button:hover {
-    cursor: pointer;
-    box-shadow: 10px 10px 30px 0px #4d4d4d;
-}
-*/
-
 .crud-panel {
     position: absolute;
     top: 20px;
@@ -192,6 +169,14 @@ tr:hover {
 
 .crud-form-panel > * {
     margin-top: 30px !important;
+}
+
+.monetario {
+    text-align: right;
+}
+
+.numerico {
+    text-align: right;
 }
 
 /* Dashboard */
