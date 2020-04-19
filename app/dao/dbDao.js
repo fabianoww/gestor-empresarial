@@ -8,9 +8,24 @@ exports.initDB = function() {
         db.all("SELECT name  FROM sqlite_master WHERE type='table'", criarTabelas);
     });
 }
+
 exports.selectEach = function(query, params, cb) {
     startDB();
     db.each(query, params, (err, row) => {
+        if (err) {
+            console.error(err.message);
+            cb(null, err.message);
+            return;
+        }
+        cb(row, null);
+      });
+      
+    closeDB();
+}
+
+exports.selectFirst = function(query, params, cb) {
+    startDB();
+    db.get(query, params, (err, row) => {
         if (err) {
             console.error(err.message);
             cb(null, err.message);

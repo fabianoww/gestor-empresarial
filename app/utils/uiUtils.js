@@ -108,3 +108,28 @@ exports.formatarMonetario = function(event) {
     
     event.target.value = formatter.format(valor);
 }
+
+exports.converterMoedaParaNumber = function(valor) {
+    if (!valor) {
+        return null;
+    }
+
+    valor = valor.replace(/\D/g,'');
+    valor = valor.length > 2 ? valor.slice(0, valor.length-2) + '.' + valor.slice(valor.length-2, valor.length) : '.' + (valor.length == 1 ? '0' + valor : valor);
+    return new Number(valor);
+}
+
+exports.validarCampo = function(campo, obrigatorio) {
+
+    let campoSelect = campo.nodeName == 'SELECT';
+    let campoAlvo = campoSelect ? campo.parentElement.children[0] : campo;
+    
+    if (!campo.checkValidity() || (obrigatorio && campo.value == '')) {
+        campoAlvo.classList.add('invalid');
+        return false;
+    } 
+    else {
+        campoAlvo.classList.remove("invalid");
+        return true;
+    }
+}
