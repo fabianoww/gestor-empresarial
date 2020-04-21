@@ -223,16 +223,17 @@ function actionclick() {
         if (validarFormEstoque()) {
             let compraInsumo = new CompraInsumo(null, inputEstoqueInsumoId.value, inputEstoqueQtde.value, 
                 uiUtils.converterMoedaParaNumber(inputEstoqueValor.value), uiUtils.converterMoedaParaNumber(inputEstoqueFrete.value), 
-                inputEstoqueParcelas.value, inputEstoqueDataCompra.value, inputEstoqueDataDebito.value, inputEstoqueDataEntrega.value);
+                inputEstoqueParcelas.value, inputEstoqueDataCompra.value, inputEstoqueDataDebito.value, inputEstoqueDataEntrega.value, inputEstoqueFornecedor.value);
             
-            insumoDao.salvarCompraInsumo(compraInsumo, (id, err) => {
+            let nomeInsumo = formEstoqueTitle.innerHTML.substring(10);
+            insumoDao.salvarCompraInsumo(compraInsumo, nomeInsumo, (err) => {
                 if (err) {
                     let msgErro = `Ocorreu um erro ao salvar a compra do insumo: ${err}`;
                     console.error(msgErro);
                     M.toast({html: msgErro,  classes: 'rounded toastErro'});
                 }
                 else {
-                    console.debug(`Nova compra inserida com id ${id}`);
+                    console.debug('Nova compra de insumo inserida');
                     atualizarTela();
                 }
 
@@ -334,6 +335,7 @@ function exibirFormularioEstoqueNovo(id, nome) {
     // Exibir formulário de cadastro
     formEstoqueTitle.innerHTML = `Compra de ${nome}`;
     formEstoqueShield.style.display = 'block';
+    actionButton.innerHTML = '<i class="fas fa-save"></i>';
 
     inputEstoqueInsumoId.value = id;
 

@@ -52,8 +52,67 @@ exports.execute = function(query, params, cb) {
     closeDB();
 }
 
+exports.executeInTransaction = function(statements, cb) {
+
+    if (!statements || statements.length <= 0) {
+        return;
+    }
+
+    startDB();
+    db.run('BEGIN TRANSACTION', [], function(err) {
+        if (err) {
+            console.error(err.message);
+            return;
+        }
+        
+        executeTxStatements(statements, 0, cb);
+    });
+    closeDB();
+}
+
+function executeTxStatements(statements, index, cb) {
+    if (index == statements.length) {
+        db.run('COMMIT', [], function(err) {
+            if (err) {
+                console.error(err.message);
+                return;
+            }
+
+            // Acionando callback do disparo da transação
+            cb(err);
+        });
+        return;
+    }
+
+    db.run(statements[index].query, statements[index].params, (err) => {
+        if (err) {
+            db.run('ROLLBACK', [], function(err) {
+                if (err) {
+                    console.error(err.message);
+                    return;
+                }
+                console.debug('Rollback feito');
+            });
+            statements[index].cb(err);
+
+            // Acionando callback do disparo da transação
+            cb(err);
+            return;
+        }
+
+        console.debug(`Passo ${index} concluído!`);
+        statements[index].cb();
+        executeTxStatements(statements, ++index, cb);
+    });
+}
+
 function startDB() {
     db = new sqlite3.Database('./data/database.db');
+    console.debug('DB aberto.');
+}
+
+function startTxDB() {
+    db = new TransactionDatabase(new sqlite3.Database('./data/database.db'));
     console.debug('DB aberto.');
 }
 
@@ -133,7 +192,8 @@ function criarTabelas(err, rows) {
                 categoria VARCHAR(50), 
                 descricao VARCHAR(200), 
                 debito_credito VARCHAR(1), 
-                data TEXT)`);
+                data TEXT,
+                valor REAL)`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
 

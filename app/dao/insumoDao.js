@@ -39,18 +39,60 @@ exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
     dbDao.selectEach(query, filtro ? [filtro, filtro] : [], cb);
 }
 
-exports.salvarCompraInsumo = function(compraInsumo, cb) {
+exports.salvarCompraInsumo = function(compraInsumo, nomeInsumo, cbk) {
+
+    // Verificando existência do estoque
     dbDao.selectFirst('SELECT * FROM estoque_insumos WHERE id_insumo = ?', [compraInsumo.idInsumo], (registro, err) => {
-        if (registro) {
-            // Já existe estoque cadastrado para o insumo. Atualizar valores
-            console.log('atualizar');
-        }
-        else {
-            // Ainda não existe estoque cadastrado para o insumo. Criar novo registro.
-            dbDao.execute('INSERT INTO estoque_insumos (id_insumo, qtde, preco_medio) VALUES(?,?,?)', [compraInsumo.idInsumo, compraInsumo.qtde, (compraInsumo.valor + compraInsumo.frete) / new Number(compraInsumo.qtde)], cb);
-        }
+        let statements = [];
+        
+            if (registro) {
+                // Já existe estoque cadastrado para o insumo. Atualizar valores
+                let novaQtde = registro.qtde + new Number(compraInsumo.qtde);
+                let novoPrecoMedio = ((registro.preco_medio * registro.qtde) + (new Number(compraInsumo.valor) + new Number(compraInsumo.frete))) / novaQtde;
+                statements[statements.length] = {
+                    query: 'UPDATE estoque_insumos SET qtde = ?, preco_medio = ROUND(?, 2) WHERE id_insumo = ?', 
+                    params: [novaQtde, novoPrecoMedio, compraInsumo.idInsumo], 
+                    cb: (err) => {
+                        if (err) {
+                            console.error(`Erro ao atualizar o estoque dos insumos: ${err}`);
+                        }
+                    }};
+            }
+            else {
+                // Ainda não existe estoque cadastrado para o insumo. Criar novo registro.
+                statements[statements.length] = {
+                    query: 'INSERT INTO estoque_insumos (id_insumo, qtde, preco_medio) VALUES(?,?,?)', 
+                    params: [compraInsumo.idInsumo, compraInsumo.qtde, (compraInsumo.valor + compraInsumo.frete) / new Number(compraInsumo.qtde)], 
+                    cb: (err) => {
+                        if (err) {
+                            console.debug(`Erro ao inserir o estoque dos insumos: ${err}`);
+                        }
+                    }};
+            }
+
+            // Inserindo movimentação de caixa
+            let dataMovimentacao = compraInsumo.dataDebito ? compraInsumo.dataDebito : compraInsumo.dataCompra;
+            statements[statements.length] = {
+                query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
+                params: ['Compra de insumo', `Compra de ${compraInsumo.qtde} ${nomeInsumo}`, 'D', dataMovimentacao, (new Number(compraInsumo.valor) + new Number(compraInsumo.frete))], 
+                cb: (err) => {
+                    if (err) {
+                        console.debug(`Erro ao inserir a movimentação de caixa dos insumos: ${err}`);
+                    }
+                }};
+
+            // Inserindo compra de insumo
+            let valorCompra = compraInsumo.valor ? compraInsumo.valor.valueOf() : null;
+            let freteCompra = compraInsumo.frete ? compraInsumo.frete.valueOf() : null
+            statements[statements.length] = {
+                query: 'INSERT INTO compra_insumo (id_movimentacao, id_insumo, id_fornecedor, qtde, data_compra, data_entrega, data_debito, valor, frete, qtde_parcelas) VALUES((SELECT MAX(id) FROM movimentacao_caixa),?,?,?,?,?,?,?,?,?)', 
+                params: [compraInsumo.idInsumo, compraInsumo.idFornecedor, compraInsumo.qtde, compraInsumo.dataCompra, compraInsumo.dataEntrega, compraInsumo.dataDebito, valorCompra, freteCompra, compraInsumo.qtdeParcelas], 
+                cb: (err) => {
+                    if (err) {
+                        console.debug(`Erro ao inserir a compra dos insumos: ${err}`);
+                    }
+                }};
+
+        dbDao.executeInTransaction(statements, cbk);
     });
-
-
-    //dbDao.execute('INSERT INTO insumo(descricao) VALUES(?)', [insumo.desc], cb);
 }
