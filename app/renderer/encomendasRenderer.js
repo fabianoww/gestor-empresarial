@@ -293,6 +293,7 @@ function apagar(event) {
 
 function consultarCep(event) {
 
+    soap.createClient('https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente?wsdl', function(err, client){
         if (err) {
             M.toast({html: 'Ocorreu um erro ao acessar o serviço de consulta de CEP! Preencha os dados manualmente.',  classes: 'rounded toastErro'});
         }
