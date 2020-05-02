@@ -1,3 +1,236 @@
-<div id="insumos-panel" style="background-color: paleturquoise;">
-    Olá! eu sou as encomendas!
+<div id="encomendas-panel" class="crud-panel">
+    <h2>Encomendas</h2>
+    
+    <div class="filtro input-field col s6">
+        <input id="filtro" type="text" max="100">
+        <label for="filtro">Filtro</label>
+    </div>
+
+    <table id="encomendas-table">
+        <tr>
+            <th style="width: 70px;">ID</th>
+            <th style="width: 100px;">Quantidade</th>
+            <th style="text-align: left;">Descrição</th>
+            <th style="width: 400px;">Cliente</th>
+            <th style="width: 100px;">Data entrega</th>
+            <th style="width: 130px;">Horas produção</th>
+            <th style="width: 50px;"></th>
+        </tr>
+    </table>
 </div>
+
+<div id="action-encomenda-btn" class="floating-action-button"><i class="fas fa-plus"></i></div>
+
+<div id="encomenda-crud-shield" class="shield">
+    <div class="crud-form-panel" style="width: 700px;">
+        <form id="encomenda-form">
+            <h5 id="titulo-form"></h5>
+            <br/>
+            <input id="encomenda-id" type="hidden"/>
+            <fieldset>
+                <legend>Produto</legend>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1;">
+                        <textarea id="desc" class="materialize-textarea" max="200" required></textarea>
+                        <label for="desc">Desrição</label>
+                        <span class="helper-text" data-error="Informe uma descrição de até 200 caracteres"></span>
+                    </div>
+                    <div class="input-field col s12" style="display: inline-block; margin-left: 20px; width: 180px;">
+                        <select id="tipo-produto" required>
+                            <option value="">Escolha uma opção</option>
+                            <option value="QUADRO">Quadro</option>
+                            <option value="FLAMULA">Flâmula</option>
+                            <option value="DISCO">Disco MDF</option>
+                        </select>
+                        <label>Tipo de produto</label>
+                        <span class="helper-text" data-error="Selecione um tipo de produto"></span>
+                    </div>
+                </div>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block;">
+                        <input id="qtde" type="text" class="validate numerico" required>
+                        <label for="qtde">Quantidade</label>
+                        <span class="helper-text" data-error="A quantidade deve ser um número"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="cores" type="text" class="validate" max="20">
+                        <label for="cores">Cores predominantes</label>
+                        <span class="helper-text" data-error="Informe as cores predominantes da encomenda"></span>
+                    </div>
+                </div>
+                <div class="input-field col s6">
+                    <textarea id="obs" class="materialize-textarea" max="200"></textarea>
+                    <label for="obs">Observações</label>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Prazos</legend>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1;">
+                        <input id="data-encomenda" type="text" class="datepicker" required>
+                        <label for="data-encomenda">Data da encomenda</label>
+                        <span class="helper-text" data-error="Informe a data da encomenda"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="data-entrega" type="text" class="datepicker">
+                        <label for="data-entrega">Data da entrega</label>
+                        <span class="helper-text" data-error="Informe a data da entrega"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="horas-producao" type="text" class="validate numerico">
+                        <label for="horas-producao">Horas para produção</label>
+                        <span class="helper-text" data-error="A quantidade de horas para produção deve ser um número"></span>
+                    </div>
+                </div>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1;">
+                        <input id="prazo-envio" type="text" class="validate numerico">
+                        <label for="prazo-envio">Prazo de envio (dias)</label>
+                        <span class="helper-text" data-error="O prazo de envio deve ser um número"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="data-envio" type="text" class="datepicker">
+                        <label for="data-envio">Data do envio</label>
+                        <span class="helper-text" data-error="Informe a data do envio"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="cod-rastreamento" type="text" class="validate" max="50">
+                        <label for="cod-rastreamento">Código de rastreamento</label>
+                        <span class="helper-text" data-error="Informe um código de rastreamento de até 50 caracteres"></span>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Cliente</legend>
+                <div class="input-field col s6">
+                    <input id="nome-cliente" type="text" class="validate" max="200" required>
+                    <label for="nome-cliente">Nome do cliente</label>
+                    <span class="helper-text" data-error="Informe o nome do cliente com até 200 caracteres"></span>
+                </div>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block;">
+                        <input id="telefone-cliente" type="text" class="validate" max="20">
+                        <label for="telefone-cliente">Telefone do cliente</label>
+                        <span class="helper-text" data-error="Informe o telefone do cliente no formato (xx) xxxxx-xxxx"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="email-cliente" type="email" class="validate" max="100">
+                        <label for="email-cliente">E-mail do cliente</label>
+                        <span class="helper-text" data-error="Informe o e-mail do cliente com até 100 caracteres"></span>
+                    </div>
+                </div>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block;">
+                        <input id="cep-end-cliente" type="text" class="validate" max="9">
+                        <label for="cep-end-cliente">Cep</label>
+                        <span class="helper-text" data-error="Informe o cep do endereço do cliente no formato xxxxx-xxx"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="log-end-cliente" type="text" class="validate" max="100">
+                        <label for="log-end-cliente">Logradouro</label>
+                        <span class="helper-text" data-error="Informe o logradouro do endereço do cliente com até 100 caracteres"></span>
+                    </div>
+                </div>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block;">
+                        <input id="numero-end-cliente" type="text" class="validate numerico" max="10">
+                        <label for="numero-end-cliente">Número</label>
+                        <span class="helper-text" data-error="Informe o número do endereço do cliente com até 10 caracteres"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <textarea id="bairro-end-cliente" class="materialize-textarea" max="200" ></textarea>
+                        <label for="bairro-end-cliente">Bairro</label>
+                        <span class="helper-text" data-error="Informe o bairro do endereço do coliente com até 200 caracteres"></span>
+                    </div>
+                </div>
+                <div class="input-field col s6">
+                    <textarea id="compl-end-cliente" class="materialize-textarea" max="200" ></textarea>
+                    <label for="compl-end-cliente">Complemento</label>
+                    <span class="helper-text" data-error="Informe o complemento do endereço do coliente com até 200 caracteres"></span>
+                </div>
+                <div style="display: flex;">
+                    <div class="input-field col s12" style="display: inline-block; width: 200px;">
+                        <select id="estado-end-cliente" required>
+                            <option value="">Escolha uma opção</option>
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="AM">Amazonas</option>
+                            <option value="BA">Bahia</option>
+                            <option value="CE">Ceará</option>
+                            <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PR">Paraná</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="TO">Tocantins</option>
+                        </select>
+                        <label>Estado</label>
+                        <span class="helper-text" data-error="Selecione o estado do endereço do cliente"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="cidade-end-cliente" type="text" class="validate" max="100">
+                        <label for="cidade_end_cliente">Cidade</label>
+                        <span class="helper-text" data-error="Informe a cidade do endereço do cliente com até 100 caracteres"></span>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                <legend>Pagamento</legend>
+                <div style="display: flex;">
+                    <div class="input-field col s12" style="display: inline-block; width: 200px;">
+                        <select id="forma-pagamento" required>
+                            <option value="">Escolha uma opção</option>
+                            <option value="ENCOMENDA">Na encomenda</option>
+                            <option value="ENTREGA">Na entrega</option>
+                            <option value="ENT+1">Entrada + 1</option>
+                        </select>
+                        <label>Forma de pagamento</label>
+                        <span class="helper-text" data-error="Selecione uma forma de pagamento"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="valor-entrada" type="text" class="validate monetario" required>
+                        <label for="valor-entrada">Entrada</label>
+                        <span class="helper-text" data-error="Informe o valor da entrada"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="valor" type="text" class="validate monetario" required>
+                        <label for="valor">Valor</label>
+                        <span class="helper-text" data-error="Informe o valor"></span>
+                    </div>
+                </div>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1;">
+                        <input id="data-pagamento" type="text" class="datepicker">
+                        <label for="data-pagamento">Data do pagamento</label>
+                        <span class="helper-text" data-error="Informe a data do pagamento"></span>
+                    </div>
+                    <div class="input-field col s12" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <select id="status" required>
+                            <option value="">Escolha uma opção</option>
+                        </select>
+                        <label>Status da encomenda</label>
+                        <span class="helper-text" data-error="Selecione o status atual da encomenda"></span>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<script>require('../renderer/encomendasRenderer')</script>

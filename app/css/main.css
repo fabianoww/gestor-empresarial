@@ -179,6 +179,14 @@ tr:hover {
     text-align: right;
 }
 
+fieldset {
+    margin: 15px 0px;
+}
+
+fieldset > legend {
+    padding: 0px 10px;
+}
+
 /* Dashboard */
 #dashboard-panel {
     display: flex;

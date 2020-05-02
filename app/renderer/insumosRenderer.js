@@ -218,6 +218,7 @@ function atualizar(insumo) {
 }
 
 function actionclick() {
+    
     if (toggleFormEstoque) {
         // Salvar compra de insumo
         if (validarFormEstoque()) {
@@ -239,6 +240,7 @@ function actionclick() {
 
                 formEstoqueShield.style.display = 'none';
                 actionButton.innerHTML = '<i class="fas fa-plus"></i>';
+                toggleFormEstoque = !toggleFormEstoque;
                 return;
             });
         }
