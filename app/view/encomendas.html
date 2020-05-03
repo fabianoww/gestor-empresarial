@@ -13,7 +13,7 @@
             <th style="text-align: left;">Descrição</th>
             <th style="width: 400px;">Cliente</th>
             <th style="width: 100px;">Data entrega</th>
-            <th style="width: 130px;">Horas produção</th>
+            <th style="width: 130px; text-align: right;">Horas produção</th>
             <th style="width: 50px;"></th>
         </tr>
     </table>
@@ -150,7 +150,7 @@
                 </div>
                 <div style="display: flex;">
                     <div class="input-field col s12" style="display: inline-block; width: 200px;">
-                        <select id="estado-end-cliente" required>
+                        <select id="estado-end-cliente">
                             <option value="">Escolha uma opção</option>
                             <option value="AC">Acre</option>
                             <option value="AL">Alagoas</option>
@@ -204,7 +204,7 @@
                         <span class="helper-text" data-error="Selecione uma forma de pagamento"></span>
                     </div>
                     <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
-                        <input id="valor-entrada" type="text" class="validate monetario" required>
+                        <input id="valor-entrada" type="text" class="validate monetario">
                         <label for="valor-entrada">Entrada</label>
                         <span class="helper-text" data-error="Informe o valor da entrada"></span>
                     </div>
@@ -223,6 +223,11 @@
                     <div class="input-field col s12" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
                         <select id="status" required>
                             <option value="">Escolha uma opção</option>
+                            <option value="PEDIDO">Pedido</option>
+                            <option value="ESBOCO">Esboço</option>
+                            <option value="PRODUCAO">Produção</option>
+                            <option value="EMBALAGEM">Embalagem</option>
+                            <option value="ENTREGA">Entrega</option>
                         </select>
                         <label>Status da encomenda</label>
                         <span class="helper-text" data-error="Selecione o status atual da encomenda"></span>

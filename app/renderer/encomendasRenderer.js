@@ -1,5 +1,5 @@
-//const Fornecedor = require('../model/fornecedor');
-//const fornecedorDao = require('../dao/fornecedorDao');
+const Encomenda = require('../model/encomenda');
+const encomendaDao = require('../dao/encomendaDao');
 const uiUtils = require('../utils/uiUtils');
 const maskInput = require('mask-input');
 const EasySoap = require('easysoap');
@@ -11,19 +11,34 @@ let formPanel = null;
 let formTitle = null;
 let form = null;
 let inputId = null;
-/*
-let inputNome = null;
-let inputTipo = null;
-let inputOnline = null;
-let inputTelefone = null;
+
+let inputDesc = null;
+let inputTipoProduto = null;
+let inputQtde = null;
+let inputCores = null;
+let inputObs = null;
+let inputDataEncomenda = null;
+let inputDataEntrega = null;
+let inputHorasProducao = null;
+let inputPrazoEnvio = null;
+let inputDataEnvio = null;
+let inputCodRastreamento = null;
+let inputNomeCliente = null;
+let inputTelCliente = null;
 let inputEmail = null;
-let inputSite = null;
-*/
 let cepEnderecoCliente = null;
 let logradouroEnderecoCliente = null;
+let numeroEnderecoCliente = null;
 let bairroEnderecoCliente = null;
+let complEnderecoCliente = null;
 let cidadeEnderecoCliente = null;
 let estadoEnderecoCliente = null;
+let inputFormaPgto = null;
+let inputValorEntrada = null;
+let inputValor = null;
+let inputDataPgto = null;
+let inputStatus = null;
+
 let toggleForm = false;
 let filtro = null;
 
@@ -37,19 +52,32 @@ function initTela() {
     formTitle = document.querySelector('#titulo-form');
     form = document.querySelector('#encomenda-form');
     inputId = document.querySelector('#encomenda-id');
-    /*
-    inputNome = document.querySelector('#nome');
-    inputTipo = document.querySelector('#tipo');
-    inputOnline = document.getElementsByName('tipoFornecedor');
-    inputTelefone = document.querySelector('#telefone');
-    inputEmail = document.querySelector('#email');
-    inputSite = document.querySelector('#site');
-    */
+    inputDesc = document.querySelector('#desc');
+    inputTipoProduto = document.querySelector('#tipo-produto');
+    inputQtde = document.querySelector('#qtde');
+    inputCores = document.querySelector('#cores');
+    inputObs = document.querySelector('#obs');
+    inputDataEncomenda = document.querySelector('#data-encomenda');
+    inputDataEntrega = document.querySelector('#data-entrega');
+    inputHorasProducao = document.querySelector('#horas-producao');
+    inputPrazoEnvio = document.querySelector('#prazo-envio');
+    inputDataEnvio = document.querySelector('#data-envio');
+    inputCodRastreamento = document.querySelector('#cod-rastreamento');
+    inputNomeCliente = document.querySelector('#nome-cliente');
+    inputTelCliente = document.querySelector('#telefone-cliente');
+    inputEmail = document.querySelector('#email-cliente');
     cepEnderecoCliente = document.querySelector('#cep-end-cliente');
     logradouroEnderecoCliente = document.querySelector('#log-end-cliente');
+    numeroEnderecoCliente = document.querySelector('#numero-end-cliente');
     bairroEnderecoCliente = document.querySelector('#bairro-end-cliente');
+    complEnderecoCliente = document.querySelector('#compl-end-cliente');
     cidadeEnderecoCliente = document.querySelector('#cidade-end-cliente');
     estadoEnderecoCliente = document.querySelector('#estado-end-cliente');
+	inputFormaPgto = document.querySelector('#forma-pagamento');
+	inputValorEntrada = document.querySelector('#valor-entrada');
+	inputValor = document.querySelector('#valor');
+	inputDataPgto = document.querySelector('#data-pagamento');
+	inputStatus = document.querySelector('#status');
 
     filtro = document.querySelector('#filtro');
     toggleForm = false;
@@ -58,6 +86,7 @@ function initTela() {
     formPanel.addEventListener('click', fecharFormClick);
     actionButton.addEventListener('click', actionclick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
+    inputFormaPgto.addEventListener('change', toggleInputEntrada);
 
     // Inicializando campos de telefone
     const telefoneMask = new maskInput.default(document.querySelector('#telefone-cliente'), {
@@ -103,35 +132,37 @@ function initTela() {
 function atualizarTela() {
     // Limpando tabela
 
-    /*
-    while(fornecedoresTable.rows.length > 1) {
-        fornecedoresTable.deleteRow(1);
+    while(encomendasTable.rows.length > 1) {
+        encomendasTable.deleteRow(1);
     }
 
-    fornecedorDao.carregarFornecedores(filtro.value, 0, 10, (registro, err) => {
+    encomendaDao.carregarEncomendas(filtro.value, 0, 10, (registro, err) => {
         if (registro) {
-            var row = fornecedoresTable.insertRow();
+            var row = encomendasTable.insertRow();
             row.insertCell().innerHTML = registro.id;
-            row.insertCell().innerHTML = registro.nome;
-            row.insertCell().innerHTML = registro.tipo;
-            row.insertCell().innerHTML = registro.online == 1 ? 'Sim' : 'Não';
-            row.insertCell().innerHTML = registro.telefone;
-            row.insertCell().innerHTML = registro.email;
-            row.insertCell().innerHTML = registro.site;
-            var deleteCol = row.insertCell();
-            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+            row.insertCell().innerHTML = registro.qtde;
+            row.insertCell().innerHTML = registro.descricao;
+            row.insertCell().innerHTML = registro.nome_cliente;
+            row.insertCell().innerHTML = registro.data_entrega;
+            
+            let horasProducaoCol = row.insertCell();
+            horasProducaoCol.innerHTML = registro.horas_producao;
+            horasProducaoCol.style = 'text-align: right;';
 
+            let deleteCol = row.insertCell();
+            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+            deleteCol.style = 'text-align: center;';
             deleteCol.addEventListener("click", apagar);
+
             row.addEventListener("click", carregarFormEdicao);
         }
 
         if (err) {
-            let msgErro = `Ocorreu um erro ao carregar os fornecedores: ${err}`;
+            let msgErro = `Ocorreu um erro ao carregar as encomendas: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
     });
-    */
 }
 
 function exibirFormularioNovo() {
@@ -142,7 +173,7 @@ function exibirFormularioNovo() {
     formTitle.innerHTML = 'Nova encomenda';
     formPanel.style.display = 'block';
     actionButton.innerHTML = '<i class="fas fa-save"></i>';
-    //inputNome.focus();
+    inputDesc.focus();
 }
 
 function carregarFormEdicao(event) {
@@ -159,97 +190,163 @@ function carregarFormEdicao(event) {
     }
 
     // Setando campos
-    /*
-    inputId.value = element.children[0].textContent;
-    inputNome.value = element.children[1].textContent;
-    inputTipo.value = element.children[2].textContent;
-    uiUtils.setRadioValue(inputOnline, element.children[3].textContent ==  "Sim" ? '1' : '0')
-    inputTelefone.value = element.children[4].textContent;
-    inputEmail.value = element.children[5].textContent;
-    inputSite.value = element.children[6].textContent;
-    M.updateTextFields();
-    */
-    
-    // Exibir formulário de cadastro
-    formTitle.innerHTML = 'Editar encomenda';
-    formPanel.style.display = 'block';
-    actionButton.innerHTML = '<i class="fas fa-save"></i>';
-    //inputNome.focus();
-    toggleForm = !toggleForm;
-}
+    let encomenda = encomendaDao.consultar(element.children[0].textContent, (encomenda) => {
+        inputId.value = encomenda.id;
+        inputDesc.value = encomenda.desc;
+        inputTipoProduto.value = encomenda.tipoProduto;
+        inputQtde.value = encomenda.qtde;
+        inputCores.value = encomenda.cores;
+        inputObs.value = encomenda.obs;
+        inputDataEncomenda.value = encomenda.dataEncomenda;
+        inputDataEntrega.value = encomenda.dataEntrega;
+        inputHorasProducao.value = encomenda.horasProd;
+        inputPrazoEnvio.value = encomenda.prazoEnvio;
+        inputDataEnvio.value = encomenda.dataEnvio;
+        inputCodRastreamento.value = encomenda.codRastreamento;
+        inputNomeCliente.value = encomenda.nomeCliente;
+        inputTelCliente.value = encomenda.telCliente;
+        inputEmail.value = encomenda.emailCliente;
+        cepEnderecoCliente.value = encomenda.cepEndCliente;
+        logradouroEnderecoCliente.value = encomenda.logEndCliente;
+        numeroEnderecoCliente.value = encomenda.numEndCliente;
+        bairroEnderecoCliente.value = encomenda.bairroEndCliente;
+        complEnderecoCliente.value = encomenda.compEndCliente;
+        estadoEnderecoCliente.value = encomenda.ufEndCliente;
+        cidadeEnderecoCliente.value = encomenda.cidEndCliente;
+        inputFormaPgto.value = encomenda.formaPgto;
+        inputValorEntrada.value = encomenda.entradaPgto;
+        inputValor.value = encomenda.valorPgto;
+        inputDataPgto.value = encomenda.dataPgto;
+        inputStatus.value = encomenda.statusPgto;
 
-function inserir(novaEncomenda) {
-    /*
-    fornecedorDao.salvar(novoFornecedor, (id, err) => {
-        if (id) {
-            console.debug(`Novo fornecedor inserido com id ${id}`);
-            atualizarTela();
-        }
-        else {
-            let msgErro = `Ocorreu um erro ao inserir um novo fornecedor: ${err}`;
-            console.error(msgErro);
-            M.toast({html: msgErro,  classes: 'rounded toastErro'});
-        }
+        // Setando a visibilidade do campo "valor entrada" com base na forma de pagamento selecionado
+        inputValorEntrada.parentElement.style.display = inputFormaPgto.value == 'ENT+1' ? 'inline-block' : 'none';
 
-        formPanel.style.display = 'none';
-        actionButton.innerHTML = '<i class="fas fa-plus"></i>';
-        return;
+        // Reinicializando campos selects 
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems, {});
+
+        // reinicializando campos texto
+        M.updateTextFields();
+        
+        // Exibir formulário de cadastro
+        formTitle.innerHTML = 'Editar encomenda';
+        formPanel.style.display = 'block';
+        actionButton.innerHTML = '<i class="fas fa-save"></i>';
+        //inputNome.focus();
+        toggleForm = !toggleForm;
+
     });
-    */
-}
-
-function atualizar(encomenda) {
-    /*
-    fornecedorDao.atualizar(fornecedor, (ie, err) => {
-        if (err) {
-            let msgErro = `Ocorreu um erro ao atualizar um fornecedor: ${err}`;
-            console.error(msgErro);
-            M.toast({html: msgErro,  classes: 'rounded toastErro'});
-        }
-        else {
-            console.debug(`Fornecedor atualizado`);
-            atualizarTela();
-        }
-
-        formPanel.style.display = 'none';
-        actionButton.innerHTML = '<i class="fas fa-plus"></i>';
-        return;
-    });
-    */
 }
 
 function actionclick() {
     if (!toggleForm) {
         exibirFormularioNovo();
+        toggleForm = !toggleForm;
     } else {
         // Verificar validade dos campos
-        /*
-        if (inputNome.checkValidity() && inputTipo.value != '' && inputTelefone.checkValidity() && inputEmail.checkValidity() && inputSite.checkValidity()) {
-            let novoFornecedor = inputId.value == null || inputId.value.trim() == '';
+        if (validarForm()) {
 
-            if (novoFornecedor) {
+            let novaEncomenda = inputId.value == null || inputId.value.trim() == '';
+            if (novaEncomenda) {
                 // Salvar
-                inserir(new Fornecedor(null, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefone.value, inputEmail.value, inputSite.value));
+                inserir(new Encomenda(null, inputDesc.value, inputTipoProduto.value, inputQtde.value, inputCores.value, inputObs.value, 
+                    inputDataEncomenda.value, inputDataEntrega.value, inputHorasProducao.value, inputPrazoEnvio.value, inputDataEnvio.value,
+                    inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
+                    logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
+                    estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, inputValorEntrada.value, 
+                    inputValor.value, inputDataPgto.value, inputStatus.value));
             }
             else {
                 // Atualizar
-                atualizar(new Fornecedor(inputId.value, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefone.value, inputEmail.value, inputSite.value));
+                atualizar(new Encomenda(inputId.value, inputDesc.value, inputTipoProduto.value, inputQtde.value, inputCores.value, inputObs.value, 
+                    inputDataEncomenda.value, inputDataEntrega.value, inputHorasProducao.value, inputPrazoEnvio.value, inputDataEnvio.value,
+                    inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
+                    logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
+                    estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, inputValorEntrada.value, 
+                    inputValor.value, inputDataPgto.value, inputStatus.value));
             }
+            
+            formPanel.style.display = 'none';
+            actionButton.innerHTML = '<i class="fas fa-plus"></i>';
+            toggleForm = !toggleForm;
         }
-        else {
-            if (inputTipo.value == '') {
-                M.toast({html: 'Selecione um tipo de fornecedor!',  classes: 'rounded toastErro'});
-            }
-            else {
-                M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
-            }
+    }
+}
 
-            return;
-        }
-        */
+function validarForm() {
+    let formValid = true;
+    formValid = uiUtils.validarCampo(inputDesc, true) && formValid;
+    formValid = uiUtils.validarCampo(inputTipoProduto, true) && formValid;
+    formValid = uiUtils.validarCampo(inputQtde, true) && formValid;
+    formValid = uiUtils.validarCampo(inputCores, false) && formValid;
+    formValid = uiUtils.validarCampo(inputObs, false) && formValid;
+    formValid = uiUtils.validarCampo(inputDataEncomenda, true) && formValid;
+    formValid = uiUtils.validarCampo(inputDataEntrega, false) && formValid;
+    formValid = uiUtils.validarCampo(inputHorasProducao, false) && formValid;
+    formValid = uiUtils.validarCampo(inputPrazoEnvio, false) && formValid;
+    formValid = uiUtils.validarCampo(inputDataEnvio, false) && formValid;
+    formValid = uiUtils.validarCampo(inputCodRastreamento, false) && formValid;
+    formValid = uiUtils.validarCampo(inputNomeCliente, true) && formValid;
+    formValid = uiUtils.validarCampo(inputTelCliente, false) && formValid;
+    formValid = uiUtils.validarCampo(inputEmail, false) && formValid;
+    formValid = uiUtils.validarCampo(cepEnderecoCliente, false) && formValid;
+    formValid = uiUtils.validarCampo(logradouroEnderecoCliente, false) && formValid;
+    formValid = uiUtils.validarCampo(numeroEnderecoCliente, false) && formValid;
+    formValid = uiUtils.validarCampo(bairroEnderecoCliente, false) && formValid;
+    formValid = uiUtils.validarCampo(complEnderecoCliente, false) && formValid;
+    formValid = uiUtils.validarCampo(cidadeEnderecoCliente, false) && formValid;
+    formValid = uiUtils.validarCampo(estadoEnderecoCliente, false) && formValid;
+    formValid = uiUtils.validarCampo(inputFormaPgto, true) && formValid;
+    formValid = uiUtils.validarCampo(inputValorEntrada, inputFormaPgto.value == 'ENT+1') && formValid;
+    formValid = uiUtils.validarCampo(inputValor, false) && formValid;
+    formValid = uiUtils.validarCampo(inputDataPgto, false) && formValid;
+    formValid = uiUtils.validarCampo(inputStatus, true) && formValid;
+    
+    if (!formValid) {
+        M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
     }
 
-    toggleForm = !toggleForm;
+    return formValid;
+}
+
+function inserir(novaEncomenda) {
+    
+    encomendaDao.salvar(novaEncomenda, (id, err) => {
+        if (id) {
+            console.debug(`Nova encomenda inserida com id ${id}`);
+            atualizarTela();
+        }
+        else {
+            let msgErro = `Ocorreu um erro ao inserir uma nova encomenda: ${err}`;
+            console.error(msgErro);
+            M.toast({html: msgErro,  classes: 'rounded toastErro'});
+        }
+
+        formPanel.style.display = 'none';
+        actionButton.innerHTML = '<i class="fas fa-plus"></i>';
+        return;
+    });
+    
+}
+
+function atualizar(encomenda) {
+    
+    encomendaDao.atualizar(encomenda, (ie, err) => {
+        if (err) {
+            let msgErro = `Ocorreu um erro ao atualizar a encomenda: ${err}`;
+            console.error(msgErro);
+            M.toast({html: msgErro,  classes: 'rounded toastErro'});
+        }
+        else {
+            console.debug(`Encomenda atualizada`);
+            atualizarTela();
+        }
+
+        formPanel.style.display = 'none';
+        actionButton.innerHTML = '<i class="fas fa-plus"></i>';
+        return;
+    });
 }
 
 function fecharFormClick(event) {
@@ -260,26 +357,30 @@ function fecharFormClick(event) {
     }
 }
 
+function toggleInputEntrada(e) {
+    inputValorEntrada.parentElement.style.display = e.target.value == 'ENT+1' ? 'inline-block' : 'none';
+}
+
 function filtrar() {
     atualizarTela();
 }
 
 function apagar(event) {
-    /*
+
     let id = event.target.parentElement.parentElement.children[0].textContent;
-    let nome = event.target.parentElement.parentElement.children[1].textContent;
+    let desc = event.target.parentElement.parentElement.children[2].textContent;
     
-    uiUtils.showPopup('Atenção!', `Deseja realmente apagar o fornecedor ${nome}?`, '200px', '300px', 
+    uiUtils.showPopup('Atenção!', `Deseja realmente apagar a encomenda ${desc}?`, '200px', '300px', 
         [
             {label: 'Sim', cb: (event) => {
-                fornecedorDao.remover(id, (id, err) => {
+                encomendaDao.remover(id, (id, err) => {
                     if (err) {
-                        let msgErro = `Ocorreu um erro ao remover o fornecedor: ${err}`;
+                        let msgErro = `Ocorreu um erro ao remover a encomenda: ${err}`;
                         console.error(msgErro);
                         M.toast({html: msgErro,  classes: 'rounded toastErro'});
                     }
                     else {
-                        console.debug(`Fornecedor removido`);
+                        console.debug(`Encomenda removida`);
                         atualizarTela();
                     }
                     return;
@@ -288,7 +389,6 @@ function apagar(event) {
             }},
             {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
         ]);
-    */
 }
 
 function consultarCep(event) {

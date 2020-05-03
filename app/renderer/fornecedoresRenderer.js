@@ -63,7 +63,7 @@ function atualizarTela() {
 
     fornecedorDao.carregarFornecedores(filtro.value, 0, 10, (registro, err) => {
         if (registro) {
-            var row = fornecedoresTable.insertRow();
+            let row = fornecedoresTable.insertRow();
             row.insertCell().innerHTML = registro.id;
             row.insertCell().innerHTML = registro.nome;
             row.insertCell().innerHTML = registro.tipo;
@@ -71,10 +71,12 @@ function atualizarTela() {
             row.insertCell().innerHTML = registro.telefone;
             row.insertCell().innerHTML = registro.email;
             row.insertCell().innerHTML = registro.site;
-            var deleteCol = row.insertCell();
+            
+            let deleteCol = row.insertCell();
             deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-
+            deleteCol.style = 'text-align: center;';
             deleteCol.addEventListener("click", apagar);
+
             row.addEventListener("click", carregarFormEdicao);
         }
 

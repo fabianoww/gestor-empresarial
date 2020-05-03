@@ -296,6 +296,7 @@ function criarTabelas(err, rows) {
                 forma_pgto VARCHAR(50),
                 data_pgto TEXT,
                 id_movimentacao_caixa INTEGER,
+                ativo INTEGER NOT NULL DEFAULT 1,
                 FOREIGN KEY (id_movimentacao_caixa) REFERENCES movimentacao_caixa (id))`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }

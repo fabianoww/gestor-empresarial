@@ -123,12 +123,12 @@ function atualizarTela() {
             precoMedioCol.style = 'text-align: right;';
             precoMedioCol.addEventListener("click", carregarFormEdicao);
 
-            var comprarCol = row.insertCell();
+            let comprarCol = row.insertCell();
             comprarCol.innerHTML = `<i class="fas fa-cart-plus"></i>`;
             comprarCol.style = 'text-align: center;';
             comprarCol.addEventListener("click", comprarInsumo);
 
-            var deleteCol = row.insertCell();
+            let deleteCol = row.insertCell();
             deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
             deleteCol.style = 'text-align: center;';
             deleteCol.addEventListener("click", apagar);
