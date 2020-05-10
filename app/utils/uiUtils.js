@@ -109,6 +109,15 @@ exports.formatarMonetario = function(event) {
     event.target.value = formatter.format(valor);
 }
 
+exports.converterNumberParaMoeda = function (num) {
+    let formatter = new Intl.NumberFormat([], {
+        style: 'currency',
+        currency: 'BRL'
+      });
+    
+    return formatter.format(num);
+}
+
 exports.converterMoedaParaNumber = function(valor) {
     if (!valor) {
         return null;

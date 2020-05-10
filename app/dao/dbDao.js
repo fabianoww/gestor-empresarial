@@ -295,9 +295,11 @@ function criarTabelas(err, rows) {
                 valor_entrega_venda REAL,
                 forma_pgto VARCHAR(50),
                 data_pgto TEXT,
-                id_movimentacao_caixa INTEGER,
+                id_movimentacao_caixa_entrada INTEGER,
+                id_movimentacao_caixa_princ INTEGER,
                 ativo INTEGER NOT NULL DEFAULT 1,
-                FOREIGN KEY (id_movimentacao_caixa) REFERENCES movimentacao_caixa (id))`);
+                FOREIGN KEY (id_movimentacao_caixa_entrada) REFERENCES movimentacao_caixa (id),
+                FOREIGN KEY (id_movimentacao_caixa_princ) REFERENCES movimentacao_caixa (id))`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
 

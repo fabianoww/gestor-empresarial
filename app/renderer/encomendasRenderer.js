@@ -214,8 +214,8 @@ function carregarFormEdicao(event) {
         estadoEnderecoCliente.value = encomenda.ufEndCliente;
         cidadeEnderecoCliente.value = encomenda.cidEndCliente;
         inputFormaPgto.value = encomenda.formaPgto;
-        inputValorEntrada.value = encomenda.entradaPgto;
-        inputValor.value = encomenda.valorPgto;
+        inputValorEntrada.value = uiUtils.converterNumberParaMoeda(encomenda.entradaPgto);
+        inputValor.value = uiUtils.converterNumberParaMoeda(encomenda.valorPgto);
         inputDataPgto.value = encomenda.dataPgto;
         inputStatus.value = encomenda.statusPgto;
 
@@ -254,8 +254,8 @@ function actionclick() {
                     inputDataEncomenda.value, inputDataEntrega.value, inputHorasProducao.value, inputPrazoEnvio.value, inputDataEnvio.value,
                     inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
                     logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
-                    estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, inputValorEntrada.value, 
-                    inputValor.value, inputDataPgto.value, inputStatus.value));
+                    estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, uiUtils.converterMoedaParaNumber(inputValorEntrada.value), 
+                    uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value));
             }
             else {
                 // Atualizar
@@ -263,8 +263,8 @@ function actionclick() {
                     inputDataEncomenda.value, inputDataEntrega.value, inputHorasProducao.value, inputPrazoEnvio.value, inputDataEnvio.value,
                     inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
                     logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
-                    estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, inputValorEntrada.value, 
-                    inputValor.value, inputDataPgto.value, inputStatus.value));
+                    estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, uiUtils.converterMoedaParaNumber(inputValorEntrada.value), 
+                    uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value));
             }
             
             formPanel.style.display = 'none';
@@ -312,17 +312,15 @@ function validarForm() {
 
 function inserir(novaEncomenda) {
     
-    encomendaDao.salvar(novaEncomenda, (id, err) => {
-        if (id) {
-            console.debug(`Nova encomenda inserida com id ${id}`);
-            atualizarTela();
-        }
-        else {
+    encomendaDao.salvar(novaEncomenda, (err) => {
+        if (err) {
             let msgErro = `Ocorreu um erro ao inserir uma nova encomenda: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
 
+        console.debug(`Nova encomenda inserida com sucesso`);
+        atualizarTela();
         formPanel.style.display = 'none';
         actionButton.innerHTML = '<i class="fas fa-plus"></i>';
         return;
@@ -332,7 +330,7 @@ function inserir(novaEncomenda) {
 
 function atualizar(encomenda) {
     
-    encomendaDao.atualizar(encomenda, (ie, err) => {
+    encomendaDao.atualizar(encomenda, (err) => {
         if (err) {
             let msgErro = `Ocorreu um erro ao atualizar a encomenda: ${err}`;
             console.error(msgErro);

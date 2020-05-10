@@ -2,29 +2,119 @@ const dbDao = require('./dbDao');
 const Encomenda = require('../model/encomenda');
 
 exports.salvar = function(encomenda, cb) {
-    dbDao.execute(`INSERT INTO encomenda(descricao, tipo_produto, qtde, cores, observacoes, data_encomenda, data_entrega, horas_producao, 
-        prazo_envio, data_envio, codigo_rastreamento, nome_cliente, telefone_cliente, email_cliente, cep_endereco_cliente, 
-        logradouro_endereco_cliente, numero_endereco_cliente, bairro_endereco_cliente, complemento_endereco_cliente, estado_endereco_cliente, 
-        cidade_endereco_cliente, forma_pgto, valor_entrada_venda, valor_entrega_venda, data_pgto, status) 
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, 
-        [encomenda.desc, encomenda.tipoProduto, encomenda.qtde, encomenda.cores, encomenda.obs, encomenda.dataEncomenda, 
+    let statements = [];
+    let queryIdEntrada = null;
+
+    if (encomenda.formaPgto && encomenda.formaPgto == 'ENT+1') {
+        // Gravando movimetação do valor de entrada
+        statements[statements.length] = {
+            query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
+            params: ['Venda (encomenda)', `Entrada da venda de ${encomenda.desc}`, 'C', encomenda.dataEncomenda, encomenda.entradaPgto.valueOf()], 
+            cb: (err) => {
+                if (err) {
+                    console.debug(`Erro ao inserir a movimentação de caixa da entrada da venda: ${err}`);
+                }
+            }};
+
+        queryIdEntrada = 'SELECT id FROM movimentacao_caixa ORDER BY id DESC LIMIT 1 OFFSET 1';
+    }
+    else {
+        queryIdEntrada = 'NULL'
+    }
+
+    // Gravando movimentação do valor principal
+    statements[statements.length] = {
+        query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
+        params: ['Venda (encomenda)', `Venda de ${encomenda.desc}`, 'C', encomenda.dataPgto, encomenda.valorPgto.valueOf()], 
+        cb: (err) => {
+            if (err) {
+                console.debug(`Erro ao inserir a movimentação de caixa da venda: ${err}`);
+            }
+        }};
+
+    // Gravando encomenda
+    statements[statements.length] = {
+        query: `INSERT INTO encomenda(descricao, tipo_produto, qtde, cores, observacoes, data_encomenda, data_entrega, horas_producao, 
+            prazo_envio, data_envio, codigo_rastreamento, nome_cliente, telefone_cliente, email_cliente, cep_endereco_cliente, 
+            logradouro_endereco_cliente, numero_endereco_cliente, bairro_endereco_cliente, complemento_endereco_cliente, estado_endereco_cliente, 
+            cidade_endereco_cliente, forma_pgto, valor_entrada_venda, valor_entrega_venda, data_pgto, status, id_movimentacao_caixa_entrada, id_movimentacao_caixa_princ) 
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, (${queryIdEntrada}), (SELECT id FROM movimentacao_caixa ORDER BY id DESC LIMIT 1))`, 
+        params: [encomenda.desc, encomenda.tipoProduto, encomenda.qtde, encomenda.cores, encomenda.obs, encomenda.dataEncomenda, 
             encomenda.dataEntrega, encomenda.horasProd, encomenda.prazoEnvio, encomenda.dataEnvio, encomenda.codRastreamento, 
             encomenda.nomeCliente, encomenda.telCliente, encomenda.emailCliente, encomenda.cepEndCliente, encomenda.logEndCliente, 
             encomenda.numEndCliente, encomenda.bairroEndCliente, encomenda.compEndCliente, encomenda.ufEndCliente, encomenda.cidEndCliente, 
-            encomenda.formaPgto, encomenda.entradaPgto, encomenda.valorPgto, encomenda.dataPgto, encomenda.statusPgto], cb);
+            encomenda.formaPgto, encomenda.entradaPgto.valueOf(), encomenda.valorPgto.valueOf(), encomenda.dataPgto, encomenda.statusPgto], 
+        cb: (err) => {
+            if (err) {
+                console.debug(`Erro ao inserir a encomenda: ${err}`);
+            }
+        }}; 
+    
+    dbDao.executeInTransaction(statements, cb);
 }
 
 exports.atualizar = function(encomenda, cb) {
-    dbDao.execute(`UPDATE encomenda SET descricao = ?, tipo_produto = ?, qtde = ?, cores = ?, observacoes = ?, data_encomenda = ?, 
+    let statements = [];
+    let queryIdEntrada = null;
+
+    // Removendo movimentações  existentes
+    statements[statements.length] = {
+        query: `DELETE FROM movimentacao_caixa WHERE id = (SELECT id_movimentacao_caixa_entrada FROM encomenda WHERE id = ?)
+            OR id = (SELECT id_movimentacao_caixa_princ FROM encomenda WHERE id = ?)`, 
+        params: [encomenda.id, encomenda.id], 
+        cb: (err) => {
+            if (err) {
+                console.debug(`Erro ao deletar aa movimentações de caixa da venda: ${err}`);
+            }
+        }};
+
+    if (encomenda.formaPgto && encomenda.formaPgto == 'ENT+1') {
+        // Gravando movimetação do valor de entrada
+        statements[statements.length] = {
+            query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
+            params: ['Venda (encomenda)', `Entrada da venda de ${encomenda.desc}`, 'C', encomenda.dataEncomenda, encomenda.entradaPgto.valueOf()], 
+            cb: (err) => {
+                if (err) {
+                    console.debug(`Erro ao inserir a movimentação de caixa da entrada da venda: ${err}`);
+                }
+            }};
+
+        queryIdEntrada = 'SELECT id FROM movimentacao_caixa ORDER BY id DESC LIMIT 1 OFFSET 1';
+    }
+    else {
+        queryIdEntrada = 'NULL'
+    }
+
+    // Gravando movimentação do valor principal
+    statements[statements.length] = {
+        query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
+        params: ['Venda (encomenda)', `Venda de ${encomenda.desc}`, 'C', encomenda.dataPgto, encomenda.valorPgto.valueOf()], 
+        cb: (err) => {
+            if (err) {
+                console.debug(`Erro ao inserir a movimentação de caixa da venda: ${err}`);
+            }
+        }};
+
+    // Atualizando encomenda
+    statements[statements.length] = {
+        query: `UPDATE encomenda SET descricao = ?, tipo_produto = ?, qtde = ?, cores = ?, observacoes = ?, data_encomenda = ?, 
         data_entrega = ?, horas_producao = ?, prazo_envio = ?, data_envio = ?, codigo_rastreamento = ?, nome_cliente = ?, 
         telefone_cliente = ?, email_cliente = ?, cep_endereco_cliente = ?, logradouro_endereco_cliente = ?, numero_endereco_cliente = ?, 
         bairro_endereco_cliente = ?, complemento_endereco_cliente = ?, estado_endereco_cliente = ?, cidade_endereco_cliente = ?, 
-        forma_pgto = ?, valor_entrada_venda = ?, valor_entrega_venda = ?, data_pgto = ?, status = ? WHERE id = ?`, 
-        [encomenda.desc, encomenda.tipoProduto, encomenda.qtde, encomenda.cores, encomenda.obs, encomenda.dataEncomenda, 
+        forma_pgto = ?, valor_entrada_venda = ?, valor_entrega_venda = ?, data_pgto = ?, status = ?, id_movimentacao_caixa_entrada = (${queryIdEntrada}), 
+        id_movimentacao_caixa_princ = (SELECT id FROM movimentacao_caixa ORDER BY id DESC LIMIT 1) WHERE id = ?`, 
+        params: [encomenda.desc, encomenda.tipoProduto, encomenda.qtde, encomenda.cores, encomenda.obs, encomenda.dataEncomenda, 
             encomenda.dataEntrega, encomenda.horasProd, encomenda.prazoEnvio, encomenda.dataEnvio, encomenda.codRastreamento, 
             encomenda.nomeCliente, encomenda.telCliente, encomenda.emailCliente, encomenda.cepEndCliente, encomenda.logEndCliente, 
             encomenda.numEndCliente, encomenda.bairroEndCliente, encomenda.compEndCliente, encomenda.ufEndCliente, encomenda.cidEndCliente, 
-            encomenda.formaPgto, encomenda.entradaPgto, encomenda.valorPgto, encomenda.dataPgto, encomenda.statusPgto, encomenda.id], cb);
+            encomenda.formaPgto, encomenda.entradaPgto.valueOf(), encomenda.valorPgto.valueOf(), encomenda.dataPgto, encomenda.statusPgto, encomenda.id], 
+        cb: (err) => {
+            if (err) {
+                console.debug(`Erro ao atualizar a encomenda: ${err}`);
+            }
+        }}; 
+
+    dbDao.executeInTransaction(statements, cb);
 }
 
 exports.remover = function(id, cb) {
