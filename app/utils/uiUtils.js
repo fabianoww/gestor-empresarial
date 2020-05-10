@@ -142,3 +142,22 @@ exports.validarCampo = function(campo, obrigatorio) {
         return true;
     }
 }
+
+exports.initDatePicker = function(selector) {
+    M.Datepicker.init(document.querySelectorAll(selector), {
+        format: 'dd/mm/yyyy', 
+        defaultDate: new Date(), 
+        setDefaultDate: true, 
+        autoClose: true,
+        i18n: {
+            cancel: 'Cancelar',
+            clear: 'Limpar',
+            done: 'Ok',
+            months: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+            monthsShort: ["Jan", "Feb", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dec"],
+            weekdays: ["Domingo","Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+            weekdaysShort: ["Dom","Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+            weekdaysAbbrev: ["D","S", "T", "Q", "Q", "S", "S"]
+        }
+    });
+}

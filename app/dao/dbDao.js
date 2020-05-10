@@ -9,6 +9,20 @@ exports.initDB = function() {
     });
 }
 
+exports.selectAll = function(query, params, cb) {
+    startDB();
+    db.all(query, params, (err, rows) => {
+        if (err) {
+            console.error(err.message);
+            cb(null, err.message);
+            return;
+        }
+        cb(rows, null);
+      });
+      
+    closeDB();
+}
+
 exports.selectEach = function(query, params, cb) {
     startDB();
     db.each(query, params, (err, row) => {
@@ -193,7 +207,8 @@ function criarTabelas(err, rows) {
                 descricao VARCHAR(200), 
                 debito_credito VARCHAR(1), 
                 data TEXT,
-                valor REAL)`);
+                valor REAL,
+                ativo INTEGER NOT NULL DEFAULT 1)`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
 

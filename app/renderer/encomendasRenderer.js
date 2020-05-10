@@ -103,11 +103,7 @@ function initTela() {
     });
 
     // Inicializando campos de data
-    let elemsData = document.querySelectorAll('.datepicker');
-    M.Datepicker.init(elemsData, {
-        format: 'dd/mm/yyyy',
-        autoClose: true
-    });
+    uiUtils.initDatePicker('.datepicker');
 
     // Inicializando campos numéricos
     let elemsNumericos = document.querySelectorAll('.numerico');
