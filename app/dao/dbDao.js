@@ -270,7 +270,8 @@ function criarTabelas(err, rows) {
                 valor REAL,
                 local VARCHAR(200),
                 tamanho VARCHAR(50),
-                imagem BLOB)`);
+                imagem BLOB,
+                ativo INTEGER NOT NULL DEFAULT 1)`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
 

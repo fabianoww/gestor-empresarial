@@ -5,7 +5,7 @@ let dashboardRenderer = null;
 let fluxoCaixa = null;
 let fluxoCaixaRenderer = null;
 let estoques = null;
-let estoquesRenderer = null;
+let estoqueRenderer = null;
 let insumos = null;
 let insumosRenderer = null;
 let configuracoes = null;
@@ -72,13 +72,13 @@ menuestoques.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (estoques) {
         document.getElementById('content').innerHTML = estoques;
-        estoquesRenderer.initTela();
+        estoqueRenderer.initTela();
     } else {
         fs.readFile(`${__dirname}/../view/estoques.html`, (err, data) => {
             estoques = data;
             document.getElementById('content').innerHTML = estoques;
-            estoquesRenderer = require('./estoquesRenderer.js');
-            estoquesRenderer.initTela();
+            estoqueRenderer = require('./estoqueRenderer.js');
+            estoqueRenderer.initTela();
         });
     }
     menuestoques.className = 'selected-menu';
