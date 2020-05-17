@@ -13,7 +13,10 @@ let inputTamanho = null;
 let inputValor = null;
 let inputLocal = null;
 let inputImagem = null;
+let displayImagem = null;
+let previewVazio = null
 let toggleForm = false;
+let possuiImagem = false;
 let filtro = null;
 
 // Inicialização da tela
@@ -30,7 +33,9 @@ function initTela() {
     inputTamanho = document.querySelector('#tamanho');
     inputValor = document.querySelector('#valor');
     inputLocal = document.querySelector('#local');
-    inputImagem = document.querySelector('#imagem');
+    inputImagem = document.querySelector('#imagem-upload');
+    displayImagem = document.querySelector('#imagem');
+    previewVazio = document.querySelector('#image-preview-vazio');
     filtro = document.querySelector('#filtro');
     toggleForm = false;
 
@@ -45,6 +50,26 @@ function initTela() {
     elemsCurrency.forEach(element => {
         element.addEventListener('keypress', uiUtils.apenasDigitos);
         element.addEventListener('keyup', uiUtils.formatarMonetario);
+    });
+
+    // Configurando onChange no inputFile
+    inputImagem.addEventListener('change', (e) => {
+        var reader = new FileReader();
+        reader.addEventListener('load', () => {
+            displayImagem.src = reader.result;
+            possuiImagem = true;
+            displayImagem.parentElement.style.display = possuiImagem ? 'block' : 'none';
+            previewVazio.style.display = !possuiImagem ? 'block' : 'none';
+        });
+        reader.readAsDataURL(e.target.files[0]);
+    });
+
+    // Configurando botão de remover preview
+    document.querySelector('#btn-remover-preview').addEventListener('click', (e) => {
+        displayImagem.src = '';
+        possuiImagem = false;
+        displayImagem.parentElement.style.display = possuiImagem ? 'block' : 'none';
+        previewVazio.style.display = !possuiImagem ? 'block' : 'none';
     });
 
     atualizarTela();
@@ -71,7 +96,7 @@ function atualizarTela() {
             imagemCol.style = 'text-align: center;';
             if (registro.tem_imagem) {
                 imagemCol.innerHTML = `<i class="fas fa-camera"></i>`;
-                imagemCol.addEventListener("click", exibirImagem);
+                imagemCol.addEventListener("click", exibirImagemPopup);
             }
             
             let deleteCol = row.insertCell();
@@ -90,7 +115,7 @@ function atualizarTela() {
     });
 }
 
-function exibirImagem(event) {
+function exibirImagemPopup(event) {
     let id = event.target.parentElement.parentElement.children[0].textContent;
     estoqueDao.carregarImagem(id, (result) => {
         let elemShield = document.createElement("DIV");
@@ -114,6 +139,13 @@ function exibirImagem(event) {
 function exibirFormularioNovo() {
     // Limpando form
     form.reset();
+    inputId.value = null;
+
+    // Resetando o display da imagem
+    displayImagem.parentElement.style.display = 'none';
+    displayImagem.src = '';
+    previewVazio.style.display = 'block';
+    possuiImagem = false;
 
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Novo item de estoque';
@@ -142,6 +174,20 @@ function carregarFormEdicao(event) {
     inputLocal.value = element.children[3].textContent;
     inputValor.value = element.children[4].textContent;
     M.updateTextFields();
+    
+    // Carregando imagem
+    estoqueDao.carregarImagem(element.children[0].textContent, (result) => {
+        if (result.imagem) {
+            displayImagem.src = result.imagem;
+            possuiImagem = true;
+        } else {
+            displayImagem.src = '';
+            possuiImagem = false;
+        }
+
+        displayImagem.parentElement.style.display = possuiImagem ? 'block' : 'none';
+        previewVazio.style.display = !possuiImagem ? 'block' : 'none';
+    });
     
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Editar item de estoque';
@@ -196,25 +242,17 @@ function actionclick() {
         // Verificar validade dos campos
         if (validarForm()) {
             let novoItemEstoque = inputId.value == null || inputId.value.trim() == '';
+            let imagem = possuiImagem ? displayImagem.src.trim() : null;
 
             if (novoItemEstoque) {
                 // Salvar
-                var reader = new FileReader();
-                reader.addEventListener('load', () => {
-                    inserir(new Estoque(null, inputDesc.value, inputTamanho.value, uiUtils.converterMoedaParaNumber(inputValor.value), 
-                        inputLocal.value, reader.result));
-
-                });
-                reader.readAsDataURL(inputImagem.files[0]);
+                inserir(new Estoque(null, inputDesc.value, inputTamanho.value, uiUtils.converterMoedaParaNumber(inputValor.value), 
+                inputLocal.value, imagem));
             }
             else {
                 // Atualizar
-                var reader = new FileReader();
-                reader.addEventListener('load', () => {
-                    atualizar(new Estoque(inputId.value, inputDesc.value, inputTamanho.value, uiUtils.converterMoedaParaNumber(inputValor.value), 
-                    inputLocal.value, reader.result));
-                });
-                reader.readAsDataURL(inputImagem.files[0]);
+                atualizar(new Estoque(inputId.value, inputDesc.value, inputTamanho.value, uiUtils.converterMoedaParaNumber(inputValor.value), 
+                inputLocal.value, imagem));
             }
             toggleForm = !toggleForm;
             

@@ -99,6 +99,7 @@ function atualizarTela() {
 function exibirFormularioNovo() {
     // Limpando form
     form.reset();
+    inputId.value = null;
 
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Novo fluxo de caixa';

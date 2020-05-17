@@ -91,6 +91,7 @@ function atualizarTela() {
 function exibirFormularioNovo() {
     // Limpando form
     fornecedorForm.reset();
+    inputId.value = null;
 
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Novo fornecedor';

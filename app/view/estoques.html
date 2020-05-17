@@ -49,11 +49,20 @@
             <div class="file-field input-field">
                 <div class="btn">
                   <span><i class="fas fa-upload"></i></span>
-                  <input id="imagem" type="file" accept="image/*">
+                  <input id="imagem-upload" type="file" accept="image/*">
                 </div>
                 <div class="file-path-wrapper">
-                  <input class="file-path validate" type="text">
+                  <input id="imagem-text-input" class="file-path validate" type="text">
                 </div>
+            </div>
+            <div>
+                <img id="imagem" src="" style="max-width: 100%; max-height: 100%;">
+                <div id="btn-remover-preview">
+                    Remover imagem
+                </div>
+            </div>
+            <div id="image-preview-vazio">
+                <i class="fas fa-camera"></i>
             </div>
         </form>
     </div>

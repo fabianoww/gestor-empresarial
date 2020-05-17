@@ -187,6 +187,30 @@ fieldset > legend {
     padding: 0px 10px;
 }
 
+#image-preview-vazio {
+    text-align: center;
+    border: solid 1px #d5d8d5;
+    padding: 30px;
+}
+
+#image-preview-vazio > i {
+    font-size: 100px;
+    opacity: .2;
+}
+
+#btn-remover-preview {
+    display: block; 
+    padding: 10px; 
+    border-radius: 10px; 
+    width: 100px; 
+    color: #485544; 
+    font-weight: bold; 
+    background-color: #83c804; 
+    cursor: pointer; 
+    width: 100%; 
+    text-align: center;
+}
+
 /* Dashboard */
 #dashboard-panel {
     display: flex;
