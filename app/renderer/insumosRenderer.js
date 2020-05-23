@@ -14,6 +14,7 @@ let formShield = null;
 let formTitle = null;
 let inputId = null;
 let inputDesc = null;
+let inputQtdeMin = null;
 
 let toggleFormEstoque = false;
 let insumoFormEstoque = null;
@@ -40,6 +41,7 @@ function initTela() {
     formShield = document.querySelector('#insumo-form-shield');
     formTitle = document.querySelector('#titulo-form');
     inputDesc = document.querySelector('#desc');
+    inputQtdeMin = document.querySelector('#qtde-min');
     inputId = document.querySelector('#insumo-id');
     insumoForm = document.querySelector('#insumo-form');
     insumoFormEstoque = document.querySelector('#estoque-form');
@@ -109,6 +111,11 @@ function atualizarTela() {
             descCol.innerHTML = registro.descricao;
             descCol.addEventListener("click", carregarFormEdicao);
 
+            let qtdeMinimaCol = row.insertCell()
+            qtdeMinimaCol.innerHTML = registro.qtde_minima ? registro.qtde_minima : '0';
+            qtdeMinimaCol.style = 'text-align: right;';
+            qtdeMinimaCol.addEventListener("click", carregarFormEdicao);
+
             let qtdeEstoqueCol = row.insertCell()
             qtdeEstoqueCol.innerHTML = registro.qtde ? registro.qtde : '0';
             qtdeEstoqueCol.style = 'text-align: right;';
@@ -168,6 +175,8 @@ function carregarFormEdicao(event) {
     // Setando campos
     inputId.value = element.children[0].textContent;
     inputDesc.value = element.children[1].textContent;
+    inputQtdeMin.value = element.children[2].textContent;
+    M.updateTextFields();
     
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Editar insumo';
@@ -247,25 +256,37 @@ function actionclick() {
         exibirFormularioNovo();
     } else {
         // Verificar validade dos campos
-        if (inputDesc.checkValidity()) {
+        if (validarForm()) {
             let novoInsumo = inputId.value == null || inputId.value.trim() == '';
 
             if (novoInsumo) {
                 // Salvar
-                inserir(new Insumo(null, inputDesc.value));
+                inserir(new Insumo(null, inputDesc.value, inputQtdeMin.value));
             }
             else {
                 // Atualizar
-                atualizar(new Insumo(inputId.value, inputDesc.value));
+                atualizar(new Insumo(inputId.value, inputDesc.value, inputQtdeMin.value));
             }
         }
         else {
-            M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
             return;
         }
     }
 
     toggleForm = !toggleForm;
+}
+
+function validarForm() {
+    let formValid = true;
+    formValid = uiUtils.validarCampo(inputDesc, true) && formValid;
+    formValid = uiUtils.validarCampo(inputQtdeMin, true) && formValid;
+    
+    if (!formValid) {
+        M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
+        return false;
+    }
+
+    return formValid;
 }
 
 function validarFormEstoque() {

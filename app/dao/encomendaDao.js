@@ -33,6 +33,8 @@ exports.salvar = function(encomenda, cb) {
         }};
 
     // Gravando encomenda
+    let entrada = encomenda.entradaPgto ? encomenda.entradaPgto.valueOf() : null;
+    let valor = encomenda.valorPgto ? encomenda.valorPgto.valueOf() : null;
     statements[statements.length] = {
         query: `INSERT INTO encomenda(descricao, tipo_produto, qtde, cores, observacoes, data_encomenda, data_entrega, horas_producao, 
             prazo_envio, data_envio, codigo_rastreamento, nome_cliente, telefone_cliente, email_cliente, cep_endereco_cliente, 
@@ -43,7 +45,7 @@ exports.salvar = function(encomenda, cb) {
             encomenda.dataEntrega, encomenda.horasProd, encomenda.prazoEnvio, encomenda.dataEnvio, encomenda.codRastreamento, 
             encomenda.nomeCliente, encomenda.telCliente, encomenda.emailCliente, encomenda.cepEndCliente, encomenda.logEndCliente, 
             encomenda.numEndCliente, encomenda.bairroEndCliente, encomenda.compEndCliente, encomenda.ufEndCliente, encomenda.cidEndCliente, 
-            encomenda.formaPgto, encomenda.entradaPgto.valueOf(), encomenda.valorPgto.valueOf(), encomenda.dataPgto, encomenda.statusPgto], 
+            encomenda.formaPgto, entrada, valor, encomenda.dataPgto, encomenda.statusPgto], 
         cb: (err) => {
             if (err) {
                 console.debug(`Erro ao inserir a encomenda: ${err}`);

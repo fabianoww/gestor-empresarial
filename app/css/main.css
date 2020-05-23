@@ -215,16 +215,50 @@ fieldset > legend {
 #dashboard-panel {
     display: flex;
     flex-flow: row wrap;
+    padding: 10px;
 }
 
-#dashboard-panel div {
+#dashboard-panel > div {
+    position: relative;
     flex-grow: 1;
     margin: 10px;
+    border-radius: 15px;
+    background-color: #ffffff;
+    box-shadow: 5px 5px 10px 0px #4d4d4d;
+    padding: 20px;
+}
+
+#dashboard-panel > div .titulo-card{
+    font-size: 2em;
+    font-weight: 400;
+}
+
+#saldo-panel {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 70px;
+    bottom: 20px;
+    text-align: center;
+    font-size: 5em;
+    line-height: 200px;
+}
+
+.saldo-positivo {
+    color: #4CAF50;
+}
+
+.saldo-negativo {
+    color: #f44340;
 }
 
 /* Toasts */
 .toastErro {
     background-color: #f44340 !important;
+}
+
+.toastSucesso {
+    background-color: #4CAF50 !important;
 }
 
 /* Popup */

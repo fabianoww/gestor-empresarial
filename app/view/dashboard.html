@@ -1,7 +1,53 @@
-<div id="dashboard-panel" style="background-color: greenyellow;">
-    <div style="min-width: 100px; height: 100px; background-color: red;">aaaa</div>
-    <div style="min-width: 100px; height: 100px; background-color: blue;">aaaa</div>
-    <div style="min-width: 200px; height: 100px; background-color: blueviolet;">aaaa</div>
-    <div style="min-width: 100px; height: 100px; background-color: goldenrod;">aaaa</div>
-    <div style="min-width: 300px; height: 100px; background-color: salmon;">aaaa</div>
+<div id="dashboard-panel">
+    <div style="min-width: 500px; height: 300px;">
+        <span class="titulo-card">Saldo</span>
+        <div id="saldo-panel">
+
+        </div>
+    </div>
+    <div style="min-width: 500px; height: 300px;">
+        <span class="titulo-card">Gastos futuros</span>
+        <div id="gastos-futuros-panel">
+            <table id="gastos-futuros-table">
+                <tr>
+                    <th style="text-align: left;">Descrição</th>
+                    <th style="width: 100px;">Data</th>
+                    <th style="width: 120px; text-align: right;">Valor</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="min-width: 500px; height: 300px;">
+        <span class="titulo-card">Próximas encomendas</span>
+        <div id="proximas-encomendas-panel">
+            <table id="proximas-encomendas-table">
+                <tr>
+                    <th style="text-align: left;">Descrição</th>
+                    <th>Cliente</th>
+                    <th style="width: 100px;">Entrega</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="min-width: 500px; height: 300px;">
+        <span class="titulo-card">Alertas de estoque</span>
+        <div id="alertas-estoque-panel">
+            <table id="alertas-estoque-table">
+                <tr>
+                    <th style="text-align: left;">Descrição</th>
+                    <th style="width: 100px;">Estoque</th>
+                    <th style="width: 100px;">Mínimo</th>
+                    <th style="width: 100px;">Déficit</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div style="min-width: 1000px; height: 300px;">
+        <span class="titulo-card">Histórico de balanços</span>
+        <div id="historico-balancos-panel">
+
+        </div>
+    </div>
 </div>
+
+<script>require('../renderer/dashboardRenderer')</script>

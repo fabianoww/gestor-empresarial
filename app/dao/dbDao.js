@@ -60,7 +60,7 @@ exports.execute = function(query, params, cb) {
             return;
         }
         
-        cb(this.lastID, null);
+        cb(this.sql.includes('update') || this.sql.includes('UPDATE') ? this.changes : this.lastID, null);
     });
     
     closeDB();
@@ -189,6 +189,7 @@ function criarTabelas(err, rows) {
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 descricao VARCHAR(200),
+                qtde_minima INTEGER,
                 ativo INTEGER NOT NULL DEFAULT 1)`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }

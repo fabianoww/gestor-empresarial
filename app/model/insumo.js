@@ -1,7 +1,8 @@
 class Insumo {
-    constructor(id, desc) {
+    constructor(id, desc, qtdeMin) {
       this.id = id;
-      this.desc = desc;
+      this.desc = desc
+      this.qtdeMin = qtdeMin;
     }
 }
 

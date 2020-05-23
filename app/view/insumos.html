@@ -10,6 +10,7 @@
         <tr>
             <th style="width: 70px;">ID</th>
             <th style="text-align: left;">Descrição</th>
+            <th style="text-align: right; width: 150px;">Qtde. Mínima</th>
             <th style="text-align: right; width: 100px;">Estoque</th>
             <th style="text-align: right; width: 150px;">Preço médio</th>
             <th style="width: 50px;"></th>
@@ -30,6 +31,11 @@
                 <input id="desc" type="text" class="validate" max="200" required>
                 <label for="desc">Descrição</label>
                 <span class="helper-text" data-error="Informe uma descrição de até 200 caracteres"></span>
+            </div>
+            <div class="input-field col s6" style="display: inline-block;">
+                <input id="qtde-min" type="text" class="validate numerico" required>
+                <label for="qtde-min">Quantidade mínima</label>
+                <span class="helper-text" data-error="A quantidade mínima deve ser um número"></span>
             </div>
         </form>
     </div>

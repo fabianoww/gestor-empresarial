@@ -20,6 +20,7 @@ app.on('ready', () => {
     dbDao.initDB();
 
     // Carregando tela principal
+    mainWindow.maximize();
     mainWindow.loadURL(`file://${__dirname}/app/main.html`);
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
