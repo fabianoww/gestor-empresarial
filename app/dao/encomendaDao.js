@@ -83,7 +83,7 @@ exports.salvar = function(encomenda, cb) {
         params: paramsInsumoProduto, 
         cb: (err) => {
             if (err) {
-                console.debug(`Erro ao inserir os insumos utilizados ela encomenda: ${err}`);
+                console.debug(`Erro ao inserir os insumos utilizados pela encomenda: ${err}`);
             }
         }};
     
@@ -209,7 +209,7 @@ exports.atualizar = function(encomenda, cb) {
             params: paramsInsumoProduto, 
             cb: (err) => {
                 if (err) {
-                    console.debug(`Erro ao inserir os insumos utilizados ela encomenda: ${err}`);
+                    console.debug(`Erro ao inserir os insumos utilizados pela encomenda: ${err}`);
                 }
             }};
 

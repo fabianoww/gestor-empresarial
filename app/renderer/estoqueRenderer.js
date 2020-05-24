@@ -1,5 +1,6 @@
 const Estoque = require('../model/estoque');
 const estoqueDao = require('../dao/estoqueDao');
+const insumoDao = require('../dao/insumoDao');
 const uiUtils = require('../utils/uiUtils');
 
 let estoqueTable = null;
@@ -15,9 +16,16 @@ let inputLocal = null;
 let inputImagem = null;
 let displayImagem = null;
 let previewVazio = null
+let inputInsumo = null;
+let inputQtdeInsumo = null;
+let btnAddInsumo = null;
+let tableInsumo = null;
+let lblCustoTotal = null;
 let toggleForm = false;
 let possuiImagem = false;
 let filtro = null;
+
+let custoItem;
 
 // Inicialização da tela
 exports.initTela = initTela;
@@ -36,6 +44,11 @@ function initTela() {
     inputImagem = document.querySelector('#imagem-upload');
     displayImagem = document.querySelector('#imagem');
     previewVazio = document.querySelector('#image-preview-vazio');
+    inputInsumo = document.querySelector('#insumo');
+    inputQtdeInsumo = document.querySelector('#qtde-insumo');
+    btnAddInsumo = document.querySelector('#btn-add-insumo-encomenda');
+    tableInsumo = document.querySelector('#insumos-table');
+    lblCustoTotal = document.querySelector('#total-custo-encomenda');
     filtro = document.querySelector('#filtro');
     toggleForm = false;
 
@@ -43,7 +56,13 @@ function initTela() {
     formShield.addEventListener('click', fecharFormClick);
     actionButton.addEventListener('click', actionclick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
-
+    btnAddInsumo.addEventListener('click', addInsumoClick);
+    btnAddInsumo.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) { // Enter
+          event.preventDefault();
+          btnAddInsumo.click();
+        }
+    }); 
 
     // Inicializando campos monetários
     let elemsCurrency = document.querySelectorAll('.monetario');
@@ -70,6 +89,23 @@ function initTela() {
         possuiImagem = false;
         displayImagem.parentElement.style.display = possuiImagem ? 'block' : 'none';
         previewVazio.style.display = !possuiImagem ? 'block' : 'none';
+    });
+
+    // Carregando lista de insumos
+    insumoDao.carregarInsumos(null, null, null, (registro, err) => {
+        if (registro) {
+            let option = document.createElement("option");
+            option.value = registro.id;
+            option.text = registro.descricao;
+            inputInsumo.add(option);
+            M.FormSelect.init(inputInsumo, {});
+        }
+
+        if (err) {
+            let msgErro = `Ocorreu um erro ao carregar os insumos: ${err}`;
+            console.error(msgErro);
+            M.toast({html: msgErro,  classes: 'rounded toastErro'});
+        }
     });
 
     atualizarTela();
@@ -140,6 +176,12 @@ function exibirFormularioNovo() {
     // Limpando form
     form.reset();
     inputId.value = null;
+    custoItem = 0;
+    
+    // Limpando tabela de insumos
+    while(tableInsumo.rows.length > 1) {
+        tableInsumo.deleteRow(1);
+    }
 
     // Resetando o display da imagem
     displayImagem.parentElement.style.display = 'none';
@@ -158,6 +200,12 @@ function carregarFormEdicao(event) {
     let element = event.target;
     // Limpando form
     form.reset();
+    custoItem = 0;
+    
+    // Limpando tabela de insumos
+    while(tableInsumo.rows.length > 1) {
+        tableInsumo.deleteRow(1);
+    }
 
     if (element.nodeName == 'I') {
         // No click da lixeira, ignorar a abertura do formulario
@@ -188,6 +236,31 @@ function carregarFormEdicao(event) {
         displayImagem.parentElement.style.display = possuiImagem ? 'block' : 'none';
         previewVazio.style.display = !possuiImagem ? 'block' : 'none';
     });
+
+    // Carregando insumos
+    estoqueDao.carregarInsumos(element.children[0].textContent, (registro, err) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        
+        var row = tableInsumo.insertRow();
+        row.insertCell().innerHTML = registro.id;
+        row.insertCell().innerHTML = registro.descricao;
+        row.insertCell().innerHTML = registro.qtde;
+        
+        custoItem = custoItem + registro.custo;
+        let precoMedioCol = row.insertCell();
+        precoMedioCol.innerHTML = uiUtils.converterNumberParaMoeda(registro.custo);
+        precoMedioCol.style = 'text-align: right;';
+
+        let deleteCol = row.insertCell();
+        deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+        deleteCol.style = 'text-align: center;';
+        deleteCol.addEventListener("click", apagarInsumo);
+
+        lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoItem)}`;
+    });
     
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Editar item de estoque';
@@ -198,15 +271,15 @@ function carregarFormEdicao(event) {
 }
 
 function inserir(itemEstoque) {
-    estoqueDao.salvar(itemEstoque, (id, err) => {
-        if (id) {
-            console.debug(`Novo item de estoque inserido com id ${id}`);
-            atualizarTela();
-        }
-        else {
+    estoqueDao.salvar(itemEstoque, (err) => {
+        console.log(err);
+        if (err) {
             let msgErro = `Ocorreu um erro ao inserir um novo item de estoque: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
+        } else {
+            console.debug('Novo item de estoque inserido com sucesso!');
+            atualizarTela();
         }
 
         formShield.style.display = 'none';
@@ -247,12 +320,12 @@ function actionclick() {
             if (novoItemEstoque) {
                 // Salvar
                 inserir(new Estoque(null, inputDesc.value, inputTamanho.value, uiUtils.converterMoedaParaNumber(inputValor.value), 
-                inputLocal.value, imagem));
+                inputLocal.value, imagem, montarInsumos()));
             }
             else {
                 // Atualizar
                 atualizar(new Estoque(inputId.value, inputDesc.value, inputTamanho.value, uiUtils.converterMoedaParaNumber(inputValor.value), 
-                inputLocal.value, imagem));
+                inputLocal.value, imagem, montarInsumos()));
             }
             toggleForm = !toggleForm;
             
@@ -312,4 +385,71 @@ function apagar(event) {
             }},
             {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
         ]);
+}
+
+function addInsumoClick() {
+    if (validarFormInsumo()) {
+        insumoDao.consultar(inputInsumo.value, (registro, err) => {
+            var row = tableInsumo.insertRow();
+            row.insertCell().innerHTML = registro.id;
+            row.insertCell().innerHTML = registro.descricao;
+            row.insertCell().innerHTML = inputQtdeInsumo.value;
+            
+            let custoInsumo = registro.preco_medio * inputQtdeInsumo.value;
+            console.log(custoItem);
+            custoItem = custoItem + custoInsumo;
+            let precoMedioCol = row.insertCell();
+            precoMedioCol.innerHTML = uiUtils.converterNumberParaMoeda(custoInsumo);
+            precoMedioCol.style = 'text-align: right;';
+
+            let deleteCol = row.insertCell();
+            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+            deleteCol.style = 'text-align: center;';
+            deleteCol.addEventListener("click", apagarInsumo);
+
+
+            lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoItem)}`;
+
+            inputInsumo.value = '';
+            inputQtdeInsumo.value = '';
+            M.FormSelect.init(inputInsumo, {});
+        });
+    }
+}
+
+function validarFormInsumo() {
+    let formValid = true;
+    formValid = uiUtils.validarCampo(inputInsumo, true) && formValid;
+    formValid = uiUtils.validarCampo(inputQtdeInsumo, true) && formValid;
+    
+    if (!formValid) {
+        M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
+    }
+
+    return formValid;
+}
+
+function apagarInsumo(event) {
+    if (event.target.nodeName != 'I') {
+        // No click da lixeira, ignorar a abertura do formulario
+        return;
+    }
+
+    let custo = uiUtils.converterMoedaParaNumber(event.target.parentElement.parentElement.children[3].textContent);
+    tableInsumo.deleteRow(event.target.parentElement.parentElement.rowIndex);
+    custoItem = custoItem - custo;
+    lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoItem)}`;
+}
+
+function montarInsumos() {
+    let insumos = [];
+    for (let i = 1; i < tableInsumo.rows.length; i++){
+        const row = tableInsumo.rows[i];
+        insumos[insumos.length] = {
+            idInsumo: row.children[0].textContent,
+            qtdeInsumo: row.children[2].textContent
+        };
+    }
+
+    return insumos;
 }

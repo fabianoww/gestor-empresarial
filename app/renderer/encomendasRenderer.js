@@ -203,7 +203,7 @@ function exibirFormularioNovo() {
     form.reset();
     inputId.value = null;
     custoEncomenda = 0;
-    lblCustoTotal.innerHTML = `Custo total: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
+    lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
     
     // Limpando tabela de insumos
     while(tableInsumo.rows.length > 1) {
@@ -304,7 +304,7 @@ function carregarFormEdicao(event) {
             deleteCol.style = 'text-align: center;';
             deleteCol.addEventListener("click", apagarInsumo);
 
-            lblCustoTotal.innerHTML = `Custo total: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
+            lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
         });
 
     });
@@ -517,7 +517,7 @@ function addInsumoClick() {
             deleteCol.style = 'text-align: center;';
             deleteCol.addEventListener("click", apagarInsumo);
 
-            lblCustoTotal.innerHTML = `Custo total: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
+            lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
 
             inputInsumo.value = '';
             inputQtdeInsumo.value = '';
@@ -547,7 +547,7 @@ function apagarInsumo(event) {
     let custo = uiUtils.converterMoedaParaNumber(event.target.parentElement.parentElement.children[3].textContent);
     tableInsumo.deleteRow(event.target.parentElement.parentElement.rowIndex);
     custoEncomenda = custoEncomenda - custo;
-    lblCustoTotal.innerHTML = `Custo total: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
+    lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
 }
 
 function montarInsumos() {
