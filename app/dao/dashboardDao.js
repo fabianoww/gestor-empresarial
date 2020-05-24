@@ -41,3 +41,14 @@ exports.carregarAlertasEstoque = function(cb) {
     
     dbDao.selectEach(query, [], cb);
 }
+
+exports.carregarHistoricoBalancos = function(cb) {
+    let query = `SELECT SUM(valor) as valor, debito_credito as tipo, (SUBSTR(data,7)||SUBSTR(data,4,2)) AS periodo
+        FROM movimentacao_caixa mc 
+        WHERE mc.data IS NOT NULL
+        AND mc.data <> ''
+        GROUP BY debito_credito, (SUBSTR(data,7)||SUBSTR(data,4,2))
+        ORDER BY 3`;
+
+    dbDao.selectAll(query, [], cb);
+}
