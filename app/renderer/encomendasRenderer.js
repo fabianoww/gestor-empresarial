@@ -1,5 +1,6 @@
 const Encomenda = require('../model/encomenda');
 const encomendaDao = require('../dao/encomendaDao');
+const insumoDao = require('../dao/insumoDao');
 const uiUtils = require('../utils/uiUtils');
 const maskInput = require('mask-input');
 const EasySoap = require('easysoap');
@@ -33,6 +34,11 @@ let bairroEnderecoCliente = null;
 let complEnderecoCliente = null;
 let cidadeEnderecoCliente = null;
 let estadoEnderecoCliente = null;
+let inputInsumo = null;
+let inputQtdeInsumo = null;
+let btnAddInsumo = null;
+let tableInsumo = null;
+let lblCustoTotal = null;
 let inputFormaPgto = null;
 let inputValorEntrada = null;
 let inputValor = null;
@@ -41,11 +47,13 @@ let inputStatus = null;
 
 let toggleForm = false;
 let filtro = null;
+let custoEncomenda;
 
 // Inicialização da tela
 exports.initTela = initTela;
 
 function initTela() {
+
     encomendasTable = document.querySelector('#encomendas-table');
     actionButton = document.querySelector('#action-encomenda-btn');
     formPanel = document.querySelector('#encomenda-crud-shield');
@@ -73,6 +81,11 @@ function initTela() {
     complEnderecoCliente = document.querySelector('#compl-end-cliente');
     cidadeEnderecoCliente = document.querySelector('#cidade-end-cliente');
     estadoEnderecoCliente = document.querySelector('#estado-end-cliente');
+    inputInsumo = document.querySelector('#insumo');
+    inputQtdeInsumo = document.querySelector('#qtde-insumo');
+    btnAddInsumo = document.querySelector('#btn-add-insumo-encomenda');
+    tableInsumo = document.querySelector('#insumos-table');
+    lblCustoTotal = document.querySelector('#total-custo-encomenda');
 	inputFormaPgto = document.querySelector('#forma-pagamento');
 	inputValorEntrada = document.querySelector('#valor-entrada');
 	inputValor = document.querySelector('#valor');
@@ -87,6 +100,30 @@ function initTela() {
     actionButton.addEventListener('click', actionclick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
     inputFormaPgto.addEventListener('change', toggleInputEntrada);
+    btnAddInsumo.addEventListener('click', addInsumoClick);
+    btnAddInsumo.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) { // Enter
+          event.preventDefault();
+          btnAddInsumo.click();
+        }
+    }); 
+
+    // Carregando lista de insumos
+    insumoDao.carregarInsumos(null, null, null, (registro, err) => {
+        if (registro) {
+            let option = document.createElement("option");
+            option.value = registro.id;
+            option.text = registro.descricao;
+            inputInsumo.add(option);
+            M.FormSelect.init(inputInsumo, {});
+        }
+
+        if (err) {
+            let msgErro = `Ocorreu um erro ao carregar os insumos: ${err}`;
+            console.error(msgErro);
+            M.toast({html: msgErro,  classes: 'rounded toastErro'});
+        }
+    });
 
     // Inicializando campos de telefone
     const telefoneMask = new maskInput.default(document.querySelector('#telefone-cliente'), {
@@ -165,6 +202,13 @@ function exibirFormularioNovo() {
     // Limpando form
     form.reset();
     inputId.value = null;
+    custoEncomenda = 0;
+    lblCustoTotal.innerHTML = `Custo total: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
+    
+    // Limpando tabela de insumos
+    while(tableInsumo.rows.length > 1) {
+        tableInsumo.deleteRow(1);
+    }
 
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Nova encomenda';
@@ -177,6 +221,12 @@ function carregarFormEdicao(event) {
     let element = event.target;
     // Limpando form
     form.reset();
+    custoEncomenda = 0;
+    
+    // Limpando tabela de insumos
+    while(tableInsumo.rows.length > 1) {
+        tableInsumo.deleteRow(1);
+    }
 
     if (element.nodeName == 'I') {
         // No click da lixeira, ignorar a abertura do formulario
@@ -230,13 +280,38 @@ function carregarFormEdicao(event) {
         formTitle.innerHTML = 'Editar encomenda';
         formPanel.style.display = 'block';
         actionButton.innerHTML = '<i class="fas fa-save"></i>';
-        //inputNome.focus();
+        inputDesc.focus();
         toggleForm = !toggleForm;
+
+        encomendaDao.carregarInsumos(encomenda.id, (registro, err) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            
+            var row = tableInsumo.insertRow();
+            row.insertCell().innerHTML = registro.id;
+            row.insertCell().innerHTML = registro.descricao;
+            row.insertCell().innerHTML = registro.qtde;
+            
+            custoEncomenda = custoEncomenda + registro.custo;
+            let precoMedioCol = row.insertCell();
+            precoMedioCol.innerHTML = uiUtils.converterNumberParaMoeda(registro.custo);
+            precoMedioCol.style = 'text-align: right;';
+
+            let deleteCol = row.insertCell();
+            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+            deleteCol.style = 'text-align: center;';
+            deleteCol.addEventListener("click", apagarInsumo);
+
+            lblCustoTotal.innerHTML = `Custo total: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
+        });
 
     });
 }
 
 function actionclick() {
+    
     if (!toggleForm) {
         exibirFormularioNovo();
         toggleForm = !toggleForm;
@@ -252,7 +327,7 @@ function actionclick() {
                     inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
                     logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
                     estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, uiUtils.converterMoedaParaNumber(inputValorEntrada.value), 
-                    uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value));
+                    uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value, montarInsumos()));
             }
             else {
                 // Atualizar
@@ -261,7 +336,7 @@ function actionclick() {
                     inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
                     logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
                     estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, uiUtils.converterMoedaParaNumber(inputValorEntrada.value), 
-                    uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value));
+                    uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value, montarInsumos()));
             }
             
             formPanel.style.display = 'none';
@@ -421,4 +496,69 @@ function consultarCep(event) {
             });
         }
    });
+}
+
+function addInsumoClick() {
+    if (validarFormInsumo()) {
+        insumoDao.consultar(inputInsumo.value, (registro, err) => {
+            var row = tableInsumo.insertRow();
+            row.insertCell().innerHTML = registro.id;
+            row.insertCell().innerHTML = registro.descricao;
+            row.insertCell().innerHTML = inputQtdeInsumo.value;
+            
+            let custoInsumo = registro.preco_medio * inputQtdeInsumo.value;
+            custoEncomenda = custoEncomenda + custoInsumo;
+            let precoMedioCol = row.insertCell();
+            precoMedioCol.innerHTML = uiUtils.converterNumberParaMoeda(custoInsumo);
+            precoMedioCol.style = 'text-align: right;';
+
+            let deleteCol = row.insertCell();
+            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+            deleteCol.style = 'text-align: center;';
+            deleteCol.addEventListener("click", apagarInsumo);
+
+            lblCustoTotal.innerHTML = `Custo total: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
+
+            inputInsumo.value = '';
+            inputQtdeInsumo.value = '';
+            M.FormSelect.init(inputInsumo, {});
+        });
+    }
+}
+
+function validarFormInsumo() {
+    let formValid = true;
+    formValid = uiUtils.validarCampo(inputInsumo, true) && formValid;
+    formValid = uiUtils.validarCampo(inputQtdeInsumo, true) && formValid;
+    
+    if (!formValid) {
+        M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
+    }
+
+    return formValid;
+}
+
+function apagarInsumo(event) {
+    if (event.target.nodeName != 'I') {
+        // No click da lixeira, ignorar a abertura do formulario
+        return;
+    }
+
+    let custo = uiUtils.converterMoedaParaNumber(event.target.parentElement.parentElement.children[3].textContent);
+    tableInsumo.deleteRow(event.target.parentElement.parentElement.rowIndex);
+    custoEncomenda = custoEncomenda - custo;
+    lblCustoTotal.innerHTML = `Custo total: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
+}
+
+function montarInsumos() {
+    let insumos = [];
+    for (let i = 1; i < tableInsumo.rows.length; i++){
+        const row = tableInsumo.rows[i];
+        insumos[insumos.length] = {
+            idInsumo: row.children[0].textContent,
+            qtdeInsumo: row.children[2].textContent
+        };
+    }
+
+    return insumos;
 }

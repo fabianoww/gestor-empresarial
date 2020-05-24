@@ -51,6 +51,41 @@ exports.salvar = function(encomenda, cb) {
                 console.debug(`Erro ao inserir a encomenda: ${err}`);
             }
         }}; 
+        
+    let queryInsumoProduto = 'INSERT INTO insumo_produto(qtde, id_encomenda, id_estoque_insumo) VALUES ';
+    let paramsInsumoProduto = [];
+    for (let i = 0; i < encomenda.insumos.length; i++) {
+        const insumo = encomenda.insumos[i];
+
+        // Gerando INSERTS para o insumo_produto
+        if (i > 0) {
+            queryInsumoProduto += ','
+        }
+
+        queryInsumoProduto += '(?,(SELECT id FROM encomenda ORDER BY id DESC LIMIT 1),(SELECT id FROM estoque_insumos WHERE id_insumo = ? LIMIT 1))';
+        paramsInsumoProduto[paramsInsumoProduto.length] = insumo.qtdeInsumo;
+        paramsInsumoProduto[paramsInsumoProduto.length] = insumo.idInsumo;
+
+        // Atualizando a quantidade em estoque do insumo
+        statements[statements.length] = {
+            query: 'UPDATE estoque_insumos SET qtde = qtde - ? WHERE id_insumo = ?', 
+            params: [insumo.qtdeInsumo, insumo.idInsumo], 
+            cb: (err) => {
+                if (err) {
+                    console.debug(`Erro ao atualizar a quantidade de estoque dos insumos: ${err}`);
+                }
+            }};
+    }
+    
+    // Executando o INSERT do insumo_produto
+    statements[statements.length] = {
+        query: queryInsumoProduto, 
+        params: paramsInsumoProduto, 
+        cb: (err) => {
+            if (err) {
+                console.debug(`Erro ao inserir os insumos utilizados ela encomenda: ${err}`);
+            }
+        }};
     
     dbDao.executeInTransaction(statements, cb);
 }
@@ -116,7 +151,71 @@ exports.atualizar = function(encomenda, cb) {
             }
         }}; 
 
-    dbDao.executeInTransaction(statements, cb);
+    dbDao.selectAll('SELECT id_estoque_insumo, qtde FROM insumo_produto WHERE id_encomenda = ?', [encomenda.id], (registros, err) => {
+        
+        for (let i = 0; i < registros.length; i++) {
+            const estoqueInsumo = registros[i];
+
+            // Revertendo a quantidade em estoque do insumo
+            statements[statements.length] = {
+                query: 'UPDATE estoque_insumos SET qtde = qtde + ? WHERE id_insumo = ?', 
+                params: [estoqueInsumo.qtde, estoqueInsumo.id_estoque_insumo], 
+                cb: (err) => {
+                    if (err) {
+                        console.debug(`Erro ao reverter a quantidade de estoque dos insumos: ${err}`);
+                    }
+                }};            
+        }
+        
+        // Deletando os insumos relacionados à encomenda
+        statements[statements.length] = {
+            query: 'DELETE FROM insumo_produto WHERE id_encomenda = ?', 
+            params: [encomenda.id], 
+            cb: (err) => {
+                if (err) {
+                    console.debug(`Erro ao deletar os insumos relacionados à encomenda: ${err}`);
+                }
+            }}; 
+
+        let queryInsumoProduto = 'INSERT INTO insumo_produto(qtde, id_encomenda, id_estoque_insumo) VALUES ';
+        let paramsInsumoProduto = [];
+        for (let i = 0; i < encomenda.insumos.length; i++) {
+            const insumo = encomenda.insumos[i];
+
+            // Gerando INSERTS para o insumo_produto
+            if (i > 0) {
+                queryInsumoProduto += ','
+            }
+
+            queryInsumoProduto += '(?,?,(SELECT id FROM estoque_insumos WHERE id_insumo = ? LIMIT 1))';
+            paramsInsumoProduto[paramsInsumoProduto.length] = insumo.qtdeInsumo;
+            paramsInsumoProduto[paramsInsumoProduto.length] = encomenda.id;
+            paramsInsumoProduto[paramsInsumoProduto.length] = insumo.idInsumo;
+
+            // Atualizando a quantidade em estoque do insumo
+            statements[statements.length] = {
+                query: 'UPDATE estoque_insumos SET qtde = qtde - ? WHERE id_insumo = ?', 
+                params: [insumo.qtdeInsumo, insumo.idInsumo], 
+                cb: (err) => {
+                    if (err) {
+                        console.debug(`Erro ao atualizar a quantidade de estoque dos insumos: ${err}`);
+                    }
+                }};
+        }
+
+        // Executando o INSERT do insumo_produto
+        statements[statements.length] = {
+            query: queryInsumoProduto, 
+            params: paramsInsumoProduto, 
+            cb: (err) => {
+                if (err) {
+                    console.debug(`Erro ao inserir os insumos utilizados ela encomenda: ${err}`);
+                }
+            }};
+
+        dbDao.executeInTransaction(statements, cb);
+    });
+
 }
 
 exports.remover = function(id, cb) {
@@ -132,6 +231,14 @@ exports.consultar = function(id, cb) {
             registro.estado_endereco_cliente, registro.cidade_endereco_cliente, registro.forma_pgto, registro.valor_entrada_venda, 
             registro.valor_entrega_venda, registro.data_pgto, registro.status));
     });
+}
+
+exports.carregarInsumos = function(idEncomenda, cb) {
+    dbDao.selectEach(`
+        SELECT i.id, i.descricao, ip.qtde, (ei.preco_medio * ip.qtde) as custo FROM insumo_produto ip 
+        JOIN estoque_insumos ei ON ip.id_estoque_insumo = ei.id
+        JOIN insumo i ON i.id = ei.id_insumo
+        WHERE id_encomenda = ?`, [idEncomenda], cb);
 }
 
 exports.carregarEncomendas = function(filtro, pagina, tamPagina, cb) {

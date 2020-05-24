@@ -14,7 +14,6 @@ exports.initDB = function() {
 
 function startDB(cb) {
     let dbPath = `${require('os').homedir()}/AppData/Local/Gestor-Empresarial`;
-    console.log(dbPath);
     checkDirectory(dbPath, function(error) {  
         if(error) {
           cb(null, error)
@@ -114,13 +113,13 @@ exports.executeInTransaction = function(statements, cb) {
                 return;
             }
             
-            executeTxStatements(statements, 0, cb);
+            executeTxStatements(db, statements, 0, cb);
         });
         closeDB(db);
     });
 }
 
-function executeTxStatements(statements, index, cb) {
+function executeTxStatements(db, statements, index, cb) {
     if (index == statements.length) {
         db.run('COMMIT', [], function(err) {
             if (err) {
@@ -150,9 +149,8 @@ function executeTxStatements(statements, index, cb) {
             return;
         }
 
-        console.debug(`Passo ${index} concluído!`);
         statements[index].cb();
-        executeTxStatements(statements, ++index, cb);
+        executeTxStatements(db, statements, ++index, cb);
     });
 }
 

@@ -15,10 +15,10 @@ exports.remover = function(id, cb) {
 exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
     
     let query = `
-    SELECT i.id, i.descricao, i.qtde_minima, i.ativo, e.qtde, e.preco_medio
-    FROM insumo i 
-    LEFT JOIN estoque_insumos e ON i.id = e.id_insumo
-    WHERE ativo = 1 `;
+        SELECT i.id, i.descricao, i.qtde_minima, i.ativo, e.qtde, e.preco_medio
+        FROM insumo i 
+        LEFT JOIN estoque_insumos e ON i.id = e.id_insumo
+        WHERE ativo = 1 `;
 
     // Assegurando que string vazia não filtrará resultados
     filtro = filtro && filtro.trim() != '' ? filtro : null;
@@ -37,6 +37,16 @@ exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
 
     
     dbDao.selectEach(query, filtro ? [filtro, filtro] : [], cb);
+}
+
+exports.consultar = function(id, cb) {
+    let query = `
+        SELECT i.id, i.descricao, i.qtde_minima, i.ativo, e.qtde, e.preco_medio
+        FROM insumo i 
+        LEFT JOIN estoque_insumos e ON i.id = e.id_insumo
+        WHERE ativo = 1 AND i.id = ?`;
+        
+    dbDao.selectFirst(query, [id], cb);
 }
 
 exports.salvarCompraInsumo = function(compraInsumo, nomeInsumo, cbk) {

@@ -191,6 +191,34 @@
                 </div>
             </fieldset>
             <fieldset>
+                <legend>Insumos</legend>
+                <div style="display: flex;">
+                    <div class="input-field col s12" style="display: inline-block; flex-grow: 1;">
+                        <select id="insumo" required>
+                            <option value="">Escolha uma opção</option>
+                        </select>
+                        <label>Insumo</label>
+                        <span class="helper-text" data-error="Selecione um insumo"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; width: 100px; flex-grow: 0; margin-left: 20px;">
+                        <input id="qtde-insumo" type="text" class="validate numerico" required>
+                        <label for="qtde-insumo">Quantidade</label>
+                        <span class="helper-text" data-error="A quantidade deve ser um número"></span>
+                    </div>
+                    <div id="btn-add-insumo-encomenda" role="button" tabindex="0"><i class="fas fa-plus"></i></div>
+                </div>
+                <table id="insumos-table">
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th>Insumo</th>
+                        <th style="width: 100px;">Quantidade</th>
+                        <th style="width: 100px; text-align: right;">Custo</th>
+                        <th style="width: 50px;"></th>
+                    </tr>
+                </table>
+                <div id="total-custo-encomenda"></div>
+            </fieldset>
+            <fieldset>
                 <legend>Pagamento</legend>
                 <div style="display: flex;">
                     <div class="input-field col s12" style="display: inline-block; width: 200px;">

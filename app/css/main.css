@@ -211,6 +211,27 @@ fieldset > legend {
     text-align: center;
 }
 
+#btn-add-insumo-encomenda {
+    display: inline-block;
+    border-radius: 10px;
+    width: 50px;
+    color: #485544;
+    font-weight: bold;
+    background-color: #83c804;
+    cursor: pointer;
+    text-align: center;
+    margin: 15px 0px 15px 20px;
+    height: 50px;
+    line-height: 50px;
+}
+
+#total-custo-encomenda {
+    text-align: right;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
 /* Dashboard */
 #dashboard-panel {
     display: flex;
