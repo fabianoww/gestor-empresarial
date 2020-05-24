@@ -1,69 +1,104 @@
 const sqlite3 = require('sqlite3');
+const fs = require('fs');
 
-var db;
+var initDb;
 
 exports.initDB = function() {
-    startDB();
-    db.serialize(function() {
-        db.all("SELECT name  FROM sqlite_master WHERE type='table'", criarTabelas);
+    startDB((db, err) => {
+        initDb = db;
+        db.serialize(function() {
+            db.all("SELECT name  FROM sqlite_master WHERE type='table'", criarTabelas);
+        });
     });
+}
+
+function startDB(cb) {
+    let dbPath = `${require('os').homedir()}/AppData/Local/Gestor-Empresarial`;
+    console.log(dbPath);
+    checkDirectory(dbPath, function(error) {  
+        if(error) {
+          cb(null, error)
+        } else {
+            cb(new sqlite3.Database(`${dbPath}/database.db`));
+            console.debug('DB aberto.');
+        }
+      });
+}
+
+function checkDirectory(directory, cb) {  
+    fs.stat(directory, function(err, stats) {
+      if (err) {
+        fs.mkdir(directory, cb);
+      } else {
+        cb();
+      }
+    });
+  }
+
+function closeDB(db) {
+    db.close();
+    console.debug('DB fechado.');
 }
 
 exports.selectAll = function(query, params, cb) {
-    startDB();
-    db.all(query, params, (err, rows) => {
-        if (err) {
-            console.error(err.message);
-            cb(null, err.message);
-            return;
-        }
-        cb(rows, null);
-      });
-      
-    closeDB();
+    startDB((db, err) => {
+        db.all(query, params, (err, rows) => {
+            if (err) {
+                console.error(err.message);
+                cb(null, err.message);
+                return;
+            }
+            cb(rows, null);
+          });
+          
+        closeDB(db);        
+    });
 }
 
 exports.selectEach = function(query, params, cb) {
-    startDB();
-    db.each(query, params, (err, row) => {
-        if (err) {
-            console.error(err.message);
-            cb(null, err.message);
-            return;
-        }
-        cb(row, null);
-      });
-      
-    closeDB();
+    startDB((db, err) => {
+        db.each(query, params, (err, row) => {
+            if (err) {
+                console.error(err.message);
+                cb(null, err.message);
+                return;
+            }
+            cb(row, null);
+          });
+          
+        closeDB(db);
+    });
 }
 
 exports.selectFirst = function(query, params, cb) {
-    startDB();
-    db.get(query, params, (err, row) => {
-        if (err) {
-            console.error(err.message);
-            cb(null, err.message);
-            return;
-        }
-        cb(row, null);
-      });
-      
-    closeDB();
+    startDB((db, err) => {
+        db.get(query, params, (err, row) => {
+            if (err) {
+                console.error(err.message);
+                cb(null, err.message);
+                return;
+            }
+            cb(row, null);
+        });
+        
+        closeDB(db);
+    });
 }
 
 exports.execute = function(query, params, cb) {
-    startDB();
-    db.run(query, params, function(err) {
-        if (err) {
-            console.error(err.message);
-            cb(null, err.message);
-            return;
-        }
+    startDB((db, err) => {
+        db.run(query, params, function(err) {
+            if (err) {
+                console.error(err.message);
+                cb(null, err.message);
+                return;
+            }
+            
+            cb(this.sql.includes('update') || this.sql.includes('UPDATE') ? this.changes : this.lastID, null);
+        });
         
-        cb(this.sql.includes('update') || this.sql.includes('UPDATE') ? this.changes : this.lastID, null);
+        closeDB(db);
     });
-    
-    closeDB();
 }
 
 exports.executeInTransaction = function(statements, cb) {
@@ -72,16 +107,17 @@ exports.executeInTransaction = function(statements, cb) {
         return;
     }
 
-    startDB();
-    db.run('BEGIN TRANSACTION', [], function(err) {
-        if (err) {
-            console.error(err.message);
-            return;
-        }
-        
-        executeTxStatements(statements, 0, cb);
+    startDB((db, err) => {
+        db.run('BEGIN TRANSACTION', [], function(err) {
+            if (err) {
+                console.error(err.message);
+                return;
+            }
+            
+            executeTxStatements(statements, 0, cb);
+        });
+        closeDB(db);
     });
-    closeDB();
 }
 
 function executeTxStatements(statements, index, cb) {
@@ -120,21 +156,6 @@ function executeTxStatements(statements, index, cb) {
     });
 }
 
-function startDB() {
-    db = new sqlite3.Database('./data/database.db');
-    console.debug('DB aberto.');
-}
-
-function startTxDB() {
-    db = new TransactionDatabase(new sqlite3.Database('./data/database.db'));
-    console.debug('DB aberto.');
-}
-
-function closeDB() {
-    db.close();
-    console.debug('DB fechado.');
-}
-
 function criarTabelas(err, rows) {
     let tabelasExistentes = [];
     rows.forEach((row) => {
@@ -151,7 +172,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 chave VARCHAR(50) NOT NULL PRIMARY KEY, 
                 valor TEXT)`);
@@ -165,7 +186,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 nome VARCHAR(200), 
@@ -185,7 +206,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 descricao VARCHAR(200),
@@ -201,7 +222,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 categoria VARCHAR(50), 
@@ -220,7 +241,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 id_movimentacao INTEGER, 
@@ -246,7 +267,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 id_insumo INTEGER,
@@ -264,7 +285,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 descricao VARCHAR(200),
@@ -283,7 +304,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 nome_cliente VARCHAR(200),
@@ -327,7 +348,7 @@ function criarTabelas(err, rows) {
     } 
     else {
         console.debug(`Criando tabela "${nomeTabela}"...`);
-        db.run(`
+        initDb.run(`
             CREATE TABLE ${nomeTabela} (
                 id INTEGER NOT NULL PRIMARY KEY, 
                 id_encomenda INTEGER, 
@@ -340,5 +361,5 @@ function criarTabelas(err, rows) {
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
     
-    closeDB();
+    closeDB(initDb);
 }

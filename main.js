@@ -2,6 +2,7 @@ const { app, BrowserWindow, screen }  = require('electron');
 const dbDao = require('./app/dao/dbDao');
 
 let mainWindow = null;
+
 app.on('ready', () => {
     console.log('Aplicacao iniciada');
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
