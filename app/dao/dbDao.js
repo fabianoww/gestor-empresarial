@@ -134,7 +134,7 @@ function executeTxStatements(db, statements, index, cb) {
     }
 
     db.run(statements[index].query, statements[index].params, (err) => {
-        console.log(`Resultado: ${err}`);
+        
         if (err) {
             db.run('ROLLBACK', [], function(err) {
                 if (err) {

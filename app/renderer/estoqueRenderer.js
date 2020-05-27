@@ -272,7 +272,6 @@ function carregarFormEdicao(event) {
 
 function inserir(itemEstoque) {
     estoqueDao.salvar(itemEstoque, (err) => {
-        console.log(err);
         if (err) {
             let msgErro = `Ocorreu um erro ao inserir um novo item de estoque: ${err}`;
             console.error(msgErro);
@@ -396,7 +395,6 @@ function addInsumoClick() {
             row.insertCell().innerHTML = inputQtdeInsumo.value;
             
             let custoInsumo = registro.preco_medio * inputQtdeInsumo.value;
-            console.log(custoItem);
             custoItem = custoItem + custoInsumo;
             let precoMedioCol = row.insertCell();
             precoMedioCol.innerHTML = uiUtils.converterNumberParaMoeda(custoInsumo);

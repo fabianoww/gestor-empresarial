@@ -36,8 +36,7 @@ exports.salvar = function(estoque, cb) {
                 }
             }};
     }
-    console.log(queryInsumoProduto);
-    console.log(paramsInsumoProduto);
+    
     // Executando o INSERT do insumo_produto
     statements[statements.length] = {
         query: queryInsumoProduto, 

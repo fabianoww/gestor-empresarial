@@ -42,7 +42,7 @@ body {
 
 #menu-items i {
     font-size: 25px;
-    line-height: 80px;
+    line-height: 60px;
 }
 
 .menu-label {
@@ -357,4 +357,9 @@ fieldset > legend {
 
 .select-dropdown > li > span {
     color: #485544 !important;
+}
+
+/* Materialize */
+td, th {
+    padding: 5px 5px !important;
 }

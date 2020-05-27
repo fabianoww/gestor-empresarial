@@ -1,7 +1,7 @@
 const dbDao = require('./dbDao');
 
 exports.salvar = function(insumo, cb) {
-    dbDao.execute('INSERT INTO insumo(descricao, qtde_minima) VALUES(?)', [insumo.desc, insumo.qtdeMin], cb);
+    dbDao.execute('INSERT INTO insumo(descricao, qtde_minima) VALUES(?,?)', [insumo.desc, insumo.qtdeMin], cb);
 }
 
 exports.atualizar = function(insumo, cb) {
