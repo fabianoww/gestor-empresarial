@@ -49,10 +49,18 @@
                 <label for="desc">Descrição</label>
                 <span class="helper-text" data-error="Informe a descrição"></span>
             </div>
-            <div class="input-field col s6">
-                <input id="categoria" type="text" class="autocomplete" required>
-                <label for="categoria">Categoria</label>
-                <span class="helper-text" data-error="Informe a categoria"></span>
+            <div class="input-field col s12">
+                <select id="categoria">
+                    <option value="">Escolha uma opção</option>
+                    <option value="Aporte financeiro">Aporte financeiro</option>
+                    <option value="Compra de insumo">Compra de insumo</option>
+                    <option value="Despesa fixa">Despesa fixa</option>
+                    <option value="Despesa variável">Despesa variável</option>
+                    <option value="Investimento">Investimento</option>
+                    <option value="Investimento">Recebimento</option>
+                </select>
+                <label>Categoria</label>
+                <span class="helper-text" data-error="Selecione uma categoria"></span>
             </div>
             <div class="input-field col s6">
                 <input id="data" type="text" class="datepicker" required>

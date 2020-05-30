@@ -1,6 +1,6 @@
 {
   "name": "gestor-empresarial",
-  "version": "1.0.0",
+  "version": "1.0.0-beta2",
   "description": "Sistema gestor para microempreendedor individual",
   "main": "main.js",
   "author": "Fabiano Oliveira",

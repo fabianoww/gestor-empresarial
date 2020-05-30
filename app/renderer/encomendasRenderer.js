@@ -131,20 +131,22 @@ function initTela() {
     paginacaoPanel = document.querySelector('#paginacao-panel');
 
     // Carregando lista de insumos
-    insumoDao.carregarInsumos(null, null, null, (registro, err) => {
-        if (registro) {
-            let option = document.createElement("option");
-            option.value = registro.id;
-            option.text = registro.descricao;
-            inputInsumo.add(option);
-            M.FormSelect.init(inputInsumo, {});
-        }
+    insumoDao.carregarInsumos(null, null, null, (result, err) => {
 
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar os insumos: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
+            return;
         }
+
+        result.registros.forEach(registro => {
+            let option = document.createElement("option");
+            option.value = registro.id;
+            option.text = registro.descricao;
+            inputInsumo.add(option);
+            M.FormSelect.init(inputInsumo, {});
+        });
     });
 
     // Inicializando campos de telefone
@@ -198,7 +200,7 @@ function atualizarTela() {
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
             return;
         }
-        console.log(result);
+        
         qtdePaginas = Math.ceil(result.total / tamanhoPagina);
         
         paginacaoPanel.style.visibility = qtdePaginas <= 1 ? 'hidden' : 'visible';
@@ -435,7 +437,7 @@ function inserir(novaEncomenda) {
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
 
-        console.debug(`Nova encomenda inserida com sucesso`);
+        M.toast({html: 'Encomenda inserida com sucesso!',  classes: 'rounded toastSucesso'});
         atualizarTela();
         formPanel.style.display = 'none';
         actionButton.innerHTML = '<i class="fas fa-plus"></i>';
@@ -453,7 +455,7 @@ function atualizar(encomenda) {
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
         else {
-            console.debug(`Encomenda atualizada`);
+            M.toast({html: 'Encomenda atualizada com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
 

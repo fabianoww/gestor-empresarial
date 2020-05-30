@@ -172,7 +172,7 @@ function inserir(novoFornecedor) {
     
     fornecedorDao.salvar(novoFornecedor, (id, err) => {
         if (id) {
-            console.debug(`Novo fornecedor inserido com id ${id}`);
+            M.toast({html: 'Fornecedor inserido com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
         else {
@@ -196,7 +196,7 @@ function atualizar(fornecedor) {
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
         else {
-            console.debug(`Fornecedor atualizado`);
+            M.toast({html: 'Fornecedor atualizado com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
 

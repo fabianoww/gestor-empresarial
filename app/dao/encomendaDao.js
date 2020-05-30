@@ -9,7 +9,7 @@ exports.salvar = function(encomenda, cb) {
         // Gravando movimetação do valor de entrada
         statements[statements.length] = {
             query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
-            params: ['Venda (encomenda)', `Entrada da venda de ${encomenda.desc}`, 'C', encomenda.dataEncomenda, encomenda.entradaPgto.valueOf()], 
+            params: ['Recebimento', `Entrada da venda de ${encomenda.desc}`, 'C', encomenda.dataEncomenda, encomenda.entradaPgto.valueOf()], 
             cb: (err) => {
                 if (err) {
                     console.debug(`Erro ao inserir a movimentação de caixa da entrada da venda: ${err}`);
@@ -25,7 +25,7 @@ exports.salvar = function(encomenda, cb) {
     // Gravando movimentação do valor principal
     statements[statements.length] = {
         query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
-        params: ['Venda (encomenda)', `Venda de ${encomenda.desc}`, 'C', encomenda.dataPgto, encomenda.valorPgto.valueOf()], 
+        params: ['Recebimento', `Venda de ${encomenda.desc}`, 'C', encomenda.dataPgto, encomenda.valorPgto.valueOf()], 
         cb: (err) => {
             if (err) {
                 console.debug(`Erro ao inserir a movimentação de caixa da venda: ${err}`);
@@ -109,7 +109,7 @@ exports.atualizar = function(encomenda, cb) {
         // Gravando movimetação do valor de entrada
         statements[statements.length] = {
             query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
-            params: ['Venda (encomenda)', `Entrada da venda de ${encomenda.desc}`, 'C', encomenda.dataEncomenda, encomenda.entradaPgto.valueOf()], 
+            params: ['Recebimento', `Entrada da venda de ${encomenda.desc}`, 'C', encomenda.dataEncomenda, encomenda.entradaPgto.valueOf()], 
             cb: (err) => {
                 if (err) {
                     console.debug(`Erro ao inserir a movimentação de caixa da entrada da venda: ${err}`);
@@ -125,7 +125,7 @@ exports.atualizar = function(encomenda, cb) {
     // Gravando movimentação do valor principal
     statements[statements.length] = {
         query: 'INSERT INTO movimentacao_caixa (categoria, descricao, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
-        params: ['Venda (encomenda)', `Venda de ${encomenda.desc}`, 'C', encomenda.dataPgto, encomenda.valorPgto.valueOf()], 
+        params: ['Recebimento', `Venda de ${encomenda.desc}`, 'C', encomenda.dataPgto, encomenda.valorPgto.valueOf()], 
         cb: (err) => {
             if (err) {
                 console.debug(`Erro ao inserir a movimentação de caixa da venda: ${err}`);

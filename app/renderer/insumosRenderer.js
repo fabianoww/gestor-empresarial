@@ -225,7 +225,7 @@ function carregarFormEdicao(event) {
 function inserir(novoInsumo) {
     insumoDao.salvar(novoInsumo, (id, err) => {
         if (id) {
-            console.debug(`Novo insumo inserido com id ${id}`);
+            M.toast({html: 'Insumo inserido com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
         else {
@@ -248,7 +248,7 @@ function atualizar(insumo) {
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
         else {
-            console.debug(`Insumo atualizado`);
+            M.toast({html: 'Insumo atualizado com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
 
@@ -275,7 +275,7 @@ function actionclick() {
                     M.toast({html: msgErro,  classes: 'rounded toastErro'});
                 }
                 else {
-                    console.debug('Nova compra de insumo inserida');
+                    M.toast({html: 'Compra de insumo registrada com sucesso!',  classes: 'rounded toastSucesso'});
                     atualizarTela();
                 }
 
@@ -400,20 +400,22 @@ function exibirFormularioEstoqueNovo(id, nome) {
         inputEstoqueFornecedor.remove(1);
     }
 
-    fornecedorDao.carregarFornecedores(null, null, null, (registro, err) => {
-        if (registro) {
+    fornecedorDao.carregarFornecedores(null, null, null, (result, err) => {
+        if (err) {
+            let msgErro = `Ocorreu um erro ao carregar os fornecedores: ${err}`;
+            console.error(msgErro);
+            M.toast({html: msgErro,  classes: 'rounded toastErro'});
+            return;
+        }
+
+        result.registros.forEach(registro => {
             let option = document.createElement("option");
             option.id = registro.id;
             option.text = registro.nome;
             inputEstoqueFornecedor.add(option);
             M.FormSelect.init(inputEstoqueFornecedor, {});
-        }
+        });
 
-        if (err) {
-            let msgErro = `Ocorreu um erro ao carregar os fornecedores: ${err}`;
-            console.error(msgErro);
-            M.toast({html: msgErro,  classes: 'rounded toastErro'});
-        }
     });
     inputEstoqueQtde.focus();
 }

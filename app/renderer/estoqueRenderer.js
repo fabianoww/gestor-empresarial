@@ -115,20 +115,22 @@ function initTela() {
     });
 
     // Carregando lista de insumos
-    insumoDao.carregarInsumos(null, null, null, (registro, err) => {
-        if (registro) {
-            let option = document.createElement("option");
-            option.value = registro.id;
-            option.text = registro.descricao;
-            inputInsumo.add(option);
-            M.FormSelect.init(inputInsumo, {});
-        }
+    insumoDao.carregarInsumos(null, null, null, (result, err) => {
 
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar os insumos: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
+            return;
         }
+        
+        result.registros.forEach(registro => {
+            let option = document.createElement("option");
+            option.value = registro.id;
+            option.text = registro.descricao;
+            inputInsumo.add(option);
+            M.FormSelect.init(inputInsumo, {});
+        });
     });
 
     atualizarTela();
@@ -315,7 +317,7 @@ function inserir(itemEstoque) {
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         } else {
-            console.debug('Novo item de estoque inserido com sucesso!');
+            M.toast({html: 'Item de estoque inserido com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
 
@@ -333,7 +335,7 @@ function atualizar(itemEstoque) {
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
         else {
-            console.debug(`Item de estoque atualizado`);
+            M.toast({html: 'Item de estoque atualizado com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
 

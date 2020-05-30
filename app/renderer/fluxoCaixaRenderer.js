@@ -80,6 +80,10 @@ function initTela() {
             data: data
         });
     })
+    
+    // Inicializando os campos select
+    var elems = document.querySelectorAll('select');
+    M.FormSelect.init(elems, {});
 
     atualizarTela();
 }
@@ -179,7 +183,7 @@ function inserir(movimentacaoCaixa) {
     
     movimentacaoCaixaDao.salvar(movimentacaoCaixa, (id, err) => {
         if (id) {
-            console.debug(`Nova movimentação de caixa inserida com id ${id}`);
+            M.toast({html: 'Movimentação de caixa inserida com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
         else {
@@ -203,7 +207,7 @@ function atualizar(movimentacaoCaixa) {
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
         else {
-            console.debug(`Movimentação de caixa atualizada`);
+            M.toast({html: 'Movimentação de caixa atualizada com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
 
@@ -222,7 +226,7 @@ function actionclick() {
         // Verificar validade dos campos
         if (validarForm()) {
             let novoFornecedor = inputId.value == null || inputId.value.trim() == '';
-
+            
             if (novoFornecedor) {
                 // Salvar
                 inserir(new MovimentacaoCaixa(null, inputDesc.value, document.querySelector('input[name="tipoFluxo"]:checked').value, 
