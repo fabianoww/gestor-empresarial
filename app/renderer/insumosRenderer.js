@@ -30,6 +30,17 @@ let inputEstoqueDataCompra = null;
 let inputEstoqueDataDebito = null;
 let inputEstoqueDataEntrega = null;
 
+// Campos paginação
+let tamanhoPagina = 15;
+let paginaAtual = 1;
+let qtdePaginas = 0;
+let btnPagPrimeira = null;
+let btnPagAnterior = null;
+let btnPagProxima = null;
+let btnPagUltima = null;
+let lblTextoPaginacao = null;
+let paginacaoPanel = null;
+
 let currencyFormatter = null;
 
 // Inicialização da tela
@@ -60,6 +71,18 @@ function initTela() {
     filtro = document.querySelector('#filtro');
     toggleForm = false;
     toggleFormEstoque = false;
+
+    // Campos de paginação
+    lblTextoPaginacao = document.querySelector('#pag-texto');
+    btnPagPrimeira = document.querySelector('#btn-pag-primeira');
+    btnPagPrimeira.addEventListener('click', navegarPrimeiraPagina);
+    btnPagAnterior = document.querySelector('#btn-pag-anterior');
+    btnPagAnterior.addEventListener('click', navegarPaginaAnterior);
+    btnPagProxima = document.querySelector('#btn-pag-proxima');
+    btnPagProxima.addEventListener('click', navegarProximaPagina);
+    btnPagUltima = document.querySelector('#btn-pag-ultima');
+    btnPagUltima.addEventListener('click', navegarUltimaPagina);
+    paginacaoPanel = document.querySelector('#paginacao-panel');
 
     // Inicializando campos de data
     uiUtils.initDatePicker('.datepicker');
@@ -99,49 +122,62 @@ function atualizarTela() {
         insumosTable.deleteRow(1);
     }
 
-    insumoDao.carregarInsumos(filtro.value, 0, 10, (registro, err) => {
-        if (registro) {
-            var row = insumosTable.insertRow();
-
-            let idCol = row.insertCell()
-            idCol.innerHTML = registro.id;
-            idCol.addEventListener("click", carregarFormEdicao);
-
-            let descCol = row.insertCell()
-            descCol.innerHTML = registro.descricao;
-            descCol.addEventListener("click", carregarFormEdicao);
-
-            let qtdeMinimaCol = row.insertCell()
-            qtdeMinimaCol.innerHTML = registro.qtde_minima ? registro.qtde_minima : '0';
-            qtdeMinimaCol.style = 'text-align: right;';
-            qtdeMinimaCol.addEventListener("click", carregarFormEdicao);
-
-            let qtdeEstoqueCol = row.insertCell()
-            qtdeEstoqueCol.innerHTML = registro.qtde ? registro.qtde : '0';
-            qtdeEstoqueCol.style = 'text-align: right;';
-            qtdeEstoqueCol.addEventListener("click", carregarFormEdicao);
-
-            let precoMedioCol = row.insertCell()
-            precoMedioCol.innerHTML = registro.preco_medio ? currencyFormatter.format(registro.preco_medio) : currencyFormatter.format(0);
-            precoMedioCol.style = 'text-align: right;';
-            precoMedioCol.addEventListener("click", carregarFormEdicao);
-
-            let comprarCol = row.insertCell();
-            comprarCol.innerHTML = `<i class="fas fa-cart-plus"></i>`;
-            comprarCol.style = 'text-align: center;';
-            comprarCol.addEventListener("click", comprarInsumo);
-
-            let deleteCol = row.insertCell();
-            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-            deleteCol.style = 'text-align: center;';
-            deleteCol.addEventListener("click", apagar);
-
-        }
-
+    insumoDao.carregarInsumos(filtro.value, 0, 15, (result, err) => {
+        
         if (err) {
-            let msgErro = `Ocorreu um erro ao carregar os insumos: ${err}`;
+            let msgErro = `Ocorreu um erro ao carregar os fluxos de caixa: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
+            return;
+        }
+
+        qtdePaginas = Math.ceil(result.total / tamanhoPagina);
+        
+        paginacaoPanel.style.visibility = qtdePaginas <= 1 ? 'hidden' : 'visible';
+        btnPagPrimeira.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagAnterior.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagProxima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+        btnPagUltima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+
+        lblTextoPaginacao.innerHTML = `Página ${paginaAtual} de ${qtdePaginas}`;
+        
+        if (result) {
+            result.registros.forEach(registro => {
+                var row = insumosTable.insertRow();
+
+                let idCol = row.insertCell()
+                idCol.innerHTML = registro.id;
+                idCol.addEventListener("click", carregarFormEdicao);
+
+                let descCol = row.insertCell()
+                descCol.innerHTML = registro.descricao;
+                descCol.addEventListener("click", carregarFormEdicao);
+
+                let qtdeMinimaCol = row.insertCell()
+                qtdeMinimaCol.innerHTML = registro.qtde_minima ? registro.qtde_minima : '0';
+                qtdeMinimaCol.style = 'text-align: right;';
+                qtdeMinimaCol.addEventListener("click", carregarFormEdicao);
+
+                let qtdeEstoqueCol = row.insertCell()
+                qtdeEstoqueCol.innerHTML = registro.qtde ? registro.qtde : '0';
+                qtdeEstoqueCol.style = 'text-align: right;';
+                qtdeEstoqueCol.addEventListener("click", carregarFormEdicao);
+
+                let precoMedioCol = row.insertCell()
+                precoMedioCol.innerHTML = registro.preco_medio ? currencyFormatter.format(registro.preco_medio) : currencyFormatter.format(0);
+                precoMedioCol.style = 'text-align: right;';
+                precoMedioCol.addEventListener("click", carregarFormEdicao);
+
+                let comprarCol = row.insertCell();
+                comprarCol.innerHTML = `<i class="fas fa-cart-plus"></i>`;
+                comprarCol.style = 'text-align: center;';
+                comprarCol.addEventListener("click", comprarInsumo);
+
+                let deleteCol = row.insertCell();
+                deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+                deleteCol.style = 'text-align: center;';
+                deleteCol.addEventListener("click", apagar);
+            });
         }
     });
 }
@@ -319,6 +355,7 @@ function fecharFormClick(event) {
 }
 
 function filtrar() {
+    paginaAtual = 1;
     atualizarTela();
 }
 
@@ -396,7 +433,24 @@ function comprarInsumo(event) {
     } 
 
     toggleFormEstoque = !toggleFormEstoque;
+}
 
+function navegarPrimeiraPagina() {
+    paginaAtual = 1;
+    atualizarTela();
+}
 
-    
+function navegarProximaPagina() {
+    paginaAtual += 1;
+    atualizarTela();
+}
+
+function navegarPaginaAnterior() {
+    paginaAtual -= 1;
+    atualizarTela();
+}
+
+function navegarUltimaPagina() {
+    paginaAtual = qtdePaginas;
+    atualizarTela();
 }

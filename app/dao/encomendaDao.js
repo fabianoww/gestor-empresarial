@@ -242,7 +242,7 @@ exports.carregarInsumos = function(idEncomenda, cb) {
 }
 
 exports.carregarEncomendas = function(filtro, pagina, tamPagina, cb) {
-    let query = 'SELECT * FROM encomenda WHERE ativo = 1 ';
+    let query = 'SELECT COUNT(*) AS total FROM encomenda WHERE ativo = 1 ';
 
     // Assegurando que string vazia não filtrará resultados
     filtro = filtro && filtro.trim() != '' ? filtro : null;
@@ -259,9 +259,38 @@ exports.carregarEncomendas = function(filtro, pagina, tamPagina, cb) {
             ) `;
     }
 
-    if (pagina != null && tamPagina != null) {
-        query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
-    }
-    
-    dbDao.selectEach(query, filtro ? [filtro, filtro, filtro] : [], cb);
+    dbDao.selectFirst(query, filtro ? [filtro, filtro, filtro] : [], (row, err) => {
+        
+        if (err) {
+            cb(null, err);
+            return;
+        } 
+        
+        let total = row.total;
+        if (total == 0) {
+            cb({total: 0, registros: []}, null);
+            return;
+        }
+        
+        query = query.replace('COUNT(*) AS total', '*');
+
+        if (pagina != null && tamPagina != null) {
+            query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
+        }
+
+        dbDao.selectAll(query, filtro ? [filtro, filtro, filtro] : [], (rows, err) => {
+            
+            if (err) {
+                cb(null, err);
+                return;
+            } 
+
+            let result = {
+                total: total,
+                registros: rows
+            };
+
+            cb(result, null);
+        });
+    })
 }

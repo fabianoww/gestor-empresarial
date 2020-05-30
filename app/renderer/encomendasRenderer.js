@@ -44,10 +44,20 @@ let inputValorEntrada = null;
 let inputValor = null;
 let inputDataPgto = null;
 let inputStatus = null;
-
 let toggleForm = false;
 let filtro = null;
 let custoEncomenda;
+
+// Campos paginação
+let tamanhoPagina = 15;
+let paginaAtual = 1;
+let qtdePaginas = 0;
+let btnPagPrimeira = null;
+let btnPagAnterior = null;
+let btnPagProxima = null;
+let btnPagUltima = null;
+let lblTextoPaginacao = null;
+let paginacaoPanel = null;
 
 // Inicialização da tela
 exports.initTela = initTela;
@@ -107,6 +117,18 @@ function initTela() {
           btnAddInsumo.click();
         }
     }); 
+
+    // Campos de paginação
+    lblTextoPaginacao = document.querySelector('#pag-texto');
+    btnPagPrimeira = document.querySelector('#btn-pag-primeira');
+    btnPagPrimeira.addEventListener('click', navegarPrimeiraPagina);
+    btnPagAnterior = document.querySelector('#btn-pag-anterior');
+    btnPagAnterior.addEventListener('click', navegarPaginaAnterior);
+    btnPagProxima = document.querySelector('#btn-pag-proxima');
+    btnPagProxima.addEventListener('click', navegarProximaPagina);
+    btnPagUltima = document.querySelector('#btn-pag-ultima');
+    btnPagUltima.addEventListener('click', navegarUltimaPagina);
+    paginacaoPanel = document.querySelector('#paginacao-panel');
 
     // Carregando lista de insumos
     insumoDao.carregarInsumos(null, null, null, (registro, err) => {
@@ -169,31 +191,53 @@ function atualizarTela() {
         encomendasTable.deleteRow(1);
     }
 
-    encomendaDao.carregarEncomendas(filtro.value, 0, 10, (registro, err) => {
-        if (registro) {
-            var row = encomendasTable.insertRow();
-            row.insertCell().innerHTML = registro.id;
-            row.insertCell().innerHTML = registro.qtde;
-            row.insertCell().innerHTML = registro.descricao;
-            row.insertCell().innerHTML = registro.nome_cliente;
-            row.insertCell().innerHTML = registro.data_entrega;
-            
-            let horasProducaoCol = row.insertCell();
-            horasProducaoCol.innerHTML = registro.horas_producao;
-            horasProducaoCol.style = 'text-align: right;';
-
-            let deleteCol = row.insertCell();
-            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-            deleteCol.style = 'text-align: center;';
-            deleteCol.addEventListener("click", apagar);
-
-            row.addEventListener("click", carregarFormEdicao);
-        }
-
+    encomendaDao.carregarEncomendas(filtro.value, 0, 15, (result, err) => {
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar as encomendas: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
+            return;
+        }
+        console.log(result);
+        qtdePaginas = Math.ceil(result.total / tamanhoPagina);
+        
+        paginacaoPanel.style.visibility = qtdePaginas <= 1 ? 'hidden' : 'visible';
+        btnPagPrimeira.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagAnterior.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagProxima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+        btnPagUltima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+
+        lblTextoPaginacao.innerHTML = `Página ${paginaAtual} de ${qtdePaginas}`;
+        
+        if (result) {
+            result.registros.forEach(registro => {
+                        
+                if (registro) {
+                    var row = encomendasTable.insertRow();
+                    row.insertCell().innerHTML = registro.id;
+                    row.insertCell().innerHTML = registro.qtde;
+                    row.insertCell().innerHTML = registro.descricao;
+                    row.insertCell().innerHTML = registro.nome_cliente;
+                    row.insertCell().innerHTML = registro.data_entrega;
+                    
+                    let horasProducaoCol = row.insertCell();
+                    horasProducaoCol.innerHTML = registro.horas_producao;
+                    horasProducaoCol.style = 'text-align: right;';
+
+                    let deleteCol = row.insertCell();
+                    deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+                    deleteCol.style = 'text-align: center;';
+                    deleteCol.addEventListener("click", apagar);
+
+                    row.addEventListener("click", carregarFormEdicao);
+                }
+
+                if (err) {
+                    let msgErro = `Ocorreu um erro ao carregar as encomendas: ${err}`;
+                    console.error(msgErro);
+                    M.toast({html: msgErro,  classes: 'rounded toastErro'});
+                }
+            });
         }
     });
 }
@@ -432,6 +476,7 @@ function toggleInputEntrada(e) {
 }
 
 function filtrar() {
+    paginaAtual = 1;
     atualizarTela();
 }
 
@@ -561,4 +606,24 @@ function montarInsumos() {
     }
 
     return insumos;
+}
+
+function navegarPrimeiraPagina() {
+    paginaAtual = 1;
+    atualizarTela();
+}
+
+function navegarProximaPagina() {
+    paginaAtual += 1;
+    atualizarTela();
+}
+
+function navegarPaginaAnterior() {
+    paginaAtual -= 1;
+    atualizarTela();
+}
+
+function navegarUltimaPagina() {
+    paginaAtual = qtdePaginas;
+    atualizarTela();
 }

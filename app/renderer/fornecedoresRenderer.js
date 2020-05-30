@@ -18,6 +18,17 @@ let toggleForm = false;
 let fornecedorForm = null;
 let filtro = null;
 
+// Campos paginação
+let tamanhoPagina = 15;
+let paginaAtual = 1;
+let qtdePaginas = 0;
+let btnPagPrimeira = null;
+let btnPagAnterior = null;
+let btnPagProxima = null;
+let btnPagUltima = null;
+let lblTextoPaginacao = null;
+let paginacaoPanel = null;
+
 // Inicialização da tela
 exports.initTela = initTela;
 
@@ -42,6 +53,18 @@ function initTela() {
     actionButton.addEventListener('click', actionclick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
 
+    // Campos de paginação
+    lblTextoPaginacao = document.querySelector('#pag-texto');
+    btnPagPrimeira = document.querySelector('#btn-pag-primeira');
+    btnPagPrimeira.addEventListener('click', navegarPrimeiraPagina);
+    btnPagAnterior = document.querySelector('#btn-pag-anterior');
+    btnPagAnterior.addEventListener('click', navegarPaginaAnterior);
+    btnPagProxima = document.querySelector('#btn-pag-proxima');
+    btnPagProxima.addEventListener('click', navegarProximaPagina);
+    btnPagUltima = document.querySelector('#btn-pag-ultima');
+    btnPagUltima.addEventListener('click', navegarUltimaPagina);
+    paginacaoPanel = document.querySelector('#paginacao-panel');
+
     // Inicializando campos campos
     const telefoneMask = new maskInput.default(document.querySelector('#telefone'), {
         mask: '(00) 0000-0000',
@@ -61,29 +84,43 @@ function atualizarTela() {
         fornecedoresTable.deleteRow(1);
     }
 
-    fornecedorDao.carregarFornecedores(filtro.value, 0, 10, (registro, err) => {
-        if (registro) {
-            let row = fornecedoresTable.insertRow();
-            row.insertCell().innerHTML = registro.id;
-            row.insertCell().innerHTML = registro.nome;
-            row.insertCell().innerHTML = registro.tipo;
-            row.insertCell().innerHTML = registro.online == 1 ? 'Sim' : 'Não';
-            row.insertCell().innerHTML = registro.telefone;
-            row.insertCell().innerHTML = registro.email;
-            row.insertCell().innerHTML = registro.site;
-            
-            let deleteCol = row.insertCell();
-            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-            deleteCol.style = 'text-align: center;';
-            deleteCol.addEventListener("click", apagar);
-
-            row.addEventListener("click", carregarFormEdicao);
-        }
-
+    fornecedorDao.carregarFornecedores(filtro.value, 0, 15, (result, err) => {
+        
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar os fornecedores: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
+            return;
+        }
+
+        qtdePaginas = Math.ceil(result.total / tamanhoPagina);
+        
+        paginacaoPanel.style.visibility = qtdePaginas <= 1 ? 'hidden' : 'visible';
+        btnPagPrimeira.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagAnterior.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagProxima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+        btnPagUltima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+
+        lblTextoPaginacao.innerHTML = `Página ${paginaAtual} de ${qtdePaginas}`;
+        
+        if (result) {
+            result.registros.forEach(registro => {
+                let row = fornecedoresTable.insertRow();
+                row.insertCell().innerHTML = registro.id;
+                row.insertCell().innerHTML = registro.nome;
+                row.insertCell().innerHTML = registro.tipo;
+                row.insertCell().innerHTML = registro.online == 1 ? 'Sim' : 'Não';
+                row.insertCell().innerHTML = registro.telefone;
+                row.insertCell().innerHTML = registro.email;
+                row.insertCell().innerHTML = registro.site;
+                
+                let deleteCol = row.insertCell();
+                deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+                deleteCol.style = 'text-align: center;';
+                deleteCol.addEventListener("click", apagar);
+
+                row.addEventListener("click", carregarFormEdicao);
+            });
         }
     });
 }
@@ -210,6 +247,7 @@ function fecharFormClick(event) {
 }
 
 function filtrar() {
+    paginaAtual = 1;
     atualizarTela();
 }
 
@@ -236,4 +274,24 @@ function apagar(event) {
             }},
             {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
         ]);
+}
+
+function navegarPrimeiraPagina() {
+    paginaAtual = 1;
+    atualizarTela();
+}
+
+function navegarProximaPagina() {
+    paginaAtual += 1;
+    atualizarTela();
+}
+
+function navegarPaginaAnterior() {
+    paginaAtual -= 1;
+    atualizarTela();
+}
+
+function navegarUltimaPagina() {
+    paginaAtual = qtdePaginas;
+    atualizarTela();
 }

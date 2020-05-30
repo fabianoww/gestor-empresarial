@@ -25,6 +25,17 @@ let toggleForm = false;
 let possuiImagem = false;
 let filtro = null;
 
+// Campos paginação
+let tamanhoPagina = 15;
+let paginaAtual = 1;
+let qtdePaginas = 0;
+let btnPagPrimeira = null;
+let btnPagAnterior = null;
+let btnPagProxima = null;
+let btnPagUltima = null;
+let lblTextoPaginacao = null;
+let paginacaoPanel = null;
+
 let custoItem;
 
 // Inicialização da tela
@@ -63,6 +74,18 @@ function initTela() {
           btnAddInsumo.click();
         }
     }); 
+
+    // Campos de paginação
+    lblTextoPaginacao = document.querySelector('#pag-texto');
+    btnPagPrimeira = document.querySelector('#btn-pag-primeira');
+    btnPagPrimeira.addEventListener('click', navegarPrimeiraPagina);
+    btnPagAnterior = document.querySelector('#btn-pag-anterior');
+    btnPagAnterior.addEventListener('click', navegarPaginaAnterior);
+    btnPagProxima = document.querySelector('#btn-pag-proxima');
+    btnPagProxima.addEventListener('click', navegarProximaPagina);
+    btnPagUltima = document.querySelector('#btn-pag-ultima');
+    btnPagUltima.addEventListener('click', navegarUltimaPagina);
+    paginacaoPanel = document.querySelector('#paginacao-panel');
 
     // Inicializando campos monetários
     let elemsCurrency = document.querySelectorAll('.monetario');
@@ -116,37 +139,52 @@ function atualizarTela() {
     while(estoqueTable.rows.length > 1) {
         estoqueTable.deleteRow(1);
     }
-    estoqueDao.carregarEstoque(filtro.value, 0, 10, (registro, err) => {
-        if (registro) {
-            let row = estoqueTable.insertRow();
-            row.insertCell().innerHTML = registro.id;
-            row.insertCell().innerHTML = registro.descricao;
-            row.insertCell().innerHTML = registro.tamanho;
-            row.insertCell().innerHTML = registro.local;
-
-            let valorCol = row.insertCell()
-            valorCol.innerHTML = uiUtils.converterNumberParaMoeda(registro.valor);
-            valorCol.style = 'text-align: right;';
-            
-            let imagemCol = row.insertCell();
-            imagemCol.style = 'text-align: center;';
-            if (registro.tem_imagem) {
-                imagemCol.innerHTML = `<i class="fas fa-camera"></i>`;
-                imagemCol.addEventListener("click", exibirImagemPopup);
-            }
-            
-            let deleteCol = row.insertCell();
-            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-            deleteCol.style = 'text-align: center;';
-            deleteCol.addEventListener("click", apagar);
-
-            row.addEventListener("click", carregarFormEdicao);
-        }
-
+    estoqueDao.carregarEstoque(filtro.value, 0, 15, (result, err) => {
+        
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar os itens do estoque: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
+            return;
+        }
+
+        qtdePaginas = Math.ceil(result.total / tamanhoPagina);
+        
+        paginacaoPanel.style.visibility = qtdePaginas <= 1 ? 'hidden' : 'visible';
+        btnPagPrimeira.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagAnterior.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagProxima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+        btnPagUltima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+
+        lblTextoPaginacao.innerHTML = `Página ${paginaAtual} de ${qtdePaginas}`;
+        
+        if (result) {
+            result.registros.forEach(registro => {
+
+                let row = estoqueTable.insertRow();
+                row.insertCell().innerHTML = registro.id;
+                row.insertCell().innerHTML = registro.descricao;
+                row.insertCell().innerHTML = registro.tamanho;
+                row.insertCell().innerHTML = registro.local;
+
+                let valorCol = row.insertCell()
+                valorCol.innerHTML = uiUtils.converterNumberParaMoeda(registro.valor);
+                valorCol.style = 'text-align: right;';
+                
+                let imagemCol = row.insertCell();
+                imagemCol.style = 'text-align: center;';
+                if (registro.tem_imagem) {
+                    imagemCol.innerHTML = `<i class="fas fa-camera"></i>`;
+                    imagemCol.addEventListener("click", exibirImagemPopup);
+                }
+                
+                let deleteCol = row.insertCell();
+                deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+                deleteCol.style = 'text-align: center;';
+                deleteCol.addEventListener("click", apagar);
+
+                row.addEventListener("click", carregarFormEdicao);
+            });
         }
     });
 }
@@ -358,6 +396,7 @@ function fecharFormClick(event) {
 }
 
 function filtrar() {
+    paginaAtual = 1;
     atualizarTela();
 }
 
@@ -450,4 +489,24 @@ function montarInsumos() {
     }
 
     return insumos;
+}
+
+function navegarPrimeiraPagina() {
+    paginaAtual = 1;
+    atualizarTela();
+}
+
+function navegarProximaPagina() {
+    paginaAtual += 1;
+    atualizarTela();
+}
+
+function navegarPaginaAnterior() {
+    paginaAtual -= 1;
+    atualizarTela();
+}
+
+function navegarUltimaPagina() {
+    paginaAtual = qtdePaginas;
+    atualizarTela();
 }

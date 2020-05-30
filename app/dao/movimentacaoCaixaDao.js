@@ -15,7 +15,7 @@ exports.remover = function(id, cb) {
 }
 
 exports.carregarMovimentacoes = function(filtro, pagina, tamPagina, cb) {
-    let query = 'SELECT * FROM movimentacao_caixa WHERE ativo = 1 ';
+    let query = 'SELECT COUNT(*) AS total FROM movimentacao_caixa WHERE ativo = 1 ';
 
     // Assegurando que string vazia não filtrará resultados
     filtro = filtro && filtro.trim() != '' ? filtro : null;
@@ -31,11 +31,40 @@ exports.carregarMovimentacoes = function(filtro, pagina, tamPagina, cb) {
             ) `;
     }
 
-    if (pagina != null && tamPagina != null) {
-        query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
-    }
-    
-    dbDao.selectEach(query, filtro ? [filtro, filtro, filtro, filtro == 'credito' ? 'C' : (filtro == 'debito' ? 'D' : '-'), filtro] : [], cb);
+    dbDao.selectFirst(query, filtro ? [filtro, filtro, filtro, filtro == 'credito' ? 'C' : (filtro == 'debito' ? 'D' : '-'), filtro] : [], (row, err) => {
+        
+        if (err) {
+            cb(null, err);
+            return;
+        } 
+        
+        let total = row.total;
+        if (total == 0) {
+            cb({total: 0, registros: []}, null);
+            return;
+        }
+
+        query = query.replace('COUNT(*) AS total', '*');
+
+        if (pagina != null && tamPagina != null) {
+            query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
+        }
+
+        dbDao.selectAll(query, filtro ? [filtro, filtro, filtro, filtro == 'credito' ? 'C' : (filtro == 'debito' ? 'D' : '-'), filtro] : [], (rows, err) => {
+            
+            if (err) {
+                cb(null, err);
+                return;
+            } 
+
+            let result = {
+                total: total,
+                registros: rows
+            };
+
+            cb(result, null);
+        });
+    });
 }
 
 exports.carregarCategorias = function (cb) {

@@ -134,7 +134,7 @@ exports.remover = function(id, cb) {
 }
 
 exports.carregarEstoque = function(filtro, pagina, tamPagina, cb) {
-    let query = 'SELECT id, descricao, valor, local, tamanho, imagem IS NOT NULL as tem_imagem FROM estoque_produtos WHERE ativo = 1 ';
+    let query = 'SELECT COUNT(*) AS total FROM estoque_produtos WHERE ativo = 1 ';
 
     // Assegurando que string vazia não filtrará resultados
     filtro = filtro && filtro.trim() != '' ? filtro : null;
@@ -150,11 +150,41 @@ exports.carregarEstoque = function(filtro, pagina, tamPagina, cb) {
             ) `;
     }
 
-    if (pagina != null && tamPagina != null) {
-        query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
-    }
-    
-    dbDao.selectEach(query, filtro ? [filtro, filtro, filtro, filtro] : [], cb);
+    dbDao.selectFirst(query, filtro ? [filtro, filtro, filtro, filtro] : [], (row, err) => {
+        
+        if (err) {
+            cb(null, err);
+            return;
+        } 
+        
+        let total = row.total;
+        if (total == 0) {
+            cb({total: 0, registros: []}, null);
+            return;
+        }
+        
+        query = query.replace('COUNT(*) AS total', 'id, descricao, valor, local, tamanho, imagem IS NOT NULL as tem_imagem');
+
+
+        if (pagina != null && tamPagina != null) {
+            query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
+        }
+
+        dbDao.selectAll(query, filtro ? [filtro, filtro, filtro, filtro] : [], (rows, err) => {
+            
+            if (err) {
+                cb(null, err);
+                return;
+            } 
+
+            let result = {
+                total: total,
+                registros: rows
+            };
+
+            cb(result, null);
+        });
+    })
 }
 
 exports.carregarImagem = function(id, cb) {

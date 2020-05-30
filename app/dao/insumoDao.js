@@ -15,7 +15,7 @@ exports.remover = function(id, cb) {
 exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
     
     let query = `
-        SELECT i.id, i.descricao, i.qtde_minima, i.ativo, e.qtde, e.preco_medio
+        SELECT COUNT(*) AS total
         FROM insumo i 
         LEFT JOIN estoque_insumos e ON i.id = e.id_insumo
         WHERE ativo = 1 `;
@@ -31,12 +31,40 @@ exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
             ) `;
     }
 
-    if (pagina != null && tamPagina != null) {
-        query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
-    }
+    dbDao.selectFirst(query, filtro ? [filtro, filtro] : [], (row, err) => {
+        
+        if (err) {
+            cb(null, err);
+            return;
+        } 
+        
+        let total = row.total;
+        if (total == 0) {
+            cb({total: 0, registros: []}, null);
+            return;
+        }
+        
+        query = query.replace('COUNT(*) AS total', 'i.id, i.descricao, i.qtde_minima, i.ativo, e.qtde, e.preco_medio');
 
-    
-    dbDao.selectEach(query, filtro ? [filtro, filtro] : [], cb);
+        if (pagina != null && tamPagina != null) {
+            query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
+        }
+
+        dbDao.selectAll(query, filtro ? [filtro, filtro] : [], (rows, err) => {
+            
+            if (err) {
+                cb(null, err);
+                return;
+            } 
+
+            let result = {
+                total: total,
+                registros: rows
+            };
+
+            cb(result, null);
+        });
+    });
 }
 
 exports.consultar = function(id, cb) {

@@ -16,6 +16,17 @@ let inputValor = null;
 let toggleForm = false;
 let filtro = null;
 
+// Campos paginação
+let tamanhoPagina = 15;
+let paginaAtual = 1;
+let qtdePaginas = 0;
+let btnPagPrimeira = null;
+let btnPagAnterior = null;
+let btnPagProxima = null;
+let btnPagUltima = null;
+let lblTextoPaginacao = null;
+let paginacaoPanel = null;
+
 // Inicialização da tela
 exports.initTela = initTela;
 
@@ -33,6 +44,18 @@ function initTela() {
     inputValor = document.querySelector('#valor');
     filtro = document.querySelector('#filtro');
     toggleForm = false;
+
+    // Campos de paginação
+    lblTextoPaginacao = document.querySelector('#pag-texto');
+    btnPagPrimeira = document.querySelector('#btn-pag-primeira');
+    btnPagPrimeira.addEventListener('click', navegarPrimeiraPagina);
+    btnPagAnterior = document.querySelector('#btn-pag-anterior');
+    btnPagAnterior.addEventListener('click', navegarPaginaAnterior);
+    btnPagProxima = document.querySelector('#btn-pag-proxima');
+    btnPagProxima.addEventListener('click', navegarProximaPagina);
+    btnPagUltima = document.querySelector('#btn-pag-ultima');
+    btnPagUltima.addEventListener('click', navegarUltimaPagina);
+    paginacaoPanel = document.querySelector('#paginacao-panel');
 
     // Adicionando listeners para elementos da tela
     formShield.addEventListener('click', fecharFormClick);
@@ -67,31 +90,45 @@ function atualizarTela() {
         fluxoCaixaTable.deleteRow(1);
     }
 
-    movimentacaoCaixaDao.carregarMovimentacoes(filtro.value, 0, 10, (registro, err) => {
-        if (registro) {
-            let row = fluxoCaixaTable.insertRow();
-            row.insertCell().innerHTML = registro.id;
-            row.insertCell().innerHTML = registro.descricao;
-            row.insertCell().innerHTML = registro.debito_credito;
-            row.insertCell().innerHTML = registro.categoria;
-            row.insertCell().innerHTML = registro.data;
-
-            let valorCol = row.insertCell()
-            valorCol.innerHTML = uiUtils.converterNumberParaMoeda(registro.valor);
-            valorCol.style = 'text-align: right;';
-            
-            let deleteCol = row.insertCell();
-            deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
-            deleteCol.style = 'text-align: center;';
-            deleteCol.addEventListener("click", apagar);
-
-            row.addEventListener("click", carregarFormEdicao);
-        }
+    movimentacaoCaixaDao.carregarMovimentacoes(filtro.value, paginaAtual-1, tamanhoPagina, (result, err) => {
 
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar os fluxos de caixa: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
+            return;
+        }
+
+        qtdePaginas = Math.ceil(result.total / tamanhoPagina);
+        
+        paginacaoPanel.style.visibility = qtdePaginas <= 1 ? 'hidden' : 'visible';
+        btnPagPrimeira.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagAnterior.style.visibility = qtdePaginas <= 1 || paginaAtual == 1 ? 'hidden' : 'visible';
+        btnPagProxima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+        btnPagUltima.style.visibility = qtdePaginas <= 1 || paginaAtual == qtdePaginas ? 'hidden' : 'visible';
+
+        lblTextoPaginacao.innerHTML = `Página ${paginaAtual} de ${qtdePaginas}`;
+        
+        if (result) {
+            result.registros.forEach(registro => {
+                let row = fluxoCaixaTable.insertRow();
+                row.insertCell().innerHTML = registro.id;
+                row.insertCell().innerHTML = registro.descricao;
+                row.insertCell().innerHTML = registro.debito_credito;
+                row.insertCell().innerHTML = registro.categoria;
+                row.insertCell().innerHTML = registro.data;
+    
+                let valorCol = row.insertCell()
+                valorCol.innerHTML = uiUtils.converterNumberParaMoeda(registro.valor);
+                valorCol.style = 'text-align: right;';
+                
+                let deleteCol = row.insertCell();
+                deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
+                deleteCol.style = 'text-align: center;';
+                deleteCol.addEventListener("click", apagar);
+    
+                row.addEventListener("click", carregarFormEdicao);
+            });
         }
     });
 }
@@ -226,6 +263,7 @@ function fecharFormClick(event) {
 }
 
 function filtrar() {
+    paginaAtual = 1;
     atualizarTela();
 }
 
@@ -252,4 +290,24 @@ function apagar(event) {
             }},
             {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
         ]);
+}
+
+function navegarPrimeiraPagina() {
+    paginaAtual = 1;
+    atualizarTela();
+}
+
+function navegarProximaPagina() {
+    paginaAtual += 1;
+    atualizarTela();
+}
+
+function navegarPaginaAnterior() {
+    paginaAtual -= 1;
+    atualizarTela();
+}
+
+function navegarUltimaPagina() {
+    paginaAtual = qtdePaginas;
+    atualizarTela();
 }
