@@ -151,7 +151,7 @@ function initTela() {
 
     // Inicializando campos de telefone
     const telefoneMask = new maskInput.default(document.querySelector('#telefone-cliente'), {
-        mask: '(00) 0000-0000',
+        mask: '(00) 00000-0000',
         alwaysShowMask: true,
         maskChar: '0',
     });

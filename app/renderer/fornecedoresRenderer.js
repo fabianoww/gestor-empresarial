@@ -11,7 +11,8 @@ let inputId = null;
 let inputNome = null;
 let inputTipo = null;
 let inputOnline = null;
-let inputTelefone = null;
+let inputTelefoneFixo = null;
+let inputTelefoneCelular = null;
 let inputEmail = null;
 let inputSite = null;
 let toggleForm = false;
@@ -41,7 +42,8 @@ function initTela() {
     inputNome = document.querySelector('#nome');
     inputTipo = document.querySelector('#tipo');
     inputOnline = document.getElementsByName('tipoFornecedor');
-    inputTelefone = document.querySelector('#telefone');
+    inputTelefoneFixo = document.querySelector('#telefone-fixo');
+    inputTelefoneCelular = document.querySelector('#telefone-celular');
     inputEmail = document.querySelector('#email');
     inputSite = document.querySelector('#site');
     fornecedorForm = document.querySelector('#fornecedor-form');
@@ -66,8 +68,14 @@ function initTela() {
     paginacaoPanel = document.querySelector('#paginacao-panel');
 
     // Inicializando campos campos
-    const telefoneMask = new maskInput.default(document.querySelector('#telefone'), {
+    const telefoneFixoMask = new maskInput.default(document.querySelector('#telefone-fixo'), {
         mask: '(00) 0000-0000',
+        alwaysShowMask: true,
+        maskChar: '0',
+    });
+    
+    const telefoneCelularMask = new maskInput.default(document.querySelector('#telefone-celular'), {
+        mask: '(00) 00000-0000',
         alwaysShowMask: true,
         maskChar: '0',
     });
@@ -146,22 +154,27 @@ function carregarFormEdicao(event) {
         element = element.parentElement;
     }
 
-    // Setando campos
-    inputId.value = element.children[0].textContent;
-    inputNome.value = element.children[1].textContent;
-    inputTipo.value = element.children[2].textContent;
-    uiUtils.setRadioValue(inputOnline, element.children[3].textContent ==  "Sim" ? '1' : '0')
-    inputTelefone.value = element.children[4].textContent;
-    inputEmail.value = element.children[5].textContent;
-    inputSite.value = element.children[6].textContent;
-    M.updateTextFields();
-    
-    // Exibir formulário de cadastro
-    formTitle.innerHTML = 'Editar fornecedor';
-    formPanel.style.display = 'block';
-    actionButton.innerHTML = '<i class="fas fa-save"></i>';
-    inputNome.focus();
-    toggleForm = !toggleForm;
+    let id = element.children[0].textContent;
+    fornecedorDao.consultar(id, (fornecedor) => {
+
+        // Setando campos
+        inputId.value = fornecedor.id;
+        inputNome.value = fornecedor.nome;
+        inputTipo.value = fornecedor.tipo;
+        uiUtils.setRadioValue(inputOnline, fornecedor.online);
+        inputTelefoneFixo.value = fornecedor.telefoneFixo;
+        inputTelefoneCelular.value = fornecedor.telefoneCelular;
+        inputEmail.value = fornecedor.email;
+        inputSite.value = fornecedor.site;
+        M.updateTextFields();
+        
+        // Exibir formulário de cadastro
+        formTitle.innerHTML = 'Editar fornecedor';
+        formPanel.style.display = 'block';
+        actionButton.innerHTML = '<i class="fas fa-save"></i>';
+        inputNome.focus();
+        toggleForm = !toggleForm;
+    });
 }
 
 function inserir(novoFornecedor) {
@@ -214,11 +227,11 @@ function actionclick() {
 
             if (novoFornecedor) {
                 // Salvar
-                inserir(new Fornecedor(null, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefone.value, inputEmail.value, inputSite.value));
+                inserir(new Fornecedor(null, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefoneFixo.value, inputTelefoneCelular.value, inputEmail.value, inputSite.value));
             }
             else {
                 // Atualizar
-                atualizar(new Fornecedor(inputId.value, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefone.value, inputEmail.value, inputSite.value));
+                atualizar(new Fornecedor(inputId.value, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefoneFixo.value, inputTelefoneCelular.value, inputEmail.value, inputSite.value));
             }
             toggleForm = !toggleForm;
         }
@@ -229,7 +242,8 @@ function validarForm() {
     let formValid = true;
     formValid = uiUtils.validarCampo(inputNome, true) && formValid;
     formValid = uiUtils.validarCampo(inputTipo, true) && formValid;
-    formValid = uiUtils.validarCampo(inputTelefone, false) && formValid;
+    formValid = uiUtils.validarCampo(inputTelefoneFixo, false) && formValid;
+    formValid = uiUtils.validarCampo(inputTelefoneCelular, false) && formValid;
     formValid = uiUtils.validarCampo(inputEmail, false) && formValid;
     formValid = uiUtils.validarCampo(inputSite, false) && formValid;
     

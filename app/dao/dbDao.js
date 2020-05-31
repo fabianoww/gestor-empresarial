@@ -191,7 +191,8 @@ function criarTabelas(err, rows) {
                 nome VARCHAR(200), 
                 tipo VARCHAR(50), 
                 online BOOLEAN, 
-                telefone VARCHAR(20), 
+                telefone_fixo VARCHAR(20), 
+                telefone_celular VARCHAR(20), 
                 site VARCHAR(200), 
                 email VARCHAR(100),
                 ativo INTEGER NOT NULL DEFAULT 1)`);

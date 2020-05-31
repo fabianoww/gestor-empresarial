@@ -1,13 +1,14 @@
+const Fornecedor = require('../model/fornecedor');
 const dbDao = require('./dbDao');
 
 exports.salvar = function(fornecedor, cb) {
-    dbDao.execute('INSERT INTO fornecedor(nome, tipo, online, telefone, site, email) VALUES(?,?,?,?,?,?)', 
-        [fornecedor.nome, fornecedor.tipo, fornecedor.online, fornecedor.telefone, fornecedor.site, fornecedor.email], cb);
+    dbDao.execute('INSERT INTO fornecedor(nome, tipo, online, telefone_fixo, telefone_celular, site, email) VALUES(?,?,?,?,?,?)', 
+        [fornecedor.nome, fornecedor.tipo, fornecedor.online, fornecedor.telefoneFixo, fornecedor.telefoneCelular, fornecedor.site, fornecedor.email], cb);
 }
 
 exports.atualizar = function(fornecedor, cb) {
-    dbDao.execute('UPDATE fornecedor SET nome = ?, tipo = ?, online = ?, telefone = ?, site = ?, email = ? WHERE id = ?', 
-        [fornecedor.nome, fornecedor.tipo, fornecedor.online, fornecedor.telefone, fornecedor.site, fornecedor.email, fornecedor.id], cb);
+    dbDao.execute('UPDATE fornecedor SET nome = ?, tipo = ?, online = ?, telefone_fixo = ?, telefone_celular = ?, site = ?, email = ? WHERE id = ?', 
+        [fornecedor.nome, fornecedor.tipo, fornecedor.online, fornecedor.telefoneFixo, fornecedor.telefoneCelular, fornecedor.site, fornecedor.email, fornecedor.id], cb);
 }
 
 exports.remover = function(id, cb) {
@@ -26,14 +27,15 @@ exports.carregarFornecedores = function(filtro, pagina, tamPagina, cb) {
                 id = ?
                 OR nome LIKE '%' || ? || '%'
                 OR tipo LIKE '%' || ? || '%'
-                OR telefone LIKE '%' || ? || '%'
+                OR telefone_fixo LIKE '%' || ? || '%'
+                OR telefone_celular LIKE '%' || ? || '%'
                 OR site LIKE '%' || ? || '%'
                 OR email LIKE '%' || ? || '%'
                 OR online = ?
             ) `;
     }
 
-    dbDao.selectFirst(query, filtro ? [filtro, filtro, filtro, filtro, filtro, filtro, filtro == 'online' ? 1 : (filtro == 'loja fisica' ? 0 : -1)] : [], (row, err) => {
+    dbDao.selectFirst(query, filtro ? [filtro, filtro, filtro, filtro, filtro, filtro, filtro, filtro == 'online' ? 1 : (filtro == 'loja fisica' ? 0 : -1)] : [], (row, err) => {
         
         if (err) {
             cb(null, err);
@@ -66,5 +68,12 @@ exports.carregarFornecedores = function(filtro, pagina, tamPagina, cb) {
 
             cb(result, null);
         });
+    });
+}
+
+exports.consultar = function(id, cb) {
+    dbDao.selectFirst('SELECT * FROM fornecedor WHERE id = ?', [id], (registro, err) => {
+        cb(new Fornecedor(registro.id, registro.nome, registro.tipo, registro.online, registro.telefone_fixo, registro.telefone_celular, 
+            registro.email, registro.site));
     });
 }
