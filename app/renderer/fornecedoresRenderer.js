@@ -5,6 +5,7 @@ const maskInput = require('mask-input');
 
 let fornecedoresTable = null;
 let actionButton = null;
+let descartarButton = null;
 let formPanel = null;
 let formTitle = null;
 let inputId = null;
@@ -40,6 +41,7 @@ exports.initTela = initTela;
 function initTela() {
     fornecedoresTable = document.querySelector('#fornecedores-table');
     actionButton = document.querySelector('#action-fornecedor-btn');
+    descartarButton = document.querySelector('#descartar-form-btn');
     formPanel = document.querySelector('#fornecedor-crud-shield');
     formTitle = document.querySelector('#titulo-form');
     inputId = document.querySelector('#fornecedor-id');
@@ -58,6 +60,7 @@ function initTela() {
     // Adicionando listeners para elementos da tela
     formPanel.addEventListener('click', fecharFormClick);
     actionButton.addEventListener('click', actionclick);
+    descartarButton.addEventListener('click', descartarclick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
 
     // Campos de paginação
@@ -126,7 +129,7 @@ function atualizarTela() {
                 let deleteCol = row.insertCell();
                 deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
                 deleteCol.style = 'text-align: center;';
-                deleteCol.addEventListener("click", apagar);
+                deleteCol.addEventListener("click", apagarClick);
 
                 row.addEventListener("click", carregarFormEdicao);
             });
@@ -134,13 +137,20 @@ function atualizarTela() {
     });
 }
 
-function exibirFormularioNovo() {
-    // Limpando form
+function limparForm() {
     fornecedorForm.reset();
     inputId.value = null;
 
     telefoneFixoMask.input._value = '(00) 0000-0000';
     telefoneCelularMask.input._value = '(00) 00000-0000';
+}
+
+function exibirFormularioNovo() {
+
+    if (inputId.value) {
+        console.log('Há registros em edição no form. Resetando form...');
+        limparForm();
+    }
 
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Novo fornecedor';
@@ -151,8 +161,6 @@ function exibirFormularioNovo() {
 
 function carregarFormEdicao(event) {
     let element = event.target;
-    // Limpando form
-    fornecedorForm.reset();
 
     if (element.nodeName == 'I') {
         // No click da lixeira, ignorar a abertura do formulario
@@ -162,6 +170,7 @@ function carregarFormEdicao(event) {
         element = element.parentElement;
     }
 
+    limparForm();
     let id = element.children[0].textContent;
     fornecedorDao.consultar(id, (fornecedor) => {
 
@@ -269,10 +278,14 @@ function validarForm() {
 
 function fecharFormClick(event) {
     if (event.target.id == this.id) {
-        formPanel.style.display = 'none';
-        actionButton.innerHTML = '<i class="fas fa-plus"></i>';
-        toggleForm = !toggleForm;
+        fecharForm();
     }
+}
+
+function fecharForm() {
+    formPanel.style.display = 'none';
+    actionButton.innerHTML = '<i class="fas fa-plus"></i>';
+    toggleForm = !toggleForm;
 }
 
 function filtrar() {
@@ -280,10 +293,13 @@ function filtrar() {
     atualizarTela();
 }
 
-function apagar(event) {
+function apagarClick(event) {
     let id = event.target.parentElement.parentElement.children[0].textContent;
     let nome = event.target.parentElement.parentElement.children[1].textContent;
-    
+    apagar(id, nome, atualizarTela);
+}
+
+function apagar(id, nome, cb) {
     uiUtils.showPopup('Atenção!', `Deseja realmente apagar o fornecedor ${nome}?`, '200px', '300px', 
         [
             {label: 'Sim', cb: (event) => {
@@ -294,8 +310,8 @@ function apagar(event) {
                         M.toast({html: msgErro,  classes: 'rounded toastErro'});
                     }
                     else {
-                        console.debug(`Fornecedor removido`);
-                        atualizarTela();
+                        M.toast({html: 'Fornecedor removido com sucesso!',  classes: 'rounded toastSucesso'});
+                        cb();
                     }
                     return;
                 });
@@ -303,6 +319,22 @@ function apagar(event) {
             }},
             {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
         ]);
+
+}
+
+function descartarclick() {
+    if (inputId.value) {
+        // Edição
+        apagar(inputId.value, inputNome.value, () => {
+            limparForm();
+            fecharForm();
+            atualizarTela();
+        });
+    } else {
+        // Inserção
+        limparForm();
+        fecharForm();
+    }
 }
 
 function navegarPrimeiraPagina() {

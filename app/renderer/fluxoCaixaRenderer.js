@@ -4,6 +4,7 @@ const uiUtils = require('../utils/uiUtils');
 
 let fluxoCaixaTable = null;
 let actionButton = null;
+let descartarButton = null;
 let form = null;
 let formShield = null;
 let formTitle = null;
@@ -33,6 +34,7 @@ exports.initTela = initTela;
 function initTela() {
     fluxoCaixaTable = document.querySelector('#fluxo-caixa-table');
     actionButton = document.querySelector('#action-btn');
+    descartarButton = document.querySelector('#descartar-form-btn');
     form = document.querySelector('#fluxo-caixa-form');
     formShield = document.querySelector('#fluxo-caixa-crud-shield');
     formTitle = document.querySelector('#titulo-form');
@@ -60,6 +62,7 @@ function initTela() {
     // Adicionando listeners para elementos da tela
     formShield.addEventListener('click', fecharFormClick);
     actionButton.addEventListener('click', actionclick);
+    descartarButton.addEventListener('click', descartarclick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
 
     // Inicializando campos de data
@@ -97,7 +100,7 @@ function atualizarTela() {
     movimentacaoCaixaDao.carregarMovimentacoes(filtro.value, paginaAtual-1, tamanhoPagina, (result, err) => {
 
         if (err) {
-            let msgErro = `Ocorreu um erro ao carregar os fluxos de caixa: ${err}`;
+            let msgErro = `Ocorreu um erro ao carregar as movimentações de caixa: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
             return;
@@ -129,7 +132,7 @@ function atualizarTela() {
                 let deleteCol = row.insertCell();
                 deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
                 deleteCol.style = 'text-align: center;';
-                deleteCol.addEventListener("click", apagar);
+                deleteCol.addEventListener("click", apagarClick);
     
                 row.addEventListener("click", carregarFormEdicao);
             });
@@ -137,13 +140,20 @@ function atualizarTela() {
     });
 }
 
-function exibirFormularioNovo() {
-    // Limpando form
+function limparForm() {
     form.reset();
     inputId.value = null;
+}
+
+function exibirFormularioNovo() {
+
+    if (inputId.value) {
+        console.log('Há registros em edição no form. Resetando form...');
+        limparForm();
+    }
 
     // Exibir formulário de cadastro
-    formTitle.innerHTML = 'Novo fluxo de caixa';
+    formTitle.innerHTML = 'Nova movimentação de caixa';
     formShield.style.display = 'block';
     actionButton.innerHTML = '<i class="fas fa-save"></i>';
     inputTipo[0].focus();
@@ -151,8 +161,6 @@ function exibirFormularioNovo() {
 
 function carregarFormEdicao(event) {
     let element = event.target;
-    // Limpando form
-    form.reset();
 
     if (element.nodeName == 'I') {
         // No click da lixeira, ignorar a abertura do formulario
@@ -161,6 +169,8 @@ function carregarFormEdicao(event) {
     else if (element.nodeName == 'TD') {
         element = element.parentElement;
     }
+
+    limparForm();
 
     // Setando campos
     inputId.value = element.children[0].textContent;
@@ -172,7 +182,7 @@ function carregarFormEdicao(event) {
     M.updateTextFields();
     
     // Exibir formulário de cadastro
-    formTitle.innerHTML = 'Editar fluxo de caixa';
+    formTitle.innerHTML = 'Editar movimentação de caixa';
     formShield.style.display = 'block';
     actionButton.innerHTML = '<i class="fas fa-save"></i>';
     inputTipo[0].focus();
@@ -260,10 +270,14 @@ function validarForm() {
 
 function fecharFormClick(event) {
     if (event.target.id == this.id) {
-        formShield.style.display = 'none';
-        actionButton.innerHTML = '<i class="fas fa-plus"></i>';
-        toggleForm = !toggleForm;
+        fecharForm();
     }
+}
+
+function fecharForm() {
+    formShield.style.display = 'none';
+    actionButton.innerHTML = '<i class="fas fa-plus"></i>';
+    toggleForm = !toggleForm;
 }
 
 function filtrar() {
@@ -271,22 +285,25 @@ function filtrar() {
     atualizarTela();
 }
 
-function apagar(event) {
+function apagarClick(event) {
     let id = event.target.parentElement.parentElement.children[0].textContent;
     let desc = event.target.parentElement.parentElement.children[1].textContent;
-    
-    uiUtils.showPopup('Atenção!', `Deseja realmente apagar o fluxo de caixa "${desc}"?`, '200px', '300px', 
+    apagar(id, desc, atualizarTela);
+}
+
+function apagar(id, desc, cb) {    
+    uiUtils.showPopup('Atenção!', `Deseja realmente apagar a movimentação de caixa "${desc}"?`, '200px', '300px', 
         [
             {label: 'Sim', cb: (event) => {
                 movimentacaoCaixaDao.remover(id, (id, err) => {
                     if (err) {
-                        let msgErro = `Ocorreu um erro ao remover o fluxo de caixa: ${err}`;
+                        let msgErro = `Ocorreu um erro ao remover a movimentação de caixa: ${err}`;
                         console.error(msgErro);
                         M.toast({html: msgErro,  classes: 'rounded toastErro'});
                     }
                     else {
-                        console.debug(`Fornecedor removido`);
-                        atualizarTela();
+                        M.toast({html: 'Movimentação de caixa removida com sucesso!',  classes: 'rounded toastSucesso'});
+                        cb();
                     }
                     return;
                 });
@@ -294,6 +311,21 @@ function apagar(event) {
             }},
             {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
         ]);
+}
+
+function descartarclick() {
+    if (inputId.value) {
+        // Edição
+        apagar(inputId.value, inputDesc.value, () => {
+            limparForm();
+            fecharForm();
+            atualizarTela();
+        });
+    } else {
+        // Inserção
+        limparForm();
+        fecharForm();
+    }
 }
 
 function navegarPrimeiraPagina() {

@@ -8,6 +8,7 @@ const soap = require('soap');
 
 let encomendasTable = null;
 let actionButton = null;
+let descartarButton = null;
 let formPanel = null;
 let formTitle = null;
 let form = null;
@@ -69,6 +70,7 @@ function initTela() {
 
     encomendasTable = document.querySelector('#encomendas-table');
     actionButton = document.querySelector('#action-encomenda-btn');
+    descartarButton = document.querySelector('#descartar-form-btn');
     formPanel = document.querySelector('#encomenda-crud-shield');
     formTitle = document.querySelector('#titulo-form');
     form = document.querySelector('#encomenda-form');
@@ -111,6 +113,7 @@ function initTela() {
     // Adicionando listeners para elementos da tela
     formPanel.addEventListener('click', fecharFormClick);
     actionButton.addEventListener('click', actionclick);
+    descartarButton.addEventListener('click', descartarclick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
     inputFormaPgto.addEventListener('change', toggleInputEntrada);
     btnAddInsumo.addEventListener('click', addInsumoClick);
@@ -232,7 +235,7 @@ function atualizarTela() {
                     let deleteCol = row.insertCell();
                     deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
                     deleteCol.style = 'text-align: center;';
-                    deleteCol.addEventListener("click", apagar);
+                    deleteCol.addEventListener("click", apagarClick);
 
                     row.addEventListener("click", carregarFormEdicao);
                 }
@@ -247,8 +250,7 @@ function atualizarTela() {
     });
 }
 
-function exibirFormularioNovo() {
-    // Limpando form
+function limparForm() {
     form.reset();
     inputId.value = null;
     custoEncomenda = 0;
@@ -256,6 +258,13 @@ function exibirFormularioNovo() {
     
     telefoneMask.input._value = '(00) 00000-0000';
     cepMask.input._value = '00000-000';
+}
+
+function exibirFormularioNovo() {
+
+    if (inputId.value) {
+        limparForm();
+    }
     
     // Limpando tabela de insumos
     while(tableInsumo.rows.length > 1) {
@@ -271,9 +280,6 @@ function exibirFormularioNovo() {
 
 function carregarFormEdicao(event) {
     let element = event.target;
-    // Limpando form
-    form.reset();
-    custoEncomenda = 0;
     
     // Limpando tabela de insumos
     while(tableInsumo.rows.length > 1) {
@@ -287,6 +293,8 @@ function carregarFormEdicao(event) {
     else if (element.nodeName == 'TD') {
         element = element.parentElement;
     }
+
+    limparForm();
 
     // Setando campos
     let encomenda = encomendaDao.consultar(element.children[0].textContent, (encomenda) => {
@@ -475,10 +483,14 @@ function atualizar(encomenda) {
 
 function fecharFormClick(event) {
     if (event.target.id == this.id) {
-        formPanel.style.display = 'none';
-        actionButton.innerHTML = '<i class="fas fa-plus"></i>';
-        toggleForm = !toggleForm;
+        fecharForm();
     }
+}
+
+function fecharForm() {
+    formPanel.style.display = 'none';
+    actionButton.innerHTML = '<i class="fas fa-plus"></i>';
+    toggleForm = !toggleForm;
 }
 
 function toggleInputEntrada(e) {
@@ -490,11 +502,13 @@ function filtrar() {
     atualizarTela();
 }
 
-function apagar(event) {
-
+function apagarClick(event) {
     let id = event.target.parentElement.parentElement.children[0].textContent;
     let desc = event.target.parentElement.parentElement.children[2].textContent;
-    
+    apagar(id, desc, atualizarTela);
+}
+
+function apagar(id, desc, cb) {
     uiUtils.showPopup('Atenção!', `Deseja realmente apagar a encomenda ${desc}?`, '200px', '300px', 
         [
             {label: 'Sim', cb: (event) => {
@@ -505,8 +519,8 @@ function apagar(event) {
                         M.toast({html: msgErro,  classes: 'rounded toastErro'});
                     }
                     else {
-                        console.debug(`Encomenda removida`);
-                        atualizarTela();
+                        M.toast({html: 'Encomenda removida com sucesso!',  classes: 'rounded toastSucesso'});
+                        cb();
                     }
                     return;
                 });
@@ -514,6 +528,21 @@ function apagar(event) {
             }},
             {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
         ]);
+}
+
+function descartarclick() {
+    if (inputId.value) {
+        // Edição
+        apagar(inputId.value, inputDesc.value, () => {
+            limparForm();
+            fecharForm();
+            atualizarTela();
+        });
+    } else {
+        // Inserção
+        limparForm();
+        fecharForm();
+    }
 }
 
 function consultarCep(event) {
