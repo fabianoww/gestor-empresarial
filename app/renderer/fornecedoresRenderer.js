@@ -15,6 +15,7 @@ let inputTelefoneFixo = null;
 let inputTelefoneCelular = null;
 let inputEmail = null;
 let inputSite = null;
+let inputObservacao = null;
 let toggleForm = false;
 let fornecedorForm = null;
 let filtro = null;
@@ -49,6 +50,7 @@ function initTela() {
     inputTelefoneCelular = document.querySelector('#telefone-celular');
     inputEmail = document.querySelector('#email');
     inputSite = document.querySelector('#site');
+    inputObservacao = document.querySelector('#observacao');
     fornecedorForm = document.querySelector('#fornecedor-form');
     filtro = document.querySelector('#filtro');
     toggleForm = false;
@@ -174,6 +176,7 @@ function carregarFormEdicao(event) {
         telefoneCelularMask.input._value = fornecedor.telefoneCelular ? fornecedor.telefoneCelular : '(00) 00000-0000';
         inputEmail.value = fornecedor.email;
         inputSite.value = fornecedor.site;
+        inputObservacao.value = fornecedor.observacao;
         M.updateTextFields();
         
         // Exibir formulário de cadastro
@@ -235,11 +238,11 @@ function actionclick() {
 
             if (novoFornecedor) {
                 // Salvar
-                inserir(new Fornecedor(null, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefoneFixo.value, inputTelefoneCelular.value, inputEmail.value, inputSite.value));
+                inserir(new Fornecedor(null, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefoneFixo.value, inputTelefoneCelular.value, inputEmail.value, inputSite.value, inputObservacao.value));
             }
             else {
                 // Atualizar
-                atualizar(new Fornecedor(inputId.value, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefoneFixo.value, inputTelefoneCelular.value, inputEmail.value, inputSite.value));
+                atualizar(new Fornecedor(inputId.value, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefoneFixo.value, inputTelefoneCelular.value, inputEmail.value, inputSite.value, inputObservacao.value));
             }
             toggleForm = !toggleForm;
         }
@@ -254,6 +257,7 @@ function validarForm() {
     formValid = uiUtils.validarCampo(inputTelefoneCelular, false) && formValid;
     formValid = uiUtils.validarCampo(inputEmail, false) && formValid;
     formValid = uiUtils.validarCampo(inputSite, false) && formValid;
+    formValid = uiUtils.validarCampo(inputObservacao, false) && formValid;
     
     if (!formValid) {
         M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});

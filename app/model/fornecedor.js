@@ -1,5 +1,5 @@
 class Fornecedor {
-    constructor(id, nome, tipo, online, telefoneFixo, telefoneCelular, email, site) {
+    constructor(id, nome, tipo, online, telefoneFixo, telefoneCelular, email, site, observacao) {
       this.id = id;
       this.nome = nome;
       this.tipo = tipo;
@@ -8,6 +8,7 @@ class Fornecedor {
       this.telefoneCelular = telefoneCelular;
       this.email = email;
       this.site = site;
+      this.observacao = observacao;
     }
 }
 

@@ -195,6 +195,7 @@ function criarTabelas(err, rows) {
                 telefone_celular VARCHAR(20), 
                 site VARCHAR(200), 
                 email VARCHAR(100),
+                observacao VARCHAR(200),
                 ativo INTEGER NOT NULL DEFAULT 1)`);
         console.debug(`Tabela "${nomeTabela}" criada com sucesso!`);
     }
