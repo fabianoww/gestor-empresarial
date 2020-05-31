@@ -48,6 +48,9 @@ let toggleForm = false;
 let filtro = null;
 let custoEncomenda;
 
+let telefoneMask = null;
+let cepMask = null
+
 // Campos paginação
 let tamanhoPagina = 15;
 let paginaAtual = 1;
@@ -150,14 +153,14 @@ function initTela() {
     });
 
     // Inicializando campos de telefone
-    const telefoneMask = new maskInput.default(document.querySelector('#telefone-cliente'), {
+    telefoneMask = new maskInput.default(document.querySelector('#telefone-cliente'), {
         mask: '(00) 00000-0000',
         alwaysShowMask: true,
         maskChar: '0',
     });
 
     // Inicializando campos de cep
-    const cepMask = new maskInput.default(document.querySelector('#cep-end-cliente'), {
+    cepMask = new maskInput.default(document.querySelector('#cep-end-cliente'), {
         mask: '00000-000',
         alwaysShowMask: true,
         maskChar: '0',
@@ -251,6 +254,9 @@ function exibirFormularioNovo() {
     custoEncomenda = 0;
     lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoEncomenda)}`;
     
+    telefoneMask.input._value = '(00) 00000-0000';
+    cepMask.input._value = '00000-000';
+    
     // Limpando tabela de insumos
     while(tableInsumo.rows.length > 1) {
         tableInsumo.deleteRow(1);
@@ -298,8 +304,10 @@ function carregarFormEdicao(event) {
         inputCodRastreamento.value = encomenda.codRastreamento;
         inputNomeCliente.value = encomenda.nomeCliente;
         inputTelCliente.value = encomenda.telCliente;
+        telefoneMask.input._value = encomenda.telCliente ? encomenda.telCliente : '(00) 00000-0000';
         inputEmail.value = encomenda.emailCliente;
         cepEnderecoCliente.value = encomenda.cepEndCliente;
+        cepMask.input._value = encomenda.cepEndCliente ? encomenda.cepEndCliente : '00000-000';
         logradouroEnderecoCliente.value = encomenda.logEndCliente;
         numeroEnderecoCliente.value = encomenda.numEndCliente;
         bairroEnderecoCliente.value = encomenda.bairroEndCliente;

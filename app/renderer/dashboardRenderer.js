@@ -152,16 +152,3 @@ function initTela() {
         }
     });
 }
-
-function drawChart() {
-    console.log('charrrrr');
-    // Standard google charts functionality is available as GoogleCharts.api after load
-    const data = GoogleCharts.api.visualization.arrayToDataTable([
-        ['Chart thing', 'Chart amount'],
-        ['Lorem ipsum', 60],
-        ['Dolor sit', 22],
-        ['Sit amet', 18]
-    ]);
-    const pie_1_chart = new GoogleCharts.api.visualization.PieChart(document.getElementById('historico-balancos-panel'));
-    pie_1_chart.draw(data);
-}

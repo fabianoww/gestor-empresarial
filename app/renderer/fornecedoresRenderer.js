@@ -19,6 +19,9 @@ let toggleForm = false;
 let fornecedorForm = null;
 let filtro = null;
 
+let telefoneFixoMask = null;
+let telefoneCelularMask = null;
+
 // Campos paginação
 let tamanhoPagina = 15;
 let paginaAtual = 1;
@@ -68,13 +71,13 @@ function initTela() {
     paginacaoPanel = document.querySelector('#paginacao-panel');
 
     // Inicializando campos campos
-    const telefoneFixoMask = new maskInput.default(document.querySelector('#telefone-fixo'), {
+    telefoneFixoMask = new maskInput.default(document.querySelector('#telefone-fixo'), {
         mask: '(00) 0000-0000',
         alwaysShowMask: true,
         maskChar: '0',
     });
     
-    const telefoneCelularMask = new maskInput.default(document.querySelector('#telefone-celular'), {
+    telefoneCelularMask = new maskInput.default(document.querySelector('#telefone-celular'), {
         mask: '(00) 00000-0000',
         alwaysShowMask: true,
         maskChar: '0',
@@ -134,6 +137,9 @@ function exibirFormularioNovo() {
     fornecedorForm.reset();
     inputId.value = null;
 
+    telefoneFixoMask.input._value = '(00) 0000-0000';
+    telefoneCelularMask.input._value = '(00) 00000-0000';
+
     // Exibir formulário de cadastro
     formTitle.innerHTML = 'Novo fornecedor';
     formPanel.style.display = 'block';
@@ -163,7 +169,9 @@ function carregarFormEdicao(event) {
         inputTipo.value = fornecedor.tipo;
         uiUtils.setRadioValue(inputOnline, fornecedor.online);
         inputTelefoneFixo.value = fornecedor.telefoneFixo;
+        telefoneFixoMask.input._value = fornecedor.telefoneFixo ? fornecedor.telefoneFixo : '(00) 0000-0000';
         inputTelefoneCelular.value = fornecedor.telefoneCelular;
+        telefoneCelularMask.input._value = fornecedor.telefoneCelular ? fornecedor.telefoneCelular : '(00) 00000-0000';
         inputEmail.value = fornecedor.email;
         inputSite.value = fornecedor.site;
         M.updateTextFields();
