@@ -141,7 +141,7 @@ function atualizarTela() {
     while(estoqueTable.rows.length > 1) {
         estoqueTable.deleteRow(1);
     }
-    estoqueDao.carregarEstoque(filtro.value, 0, 15, (result, err) => {
+    estoqueDao.carregarEstoque(filtro.value, paginaAtual-1, tamanhoPagina, (result, err) => {
         
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar os itens do estoque: ${err}`;

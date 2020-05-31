@@ -84,7 +84,7 @@ function atualizarTela() {
         fornecedoresTable.deleteRow(1);
     }
 
-    fornecedorDao.carregarFornecedores(filtro.value, 0, 15, (result, err) => {
+    fornecedorDao.carregarFornecedores(filtro.value, paginaAtual-1, tamanhoPagina, (result, err) => {
         
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar os fornecedores: ${err}`;
@@ -109,10 +109,6 @@ function atualizarTela() {
                 row.insertCell().innerHTML = registro.id;
                 row.insertCell().innerHTML = registro.nome;
                 row.insertCell().innerHTML = registro.tipo;
-                row.insertCell().innerHTML = registro.online == 1 ? 'Sim' : 'Não';
-                row.insertCell().innerHTML = registro.telefone;
-                row.insertCell().innerHTML = registro.email;
-                row.insertCell().innerHTML = registro.site;
                 
                 let deleteCol = row.insertCell();
                 deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
@@ -207,11 +203,13 @@ function atualizar(fornecedor) {
 }
 
 function actionclick() {
+    
     if (!toggleForm) {
         exibirFormularioNovo();
+        toggleForm = !toggleForm;
     } else {
         // Verificar validade dos campos
-        if (inputNome.checkValidity() && inputTipo.value != '' && inputTelefone.checkValidity() && inputEmail.checkValidity() && inputSite.checkValidity()) {
+        if (validarForm()) {
             let novoFornecedor = inputId.value == null || inputId.value.trim() == '';
 
             if (novoFornecedor) {
@@ -222,20 +220,25 @@ function actionclick() {
                 // Atualizar
                 atualizar(new Fornecedor(inputId.value, inputNome.value, inputTipo.value, uiUtils.getRadioValue(inputOnline), inputTelefone.value, inputEmail.value, inputSite.value));
             }
-        }
-        else {
-            if (inputTipo.value == '') {
-                M.toast({html: 'Selecione um tipo de fornecedor!',  classes: 'rounded toastErro'});
-            }
-            else {
-                M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
-            }
-
-            return;
+            toggleForm = !toggleForm;
         }
     }
+}
 
-    toggleForm = !toggleForm;
+function validarForm() {
+    let formValid = true;
+    formValid = uiUtils.validarCampo(inputNome, true) && formValid;
+    formValid = uiUtils.validarCampo(inputTipo, true) && formValid;
+    formValid = uiUtils.validarCampo(inputTelefone, false) && formValid;
+    formValid = uiUtils.validarCampo(inputEmail, false) && formValid;
+    formValid = uiUtils.validarCampo(inputSite, false) && formValid;
+    
+    if (!formValid) {
+        M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
+        return false;
+    }
+
+    return formValid;
 }
 
 function fecharFormClick(event) {

@@ -193,7 +193,7 @@ function atualizarTela() {
         encomendasTable.deleteRow(1);
     }
 
-    encomendaDao.carregarEncomendas(filtro.value, 0, 15, (result, err) => {
+    encomendaDao.carregarEncomendas(filtro.value, paginaAtual-1, tamanhoPagina, (result, err) => {
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar as encomendas: ${err}`;
             console.error(msgErro);

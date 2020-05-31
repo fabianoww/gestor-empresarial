@@ -122,7 +122,7 @@ function atualizarTela() {
         insumosTable.deleteRow(1);
     }
 
-    insumoDao.carregarInsumos(filtro.value, 0, 15, (result, err) => {
+    insumoDao.carregarInsumos(filtro.value, paginaAtual-1, tamanhoPagina, (result, err) => {
         
         if (err) {
             let msgErro = `Ocorreu um erro ao carregar os fluxos de caixa: ${err}`;
