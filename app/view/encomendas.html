@@ -40,7 +40,7 @@
                 <div style="display: flex;">
                     <div class="input-field col s6" style="display: inline-block; flex-grow: 1;">
                         <textarea id="desc" class="materialize-textarea" max="200" required></textarea>
-                        <label for="desc">Desrição</label>
+                        <label for="desc">Descrição</label>
                         <span class="helper-text" data-error="Informe uma descrição de até 200 caracteres"></span>
                     </div>
                     <div class="input-field col s12" style="display: inline-block; margin-left: 20px; width: 180px;">
@@ -229,34 +229,7 @@
             <fieldset>
                 <legend>Pagamento</legend>
                 <div style="display: flex;">
-                    <div class="input-field col s12" style="display: inline-block; width: 200px;">
-                        <select id="forma-pagamento" required>
-                            <option value="">Escolha uma opção</option>
-                            <option value="ENCOMENDA">Na encomenda</option>
-                            <option value="ENTREGA">Na entrega</option>
-                            <option value="ENT+1">Entrada + 1</option>
-                        </select>
-                        <label>Forma de pagamento</label>
-                        <span class="helper-text" data-error="Selecione uma forma de pagamento"></span>
-                    </div>
-                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
-                        <input id="valor-entrada" type="text" class="validate monetario">
-                        <label for="valor-entrada">Entrada</label>
-                        <span class="helper-text" data-error="Informe o valor da entrada"></span>
-                    </div>
-                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
-                        <input id="valor" type="text" class="validate monetario" required>
-                        <label for="valor">Valor</label>
-                        <span class="helper-text" data-error="Informe o valor"></span>
-                    </div>
-                </div>
-                <div style="display: flex;">
-                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1;">
-                        <input id="data-pagamento" type="text" class="datepicker">
-                        <label for="data-pagamento">Data do pagamento</label>
-                        <span class="helper-text" data-error="Informe a data do pagamento"></span>
-                    </div>
-                    <div class="input-field col s12" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                    <div class="input-field col s12" style="display: inline-block; flex-grow: 1;">
                         <select id="status" required>
                             <option value="">Escolha uma opção</option>
                             <option value="PEDIDO">Pedido</option>
@@ -268,6 +241,40 @@
                         </select>
                         <label>Status da encomenda</label>
                         <span class="helper-text" data-error="Selecione o status atual da encomenda"></span>
+                    </div>
+                    <div class="input-field col s12" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <select id="forma-pagamento" required>
+                            <option value="">Escolha uma opção</option>
+                            <option value="ENCOMENDA">Na encomenda</option>
+                            <option value="ENTREGA">Na entrega</option>
+                            <option value="ENT+1">Entrada + 1</option>
+                        </select>
+                        <label>Forma de pagamento</label>
+                        <span class="helper-text" data-error="Selecione uma forma de pagamento"></span>
+                    </div>
+                </div>
+                <div id="campos-entrada" style="display: none;">
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1;">
+                        <input id="valor-entrada" type="text" class="validate monetario">
+                        <label for="valor-entrada">Entrada</label>
+                        <span class="helper-text" data-error="Informe o valor da entrada"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="data-entrada" type="text" class="datepicker">
+                        <label for="data-entrada">Data da entrada</label>
+                        <span class="helper-text" data-error="Informe a data da entrada"></span>
+                    </div>
+                </div>
+                <div style="display: flex;">
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1;">
+                        <input id="valor" type="text" class="validate monetario" required>
+                        <label for="valor">Valor</label>
+                        <span class="helper-text" data-error="Informe o valor"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
+                        <input id="data-pagamento" type="text" class="datepicker">
+                        <label for="data-pagamento">Data do pagamento</label>
+                        <span class="helper-text" data-error="Informe a data do pagamento"></span>
                     </div>
                 </div>
             </fieldset>

@@ -41,6 +41,8 @@ let btnAddInsumo = null;
 let tableInsumo = null;
 let lblCustoTotal = null;
 let inputFormaPgto = null;
+let camposEntrada = null;
+let inputDataEntrada = null;
 let inputValorEntrada = null;
 let inputValor = null;
 let inputDataPgto = null;
@@ -102,6 +104,8 @@ function initTela() {
     tableInsumo = document.querySelector('#insumos-table');
     lblCustoTotal = document.querySelector('#total-custo-encomenda');
 	inputFormaPgto = document.querySelector('#forma-pagamento');
+	camposEntrada = document.querySelector('#campos-entrada');
+	inputDataEntrada = document.querySelector('#data-entrada');
 	inputValorEntrada = document.querySelector('#valor-entrada');
 	inputValor = document.querySelector('#valor');
 	inputDataPgto = document.querySelector('#data-pagamento');
@@ -190,6 +194,7 @@ function initTela() {
     cepEnderecoCliente.addEventListener('blur', consultarCep);
 
     atualizarTela();
+    limparForm();
 }
 
 function atualizarTela() {
@@ -324,12 +329,13 @@ function carregarFormEdicao(event) {
         cidadeEnderecoCliente.value = encomenda.cidEndCliente;
         inputFormaPgto.value = encomenda.formaPgto;
         inputValorEntrada.value = uiUtils.converterNumberParaMoeda(encomenda.entradaPgto);
+        inputDataEntrada.value = encomenda.dataEntrada;
         inputValor.value = uiUtils.converterNumberParaMoeda(encomenda.valorPgto);
         inputDataPgto.value = encomenda.dataPgto;
         inputStatus.value = encomenda.statusPgto;
 
-        // Setando a visibilidade do campo "valor entrada" com base na forma de pagamento selecionado
-        inputValorEntrada.parentElement.style.display = inputFormaPgto.value == 'ENT+1' ? 'inline-block' : 'none';
+        // Setando a visibilidade dos campos "valor entrada" e "data da entrada" com base na forma de pagamento selecionado
+        camposEntrada.style.display = inputFormaPgto.value == 'ENT+1' ? 'flex' : 'none';
 
         // Reinicializando campos selects 
         var elems = document.querySelectorAll('select');
@@ -389,7 +395,7 @@ function actionclick() {
                     inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
                     logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
                     estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, uiUtils.converterMoedaParaNumber(inputValorEntrada.value), 
-                    uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value, montarInsumos()));
+                    inputDataEntrada.value, uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value, montarInsumos()));
             }
             else {
                 // Atualizar
@@ -398,7 +404,7 @@ function actionclick() {
                     inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
                     logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
                     estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, uiUtils.converterMoedaParaNumber(inputValorEntrada.value), 
-                    uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value, montarInsumos()));
+                    inputDataEntrada.value, uiUtils.converterMoedaParaNumber(inputValor.value), inputDataPgto.value, inputStatus.value, montarInsumos()));
             }
             
             formPanel.style.display = 'none';
@@ -433,13 +439,18 @@ function validarForm() {
     formValid = uiUtils.validarCampo(estadoEnderecoCliente, false) && formValid;
     formValid = uiUtils.validarCampo(inputFormaPgto, true) && formValid;
     formValid = uiUtils.validarCampo(inputValorEntrada, inputFormaPgto.value == 'ENT+1') && formValid;
-    formValid = uiUtils.validarCampo(inputValor, false) && formValid;
+    formValid = uiUtils.validarCampo(inputDataEntrada, false) && formValid;
+    formValid = uiUtils.validarCampo(inputValor, true) && formValid;
     formValid = uiUtils.validarCampo(inputDataPgto, false) && formValid;
     formValid = uiUtils.validarCampo(inputStatus, true) && formValid;
     
     if (!formValid) {
         M.toast({html: 'Corrija os campos destacados em vermelho!',  classes: 'rounded toastErro'});
+    } else if (tableInsumo.rows.length <= 1) {
+        formValid = false;
+        M.toast({html: 'É necessário inserir ao menos um insumo!',  classes: 'rounded toastErro'});
     }
+
 
     return formValid;
 }
@@ -494,7 +505,7 @@ function fecharForm() {
 }
 
 function toggleInputEntrada(e) {
-    inputValorEntrada.parentElement.style.display = e.target.value == 'ENT+1' ? 'inline-block' : 'none';
+    camposEntrada.style.display = e.target.value == 'ENT+1' ? 'flex' : 'none';
 }
 
 function filtrar() {

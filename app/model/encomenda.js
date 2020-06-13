@@ -1,7 +1,7 @@
 class Encomenda {
     constructor(id, desc, tipoProduto, qtde, cores, obs, dataEncomenda, dataEntrega, horasProd, prazoEnvio, dataEnvio,
         codRastreamento, nomeCliente, telCliente, emailCliente, cepEndCliente, logEndCliente, numEndCliente, bairroEndCliente,
-        compEndCliente, ufEndCliente, cidEndCliente, formaPgto, entradaPgto, valorPgto, dataPgto, statusPgto, insumos) {
+        compEndCliente, ufEndCliente, cidEndCliente, formaPgto, entradaPgto, dataEntrada, valorPgto, dataPgto, statusPgto, insumos) {
       this.id = id;
       this.desc = desc;
       this.tipoProduto = tipoProduto;
@@ -26,6 +26,7 @@ class Encomenda {
       this.cidEndCliente = cidEndCliente;
       this.formaPgto = formaPgto;
       this.entradaPgto = entradaPgto;
+      this.dataEntrada = dataEntrada;
       this.valorPgto = valorPgto;
       this.dataPgto = dataPgto;
       this.statusPgto = statusPgto;
