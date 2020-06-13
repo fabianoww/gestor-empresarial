@@ -7,7 +7,6 @@ exports.salvar = function(fornecedor, cb) {
 }
 
 exports.atualizar = function(fornecedor, cb) {
-    console.log(fornecedor.observacao);
     dbDao.execute('UPDATE fornecedor SET nome = ?, tipo = ?, online = ?, telefone_fixo = ?, telefone_celular = ?, site = ?, email = ?, observacao = ? WHERE id = ?', 
         [fornecedor.nome, fornecedor.tipo, fornecedor.online, fornecedor.telefoneFixo, fornecedor.telefoneCelular, fornecedor.site, fornecedor.email, fornecedor.observacao, fornecedor.id], cb);
 }

@@ -31,6 +31,7 @@ exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
             ) `;
     }
 
+
     dbDao.selectFirst(query, filtro ? [filtro, filtro] : [], (row, err) => {
         
         if (err) {
@@ -45,6 +46,7 @@ exports.carregarInsumos = function(filtro, pagina, tamPagina, cb) {
         }
         
         query = query.replace('COUNT(*) AS total', 'i.id, i.descricao, i.qtde_minima, i.ativo, e.qtde, e.preco_medio');
+        query += 'ORDER BY i.descricao ';
 
         if (pagina != null && tamPagina != null) {
             query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;

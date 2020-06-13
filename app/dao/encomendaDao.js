@@ -160,16 +160,19 @@ exports.atualizar = function(encomenda, cb) {
         
         for (let i = 0; i < registros.length; i++) {
             const estoqueInsumo = registros[i];
+            console.log(estoqueInsumo);
 
             // Revertendo a quantidade em estoque do insumo
             statements[statements.length] = {
-                query: 'UPDATE estoque_insumos SET qtde = qtde + ? WHERE id_insumo = ?', 
+                query: 'UPDATE estoque_insumos SET qtde = qtde + ? WHERE id = ?', 
                 params: [estoqueInsumo.qtde, estoqueInsumo.id_estoque_insumo], 
                 cb: (err) => {
                     if (err) {
                         console.debug(`Erro ao reverter a quantidade de estoque dos insumos: ${err}`);
                     }
-                }};            
+                }};          
+                
+            console.log(statements[statements.length-1]);
         }
         
         // Deletando os insumos relacionados à encomenda
@@ -206,6 +209,7 @@ exports.atualizar = function(encomenda, cb) {
                         console.debug(`Erro ao atualizar a quantidade de estoque dos insumos: ${err}`);
                     }
                 }};
+            console.log(statements[statements.length-1]);
         }
 
         // Executando o INSERT do insumo_produto

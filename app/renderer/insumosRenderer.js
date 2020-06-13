@@ -128,7 +128,7 @@ function atualizarTela() {
     insumoDao.carregarInsumos(filtro.value, paginaAtual-1, tamanhoPagina, (result, err) => {
         
         if (err) {
-            let msgErro = `Ocorreu um erro ao carregar os fluxos de caixa: ${err}`;
+            let msgErro = `Ocorreu um erro ao carregar os insumos: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
             return;

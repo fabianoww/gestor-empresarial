@@ -45,6 +45,7 @@ exports.carregarMovimentacoes = function(filtro, pagina, tamPagina, cb) {
         }
 
         query = query.replace('COUNT(*) AS total', '*');
+        query += 'ORDER BY (SUBSTR(data,7)||SUBSTR(data,4,2)||SUBSTR(data,1,2)) DESC '
 
         if (pagina != null && tamPagina != null) {
             query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
