@@ -333,6 +333,7 @@ function criarTabelas(err, rows) {
                 valor_entrada_venda REAL,
                 valor_entrega_venda REAL,
                 forma_pgto VARCHAR(50),
+                data_entrada TEXT,
                 data_pgto TEXT,
                 id_movimentacao_caixa_entrada INTEGER,
                 id_movimentacao_caixa_princ INTEGER,
