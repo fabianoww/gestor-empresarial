@@ -59,12 +59,11 @@ Execute o instalador na máquina que será utilizada pelo usuário. Após a inst
 
 * **Fabiano Oliveira**
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
 ## Licença
 
 Este projeto é licensiado sobre a licença [GPL-3.0 License](https://github.com/fabianoww/gestor-empresarial/blob/master/LICENSE).
 
 ## Contribuição
 
+Este software é *open-source*, sendo seu uso totalmente gratuito. Se ele foi útil e se quiser agradecer de alguma forma, clique no botão abaixo e me pague um café!
 <a href="https://www.buymeacoffee.com/fabianooliveira" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-orange.png" alt="Gostou? Me pague um café!"  style="height: 51px !important;width: 217px !important;" ></a>
