@@ -1,0 +1,103 @@
+<div id="insumos-panel" class="crud-panel">
+    <h2>Insumos</h2>
+    
+    <div class="filtro input-field col s6">
+        <input id="filtro" type="text" max="100">
+        <label for="filtro">Filtro</label>
+    </div>
+
+    <table id="insumos-table">
+        <tr>
+            <th style="width: 70px;">ID</th>
+            <th style="text-align: left;">Descrição</th>
+            <th style="text-align: right; width: 150px;">Qtde. Mínima</th>
+            <th style="text-align: right; width: 100px;">Estoque</th>
+            <th style="text-align: right; width: 150px;">Preço médio</th>
+            <th style="width: 50px;"></th>
+            <th style="width: 50px;"></th>
+        </tr>
+    </table>
+</div>
+
+<div id="paginacao-panel">
+    <div id="btn-pag-primeira" title="Primeira página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-circle-left"></i></div>
+    <div id="btn-pag-anterior" title="Página anterior" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-left"></i></div>
+    <div id="pag-texto"></div>
+    <div id="btn-pag-proxima" title="Próxima página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-right"></i></div>
+    <div id="btn-pag-ultima" title="Última página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-circle-right"></i></div>
+</div>
+
+<div id="action-insumo-btn" class="floating-action-button"><i class="fas fa-plus"></i></div>
+
+<div id="insumo-form-shield" class="shield">
+    <div class="crud-form-panel">
+        <form id="insumo-form">
+            <h5 id="titulo-form"></h5>
+            <br/>
+            <input id="insumo-id" type="hidden"/>
+            <div class="input-field col s6">
+                <input id="desc" type="text" class="validate" max="200" required>
+                <label for="desc">Descrição</label>
+                <span class="helper-text" data-error="Informe uma descrição de até 200 caracteres"></span>
+            </div>
+            <div class="input-field col s6" style="display: inline-block;">
+                <input id="qtde-min" type="text" class="validate numerico" required>
+                <label for="qtde-min">Quantidade mínima</label>
+                <span class="helper-text" data-error="A quantidade mínima deve ser um número"></span>
+            </div>
+        </form>
+    </div>
+    <div id="descartar-form-btn"><i class="fas fa-trash-alt"></i></div>
+</div>
+
+<div id="estoque-form-shield" class="shield">
+    <div class="crud-form-panel">
+        <form id="estoque-form">
+            <h5 id="titulo-estoque-form"></h5>
+            <br/>
+            <input id="estoque-insumo-id" type="hidden"/>
+            <div class="input-field col s6">
+                <input id="estoque-qtde-itens" type="text" class="validate numerico" max="2" required>
+                <label for="estoque-qtde">Quantidade de itens</label>
+                <span class="helper-text" data-error="A quantidade de itens  deve ser um número"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-valor" type="text" class="validate monetario" required>
+                <label for="estoque-valor">Valor da compra (sem o frete)</label>
+                <span class="helper-text" data-error="Informe o valor da compra"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-frete" type="text" class="validate monetario">
+                <label for="estoque-frete">Valor do frete</label>
+                <span class="helper-text" data-error="Informe o valor do frete"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-qtde_parcelas" type="text" class="validate numerico" max="2">
+                <label for="estoque-qtde_parcelas">Quantidade de parcelas</label>
+                <span class="helper-text" data-error="A quantidade de parcelas deve ser um número"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-data-compra" type="text" class="datepicker">
+                <label for="estoque-data-compra">Data da compra</label>
+                <span class="helper-text" data-error="Informe a data da compra"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-data-debito" type="text" class="datepicker">
+                <label for="estoque-data-debito">Data do débito</label>
+            </div>
+            <div class="input-field col s6">
+                <input id="estoque-data-entrega" type="text" class="datepicker">
+                <label for="estoque-data-entrega">Data da entrega</label>
+            </div>
+            <div class="input-field col s12">
+                <select id="estoque-fornecedor" required>
+                    <option value="">Escolha um fornecedor</option>
+                </select>
+                <label>Fornecedor</label>
+                <span class="helper-text" data-error="Selecione um fornecedor"></span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>require('../renderer/insumosRenderer')</script>

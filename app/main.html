@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor Empresarial</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/materialize.css">
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="container">
+        <div id="vertical-menu">
+            <div id="menu-items">
+                <div id="menu-dashboard"><i class="fas fa-chart-bar menu-icon"></i><span class="menu-label">Dashboard</span></div><hr/>
+                <div id="menu-fluxo-caixa"><i class="fas fa-wallet menu-icon"></i><span class="menu-label">Fluxo de Caixa</span></div><hr/>
+                <div id="menu-encomendas"><i class="fas fa-cash-register menu-icon"></i><span class="menu-label">Encomendas</span></div><hr/>
+                <div id="menu-estoques"><i class="fas fa-boxes menu-icon"></i><span class="menu-label">Estoque</span></div><hr/>
+                <div id="menu-insumos"><i class="fas fa-lightbulb menu-icon"></i><span class="menu-label">Insumos</span class="menu-label"></div><hr/>
+                <div id="menu-fornecedores"><i class="fas fa-truck-loading menu-icon"></i><span class="menu-label">Fornecedores</span class="menu-label"></div><hr/>
+                <div id="menu-configuracoes"><i class="fas fa-cog menu-icon"></i><span class="menu-label">Configurações</span class="menu-label"></div>
+            </div>
+            <div id="menu-slider">
+                <i id="menu-slider-left" class="fas fa-angle-left"></i>
+                <i id="menu-slider-right" class="fas fa-angle-right" style="display: none;"></i id="menu-slider-right">
+            </div>
+        </div>
+        <div id="content"></div>
+    </div>
+
+    <script>require('./renderer/mainRenderer')</script>
+    <script type="text/javascript" src="resources/js/materialize.js"></script>
+</body>
+</html>

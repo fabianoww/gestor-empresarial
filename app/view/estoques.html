@@ -1,0 +1,112 @@
+<div id="estoque-panel" class="crud-panel">
+    <h2>Estoque</h2>
+    
+    <div class="filtro input-field col s6">
+        <input id="filtro" type="text" max="100">
+        <label for="filtro">Filtro</label>
+    </div>
+
+    <table id="estoque-table">
+        <tr>
+            <th style="width: 70px;">ID</th>
+            <th style="text-align: left;">Descrição</th>
+            <th style="width: 100px;">Tamanho</th>
+            <th style="width: 200px;">local</th>
+            <th style="width: 150px;">Valor</th>
+            <th style="width: 50px;"></th>
+            <th style="width: 50px;"></th>
+        </tr>
+    </table>
+</div>
+
+<div id="paginacao-panel">
+    <div id="btn-pag-primeira" title="Primeira página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-circle-left"></i></div>
+    <div id="btn-pag-anterior" title="Página anterior" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-left"></i></div>
+    <div id="pag-texto"></div>
+    <div id="btn-pag-proxima" title="Próxima página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-right"></i></div>
+    <div id="btn-pag-ultima" title="Última página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-circle-right"></i></div>
+</div>
+
+<div id="action-btn" class="floating-action-button"><i class="fas fa-plus"></i></div>
+
+<div id="estoque-crud-shield" class="shield">
+    <div class="crud-form-panel" style="width: 600px;">
+        <form id="estoque-form">
+            <h5 id="titulo-form"></h5>
+            <input id="estoque-id" type="hidden"/>
+            <div class="input-field col s6">
+                <input id="desc" type="text" class="validate" required>
+                <label for="desc">Descrição</label>
+                <span class="helper-text" data-error="Informe a descrição"></span>
+            </div>
+            <div style="display: inline-block; width: 50%; vertical-align: top;">
+                <div class="input-field col s6">
+                    <input id="tamanho" type="text" class="validate">
+                    <label for="tamanho">Tamanho</label>
+                    <span class="helper-text" data-error="Informe o tamanho"></span>
+                </div>
+                <div class="input-field col s6">
+                    <input id="valor" type="text" class="validate monetario" required>
+                    <label for="valor">Valor</label>
+                    <span class="helper-text" data-error="Informe o valor"></span>
+                </div>
+                <div class="input-field col s6">
+                    <input id="local" type="text" class="validate">
+                    <label for="local">Local</label>
+                    <span class="helper-text" data-error="Informe o local"></span>
+                </div>
+            </div>
+            <div style="display: inline-block; width: 40%; margin-left: 50px;">
+                <div class="file-field input-field">
+                    <div class="btn">
+                    <span><i class="fas fa-upload"></i></span>
+                    <input id="imagem-upload" type="file" accept="image/*">
+                    </div>
+                    <div class="file-path-wrapper">
+                    <input id="imagem-text-input" class="file-path validate" type="text">
+                    </div>
+                </div>
+                <div>
+                    <img id="imagem" src="" style="max-width: 100%; max-height: 100%;">
+                    <div id="btn-remover-preview">
+                        Remover imagem
+                    </div>
+                </div>
+                <div id="image-preview-vazio">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
+            <fieldset>
+                <legend>Insumos</legend>
+                <div style="display: flex;">
+                    <div class="input-field col s12" style="display: inline-block; flex-grow: 1;">
+                        <select id="insumo" required>
+                            <option value="">Escolha uma opção</option>
+                        </select>
+                        <label>Insumo</label>
+                        <span class="helper-text" data-error="Selecione um insumo"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: inline-block; width: 100px; flex-grow: 0; margin-left: 20px;">
+                        <input id="qtde-insumo" type="text" class="validate numerico" required>
+                        <label for="qtde-insumo">Quantidade</label>
+                        <span class="helper-text" data-error="A quantidade deve ser um número"></span>
+                    </div>
+                    <div id="btn-add-insumo-encomenda" role="button" tabindex="0"><i class="fas fa-plus"></i></div>
+                </div>
+                <table id="insumos-table">
+                    <tr>
+                        <th style="width: 50px;">ID</th>
+                        <th>Insumo</th>
+                        <th style="width: 100px;">Quantidade</th>
+                        <th style="width: 100px; text-align: right;">Custo</th>
+                        <th style="width: 50px;"></th>
+                    </tr>
+                </table>
+                <div id="total-custo-encomenda"></div>
+            </fieldset>
+        </form>
+    </div>
+    <div id="descartar-form-btn"><i class="fas fa-trash-alt"></i></div>
+</div>
+
+<script>require('../renderer/estoqueRenderer')</script>
