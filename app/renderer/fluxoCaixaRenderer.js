@@ -9,7 +9,6 @@ let form = null;
 let formShield = null;
 let formTitle = null;
 let inputId = null;
-let inputTipo = null;
 let inputDesc = null;
 let inputCategoria = null;
 let inputData = null;
@@ -39,7 +38,6 @@ function initTela() {
     formShield = document.querySelector('#fluxo-caixa-crud-shield');
     formTitle = document.querySelector('#titulo-form');
     inputId = document.querySelector('#fluxo-caixa-id');
-    inputTipo = document.getElementsByName('tipoFluxo');
     inputDesc = document.querySelector('#desc');
     inputCategoria = document.querySelector('#categoria');
     inputData = document.querySelector('#data');
@@ -156,7 +154,7 @@ function exibirFormularioNovo() {
     formTitle.innerHTML = 'Nova movimentação de caixa';
     formShield.style.display = 'block';
     actionButton.innerHTML = '<i class="fas fa-save"></i>';
-    inputTipo[0].focus();
+    inputDesc.focus();
 }
 
 function carregarFormEdicao(event) {
@@ -175,7 +173,7 @@ function carregarFormEdicao(event) {
     // Setando campos
     inputId.value = element.children[0].textContent;
     inputDesc.value = element.children[1].textContent;
-    uiUtils.setRadioValue(inputTipo, element.children[2].textContent)
+    //uiUtils.setRadioValue(inputTipo, element.children[2].textContent)
     inputCategoria.value = element.children[3].textContent;
     inputData.value = element.children[4].textContent;
     inputValor.value = element.children[5].textContent;
@@ -185,7 +183,7 @@ function carregarFormEdicao(event) {
     formTitle.innerHTML = 'Editar movimentação de caixa';
     formShield.style.display = 'block';
     actionButton.innerHTML = '<i class="fas fa-save"></i>';
-    inputTipo[0].focus();
+    inputDesc.focus();
     toggleForm = !toggleForm;
 }
 
@@ -239,13 +237,13 @@ function actionclick() {
             
             if (novoFornecedor) {
                 // Salvar
-                inserir(new MovimentacaoCaixa(null, inputDesc.value, document.querySelector('input[name="tipoFluxo"]:checked').value, 
+                inserir(new MovimentacaoCaixa(null, inputDesc.value, 
                     inputCategoria.value, inputData.value, uiUtils.converterMoedaParaNumber(inputValor.value)));
             }
             else {
                 // Atualizar
-                atualizar(new MovimentacaoCaixa(inputId.value, inputDesc.value, document.querySelector('input[name="tipoFluxo"]:checked').value, 
-                inputCategoria.value, inputData.value, uiUtils.converterMoedaParaNumber(inputValor.value)));
+                atualizar(new MovimentacaoCaixa(inputId.value, inputDesc.value, 
+                    inputCategoria.value, inputData.value, uiUtils.converterMoedaParaNumber(inputValor.value)));
             }
             toggleForm = !toggleForm;
         }

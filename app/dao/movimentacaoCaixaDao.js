@@ -2,12 +2,13 @@ const dbDao = require('./dbDao');
 
 exports.salvar = function(movimentacaoCaixa, cb) {
     dbDao.execute('INSERT INTO movimentacao_caixa (descricao, categoria, debito_credito, data, valor) VALUES(?,?,?,?,?)', 
-        [movimentacaoCaixa.descricao, movimentacaoCaixa.categoria, movimentacaoCaixa.tipo, movimentacaoCaixa.data, movimentacaoCaixa.valor.valueOf()], cb);
+        [movimentacaoCaixa.descricao, movimentacaoCaixa.categoria, movimentacaoCaixa.obterTipo(), movimentacaoCaixa.data, movimentacaoCaixa.valor.valueOf()], cb);
 }
 
 exports.atualizar = function(movimentacaoCaixa, cb) {
+    console.log(movimentacaoCaixa.obterTipo());
     dbDao.execute('UPDATE movimentacao_caixa SET descricao = ?, categoria = ?, debito_credito = ?, data = ?, valor = ? WHERE id = ?', 
-        [movimentacaoCaixa.descricao, movimentacaoCaixa.categoria, movimentacaoCaixa.tipo, movimentacaoCaixa.data, movimentacaoCaixa.valor.valueOf(), movimentacaoCaixa.id], cb);
+        [movimentacaoCaixa.descricao, movimentacaoCaixa.categoria, movimentacaoCaixa.obterTipo(), movimentacaoCaixa.data, movimentacaoCaixa.valor.valueOf(), movimentacaoCaixa.id], cb);
 }
 
 exports.remover = function(id, cb) {
