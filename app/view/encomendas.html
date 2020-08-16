@@ -12,7 +12,7 @@
             <th style="width: 100px;">Quantidade</th>
             <th style="text-align: left;">Descrição</th>
             <th style="width: 400px;">Cliente</th>
-            <th style="width: 100px;">Data entrega</th>
+            <th style="width: 100px;">Data prevista</th>
             <th style="width: 130px; text-align: right;">Horas produção</th>
             <th style="width: 50px;"></th>
         </tr>
@@ -80,9 +80,9 @@
                         <span class="helper-text" data-error="Informe a data da encomenda"></span>
                     </div>
                     <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
-                        <input id="data-entrega" type="text" class="datepicker">
-                        <label for="data-entrega">Data da entrega</label>
-                        <span class="helper-text" data-error="Informe a data da entrega"></span>
+                        <input id="data-prevista" type="text" class="datepicker">
+                        <label for="data-prevista">Data prevista de entrega</label>
+                        <span class="helper-text" data-error="Informe a data prevista para entrega"></span>
                     </div>
                     <div class="input-field col s6" style="display: inline-block; flex-grow: 1; margin-left: 20px;">
                         <input id="horas-producao" type="text" class="validate numerico">
@@ -275,6 +275,11 @@
                         <input id="data-pagamento" type="text" class="datepicker">
                         <label for="data-pagamento">Data do pagamento</label>
                         <span class="helper-text" data-error="Informe a data do pagamento"></span>
+                    </div>
+                    <div class="input-field col s6" style="display: none; flex-grow: 1; margin-left: 20px;">
+                        <input id="data-entrega" type="text" class="datepicker">
+                        <label for="data-entrega">Data da entrega</label>
+                        <span class="helper-text" data-error="Informe a data da entrega"></span>
                     </div>
                 </div>
             </fieldset>

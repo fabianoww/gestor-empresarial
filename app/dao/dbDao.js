@@ -7,7 +7,7 @@ exports.initDB = function() {
     startDB((db, err) => {
         initDb = db;
         db.serialize(function() {
-            db.all("SELECT name  FROM sqlite_master WHERE type='table'", criarTabelas);
+            db.all("SELECT name FROM sqlite_master WHERE type='table'", aplicarMigracoes);
         });
     });
 }
@@ -155,13 +155,36 @@ function executeTxStatements(db, statements, index, cb) {
     });
 }
 
-function criarTabelas(err, rows) {
+function aplicarMigracoes(err, rows) {
     let tabelasExistentes = [];
     rows.forEach((row) => {
         tabelasExistentes[tabelasExistentes.length] = row.name;
     });
     console.debug('Tabelas existentes: ' + tabelasExistentes);
 
+    if (tabelasExistentes.length == 0) {
+        // Primeira instação. Criar base da versão 1.0
+        aplicarV1x0x0(tabelasExistentes);
+    }
+
+    // Obtendo a versão instalada
+    initDb.get('SELECT valor FROM config c WHERE chave = "versaoInstalada"', [], (err, row) => {
+        if (err) {
+            console.error(err.message);
+            return;
+        }
+
+        let versaoInstalada = row == undefined ? undefined : row.valor;
+        console.log(`Versão instalada: ${versaoInstalada}`);
+
+        if (versaoInstalada == undefined) {
+            aplicarV1x1x0();
+        }
+    });
+}
+
+function aplicarV1x0x0(tabelasExistentes){
+    console.log('Aplicando versão 1.0.0 da base de dados');
     let nomeTabela;
 
     // Verificando tabela 'config'
@@ -364,4 +387,16 @@ function criarTabelas(err, rows) {
     }
     
     closeDB(initDb);
+}
+
+function aplicarV1x1x0(tabelasExistentes){
+    console.log('Aplicando versão 1.1.0 da base de dados');
+    
+    // Definindo versão do sistema na tabela de configurações
+    initDb.run('INSERT INTO config (chave, valor) values ("versaoInstalada", "1.1.0")');
+    
+    // Criando coluna de data prevista da encomenda
+    initDb.run('ALTER TABLE encomenda ADD data_prevista TEXT');
+
+    
 }

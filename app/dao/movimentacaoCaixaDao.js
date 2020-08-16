@@ -6,7 +6,6 @@ exports.salvar = function(movimentacaoCaixa, cb) {
 }
 
 exports.atualizar = function(movimentacaoCaixa, cb) {
-    console.log(movimentacaoCaixa.obterTipo());
     dbDao.execute('UPDATE movimentacao_caixa SET descricao = ?, categoria = ?, debito_credito = ?, data = ?, valor = ? WHERE id = ?', 
         [movimentacaoCaixa.descricao, movimentacaoCaixa.categoria, movimentacaoCaixa.obterTipo(), movimentacaoCaixa.data, movimentacaoCaixa.valor.valueOf(), movimentacaoCaixa.id], cb);
 }

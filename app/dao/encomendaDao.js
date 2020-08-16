@@ -38,12 +38,12 @@ exports.salvar = function(encomenda, cb) {
     let entrada = encomenda.entradaPgto ? encomenda.entradaPgto.valueOf() : null;
     let valor = encomenda.valorPgto ? encomenda.valorPgto.valueOf() : null;
     statements[statements.length] = {
-        query: `INSERT INTO encomenda(descricao, tipo_produto, qtde, cores, observacoes, data_encomenda, data_entrega, horas_producao, 
+        query: `INSERT INTO encomenda(descricao, tipo_produto, qtde, cores, observacoes, data_prevista, data_encomenda, data_entrega, horas_producao, 
             prazo_envio, data_envio, codigo_rastreamento, nome_cliente, telefone_cliente, email_cliente, cep_endereco_cliente, 
             logradouro_endereco_cliente, numero_endereco_cliente, bairro_endereco_cliente, complemento_endereco_cliente, estado_endereco_cliente, 
             cidade_endereco_cliente, forma_pgto, valor_entrada_venda, data_entrada, valor_entrega_venda, data_pgto, status, id_movimentacao_caixa_entrada, id_movimentacao_caixa_princ) 
-            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, (${queryIdEntrada}), (SELECT id FROM movimentacao_caixa ORDER BY id DESC LIMIT 1))`, 
-        params: [encomenda.desc, encomenda.tipoProduto, encomenda.qtde, encomenda.cores, encomenda.obs, encomenda.dataEncomenda, 
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, (${queryIdEntrada}), (SELECT id FROM movimentacao_caixa ORDER BY id DESC LIMIT 1))`, 
+        params: [encomenda.desc, encomenda.tipoProduto, encomenda.qtde, encomenda.cores, encomenda.obs, encomenda.dataPrevista, encomenda.dataEncomenda, 
             encomenda.dataEntrega, encomenda.horasProd, encomenda.prazoEnvio, encomenda.dataEnvio, encomenda.codRastreamento, 
             encomenda.nomeCliente, encomenda.telCliente, encomenda.emailCliente, encomenda.cepEndCliente, encomenda.logEndCliente, 
             encomenda.numEndCliente, encomenda.bairroEndCliente, encomenda.compEndCliente, encomenda.ufEndCliente, encomenda.cidEndCliente, 
@@ -138,13 +138,13 @@ exports.atualizar = function(encomenda, cb) {
 
     // Atualizando encomenda
     statements[statements.length] = {
-        query: `UPDATE encomenda SET descricao = ?, tipo_produto = ?, qtde = ?, cores = ?, observacoes = ?, data_encomenda = ?, 
+        query: `UPDATE encomenda SET descricao = ?, tipo_produto = ?, qtde = ?, cores = ?, observacoes = ?, data_prevista = ?, data_encomenda = ?, 
         data_entrega = ?, horas_producao = ?, prazo_envio = ?, data_envio = ?, codigo_rastreamento = ?, nome_cliente = ?, 
         telefone_cliente = ?, email_cliente = ?, cep_endereco_cliente = ?, logradouro_endereco_cliente = ?, numero_endereco_cliente = ?, 
         bairro_endereco_cliente = ?, complemento_endereco_cliente = ?, estado_endereco_cliente = ?, cidade_endereco_cliente = ?, 
         forma_pgto = ?, valor_entrada_venda = ?, data_entrada = ?, valor_entrega_venda = ?, data_pgto = ?, status = ?, id_movimentacao_caixa_entrada = (${queryIdEntrada}), 
         id_movimentacao_caixa_princ = (SELECT id FROM movimentacao_caixa ORDER BY id DESC LIMIT 1) WHERE id = ?`, 
-        params: [encomenda.desc, encomenda.tipoProduto, encomenda.qtde, encomenda.cores, encomenda.obs, encomenda.dataEncomenda, 
+        params: [encomenda.desc, encomenda.tipoProduto, encomenda.qtde, encomenda.cores, encomenda.obs, encomenda.dataPrevista, encomenda.dataEncomenda, 
             encomenda.dataEntrega, encomenda.horasProd, encomenda.prazoEnvio, encomenda.dataEnvio, encomenda.codRastreamento, 
             encomenda.nomeCliente, encomenda.telCliente, encomenda.emailCliente, encomenda.cepEndCliente, encomenda.logEndCliente, 
             encomenda.numEndCliente, encomenda.bairroEndCliente, encomenda.compEndCliente, encomenda.ufEndCliente, encomenda.cidEndCliente, 
@@ -160,7 +160,6 @@ exports.atualizar = function(encomenda, cb) {
         
         for (let i = 0; i < registros.length; i++) {
             const estoqueInsumo = registros[i];
-            console.log(estoqueInsumo);
 
             // Revertendo a quantidade em estoque do insumo
             statements[statements.length] = {
@@ -171,8 +170,6 @@ exports.atualizar = function(encomenda, cb) {
                         console.debug(`Erro ao reverter a quantidade de estoque dos insumos: ${err}`);
                     }
                 }};          
-                
-            console.log(statements[statements.length-1]);
         }
         
         // Deletando os insumos relacionados à encomenda
@@ -209,7 +206,6 @@ exports.atualizar = function(encomenda, cb) {
                         console.debug(`Erro ao atualizar a quantidade de estoque dos insumos: ${err}`);
                     }
                 }};
-            console.log(statements[statements.length-1]);
         }
 
         // Executando o INSERT do insumo_produto
@@ -234,7 +230,7 @@ exports.remover = function(id, cb) {
 exports.consultar = function(id, cb) {
     dbDao.selectFirst('SELECT * FROM encomenda WHERE id = ?', [id], (registro, err) => {
         cb(new Encomenda(registro.id, registro.descricao, registro.tipo_produto, registro.qtde, registro.cores, registro.observacoes, 
-            registro.data_encomenda, registro.data_entrega, registro.horas_producao, registro.prazo_envio, registro.data_envio,
+            registro.data_encomenda, registro.data_prevista, registro.data_entrega, registro.horas_producao, registro.prazo_envio, registro.data_envio,
             registro.codigo_rastreamento, registro.nome_cliente, registro.telefone_cliente, registro.email_cliente, registro.cep_endereco_cliente, 
             registro.logradouro_endereco_cliente, registro.numero_endereco_cliente, registro.bairro_endereco_cliente, registro.complemento_endereco_cliente, 
             registro.estado_endereco_cliente, registro.cidade_endereco_cliente, registro.forma_pgto, registro.valor_entrada_venda, registro.data_entrada ? registro.data_entrada : '',
@@ -263,7 +259,7 @@ exports.carregarEncomendas = function(filtro, pagina, tamPagina, cb) {
                 OR descricao LIKE '%' || ? || '%'
                 OR nome_cliente LIKE '%' || ? || '%'
                 OR tipo_produto LIKE '%' || ? || '%'
-                OR data_encomenda LIKE '%' || ? || '%'
+                OR data_prevista LIKE '%' || ? || '%'
                 OR data_entrega LIKE '%' || ? || '%'
             ) `;
     }
@@ -283,7 +279,7 @@ exports.carregarEncomendas = function(filtro, pagina, tamPagina, cb) {
         
         query = query.replace('COUNT(*) AS total', '*');
         query += `ORDER BY CASE WHEN status = "ENTREGUE" THEN 1 ELSE 0 END ASC, 
-            (SUBSTR(data_encomenda,7)||SUBSTR(data_encomenda,4,2)||SUBSTR(data_encomenda,1,2)) ASC `;
+            (SUBSTR(data_prevista,7)||SUBSTR(data_prevista,4,2)||SUBSTR(data_prevista,1,2)) ASC `;
 
         if (pagina != null && tamPagina != null) {
             query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;
