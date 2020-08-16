@@ -284,7 +284,6 @@ exports.carregarEncomendas = function(filtro, pagina, tamPagina, cb) {
         query = query.replace('COUNT(*) AS total', '*');
         query += `ORDER BY CASE WHEN status = "ENTREGUE" THEN 1 ELSE 0 END ASC, 
             (SUBSTR(data_encomenda,7)||SUBSTR(data_encomenda,4,2)||SUBSTR(data_encomenda,1,2)) ASC `;
-        console.log(query);
 
         if (pagina != null && tamPagina != null) {
             query += `LIMIT ${tamPagina} OFFSET ${pagina * tamPagina}`;

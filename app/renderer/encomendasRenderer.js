@@ -243,6 +243,10 @@ function atualizarTela() {
                     deleteCol.addEventListener("click", apagarClick);
 
                     row.addEventListener("click", carregarFormEdicao);
+
+                    if(registro.status == 'ENTREGUE') {
+                        row.className = 'encomendaEntregue';
+                    }
                 }
 
                 if (err) {
