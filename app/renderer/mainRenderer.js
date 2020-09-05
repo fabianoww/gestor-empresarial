@@ -2,8 +2,12 @@ const fs = require('fs');
 
 let dashboard = null;
 let dashboardRenderer = null;
-let fluxoCaixa = null;
-let fluxoCaixaRenderer = null;
+//let fluxoCaixa = null;
+//let fluxoCaixaRenderer = null;
+let pagamentos = null;
+let pagamentosRenderer = null;
+let recebimentos = null;
+let recebimentosRenderer = null;
 let estoques = null;
 let estoqueRenderer = null;
 let insumos = null;
@@ -15,7 +19,9 @@ let encomendasRenderer = null;
 let fornecedores = null;
 let fornecedoresRenderer = null;
 let menuDashboard = document.querySelector('#menu-dashboard');
-let menuFluxoCaixa = document.querySelector('#menu-fluxo-caixa');
+//let menuFluxoCaixa = document.querySelector('#menu-fluxo-caixa');
+let menuPagamentos = document.querySelector('#menu-pagamentos');
+let menuRecebimentos = document.querySelector('#menu-recebimentos');
 let menuestoques = document.querySelector('#menu-estoques');
 let menuInsumos = document.querySelector('#menu-insumos');
 let menuConfiguracoes = document.querySelector('#menu-configuracoes');
@@ -52,6 +58,7 @@ menuDashboard.addEventListener('click' ,function () {
     menuDashboard.className = 'selected-menu';
 });
 
+/*
 menuFluxoCaixa.addEventListener('click' ,function () {
     clearSelectedMenu();
     if (fluxoCaixa) {
@@ -66,6 +73,39 @@ menuFluxoCaixa.addEventListener('click' ,function () {
         });
     }
     menuFluxoCaixa.className = 'selected-menu';
+});
+*/
+
+menuPagamentos.addEventListener('click' ,function () {
+    clearSelectedMenu();
+    if (pagamentos) {
+        document.getElementById('content').innerHTML = pagamentos;
+        pagamentosRenderer.initTela();
+    } else {
+        fs.readFile(`${__dirname}/../view/pagamentos.html`, (err, data) => {
+            pagamentos = data;
+            document.getElementById('content').innerHTML = pagamentos;
+            pagamentosRenderer = require('./pagamentosRenderer.js');
+            pagamentosRenderer.initTela();
+        });
+    }
+    menuPagamentos.className = 'selected-menu';
+});
+
+menuRecebimentos.addEventListener('click' ,function () {
+    clearSelectedMenu();
+    if (recebimentos) {
+        document.getElementById('content').innerHTML = recebimentos;
+        recebimentosRenderer.initTela();
+    } else {
+        fs.readFile(`${__dirname}/../view/recebimentos.html`, (err, data) => {
+            recebimentos = data;
+            document.getElementById('content').innerHTML = recebimentos;
+            recebimentosRenderer = require('./recebimentosRenderer.js');
+            recebimentosRenderer.initTela();
+        });
+    }
+    menuRecebimentos.className = 'selected-menu';
 });
 
 menuestoques.addEventListener('click' ,function () {

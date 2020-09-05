@@ -161,3 +161,19 @@ exports.initDatePicker = function(selector) {
         }
     });
 }
+
+exports.converterData = function(date) {
+    let dia = date.getDate();
+    let mes = date.getMonth() + 1;
+    let ano = date.getFullYear();
+
+    if (dia < 10) {
+        dia = "0" + dia;
+    }
+
+    if (mes < 10) {
+        mes = "0" + mes;
+    }
+
+    return dia + "/" + mes + "/" + ano;
+}

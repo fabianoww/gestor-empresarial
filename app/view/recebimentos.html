@@ -1,16 +1,15 @@
-<div id="fluxo-caixa-panel" class="crud-panel">
-    <h2>Fluxo de Caixa</h2>
+<div id="recebimentos-panel" class="crud-panel">
+    <h2>Recebimentos</h2>
     
     <div class="filtro input-field col s6">
         <input id="filtro" type="text" max="100">
         <label for="filtro">Filtro</label>
     </div>
 
-    <table id="fluxo-caixa-table">
+    <table id="recebimentos-table">
         <tr>
             <th style="width: 70px;">ID</th>
             <th style="text-align: left;">Descrição</th>
-            <th style="width: 100px;">Tipo</th>
             <th style="width: 200px;">Categoria</th>
             <th style="width: 100px;">Data</th>
             <th style="width: 150px; text-align: right;">Valor</th>
@@ -29,11 +28,11 @@
 
 <div id="action-btn" class="floating-action-button"><i class="fas fa-plus"></i></div>
 
-<div id="fluxo-caixa-crud-shield" class="shield">
+<div id="recebimentos-crud-shield" class="shield">
     <div class="crud-form-panel">
-        <form id="fluxo-caixa-form">
+        <form id="recebimentos-form">
             <h5 id="titulo-form"></h5>
-            <input id="fluxo-caixa-id" type="hidden"/>
+            <input id="recebimentos-id" type="hidden"/>
             <div class="input-field col s6">
                 <input id="desc" type="text" class="validate" required>
                 <label for="desc">Descrição</label>
@@ -43,10 +42,6 @@
                 <select id="categoria">
                     <option value="">Escolha uma opção</option>
                     <option value="Aporte financeiro">Aporte financeiro</option>
-                    <option value="Compra de insumo">Compra de insumo</option>
-                    <option value="Despesa fixa">Despesa fixa</option>
-                    <option value="Despesa variável">Despesa variável</option>
-                    <option value="Investimento">Investimento</option>
                     <option value="Recebimento">Recebimento</option>
                 </select>
                 <label>Categoria</label>
@@ -67,4 +62,4 @@
     <div id="descartar-form-btn"><i class="fas fa-trash-alt"></i></div>
 </div>
 
-<script>require('../renderer/fluxoCaixaRenderer')</script>
+<script>require('../renderer/recebimentosRenderer')</script>

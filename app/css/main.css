@@ -405,3 +405,8 @@ fieldset > legend {
 td, th {
     padding: 5px 5px !important;
 }
+
+/* Específicos */
+.encomendaEntregue {
+    background-color: rgba(163, 248, 5, 0.12);
+}

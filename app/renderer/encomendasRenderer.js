@@ -21,6 +21,7 @@ let inputCores = null;
 let inputObs = null;
 let inputDataEncomenda = null;
 let inputDataEntrega = null;
+let inputDataPrevista = null;
 let inputHorasProducao = null;
 let inputPrazoEnvio = null;
 let inputDataEnvio = null;
@@ -83,6 +84,7 @@ function initTela() {
     inputCores = document.querySelector('#cores');
     inputObs = document.querySelector('#obs');
     inputDataEncomenda = document.querySelector('#data-encomenda');
+    inputDataPrevista = document.querySelector('#data-prevista');
     inputDataEntrega = document.querySelector('#data-entrega');
     inputHorasProducao = document.querySelector('#horas-producao');
     inputPrazoEnvio = document.querySelector('#prazo-envio');
@@ -119,6 +121,7 @@ function initTela() {
     actionButton.addEventListener('click', actionclick);
     descartarButton.addEventListener('click', descartarclick);
     filtro.addEventListener('input', uiUtils.debounce(filtrar, 500));
+    inputStatus.addEventListener('change', statusChange);
     inputFormaPgto.addEventListener('change', toggleInputEntrada);
     btnAddInsumo.addEventListener('click', addInsumoClick);
     btnAddInsumo.addEventListener("keyup", function(event) {
@@ -231,7 +234,7 @@ function atualizarTela() {
                     row.insertCell().innerHTML = registro.qtde;
                     row.insertCell().innerHTML = registro.descricao;
                     row.insertCell().innerHTML = registro.nome_cliente;
-                    row.insertCell().innerHTML = registro.data_entrega;
+                    row.insertCell().innerHTML = registro.data_prevista;
                     
                     let horasProducaoCol = row.insertCell();
                     horasProducaoCol.innerHTML = registro.horas_producao;
@@ -243,6 +246,10 @@ function atualizarTela() {
                     deleteCol.addEventListener("click", apagarClick);
 
                     row.addEventListener("click", carregarFormEdicao);
+
+                    if(registro.status == 'ENTREGUE') {
+                        row.className = 'encomendaEntregue';
+                    }
                 }
 
                 if (err) {
@@ -311,6 +318,7 @@ function carregarFormEdicao(event) {
         inputObs.value = encomenda.obs;
         inputDataEncomenda.value = encomenda.dataEncomenda;
         inputDataEntrega.value = encomenda.dataEntrega;
+        inputDataPrevista.value = encomenda.dataPrevista;
         inputHorasProducao.value = encomenda.horasProd;
         inputPrazoEnvio.value = encomenda.prazoEnvio;
         inputDataEnvio.value = encomenda.dataEnvio;
@@ -391,7 +399,7 @@ function actionclick() {
             if (novaEncomenda) {
                 // Salvar
                 inserir(new Encomenda(null, inputDesc.value, inputTipoProduto.value, inputQtde.value, inputCores.value, inputObs.value, 
-                    inputDataEncomenda.value, inputDataEntrega.value, inputHorasProducao.value, inputPrazoEnvio.value, inputDataEnvio.value,
+                    inputDataEncomenda.value, inputDataPrevista.value, inputDataEntrega.value, inputHorasProducao.value, inputPrazoEnvio.value, inputDataEnvio.value,
                     inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
                     logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
                     estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, uiUtils.converterMoedaParaNumber(inputValorEntrada.value), 
@@ -400,7 +408,7 @@ function actionclick() {
             else {
                 // Atualizar
                 atualizar(new Encomenda(inputId.value, inputDesc.value, inputTipoProduto.value, inputQtde.value, inputCores.value, inputObs.value, 
-                    inputDataEncomenda.value, inputDataEntrega.value, inputHorasProducao.value, inputPrazoEnvio.value, inputDataEnvio.value,
+                    inputDataEncomenda.value, inputDataPrevista.value, inputDataEntrega.value, inputHorasProducao.value, inputPrazoEnvio.value, inputDataEnvio.value,
                     inputCodRastreamento.value, inputNomeCliente.value, inputTelCliente.value, inputEmail.value, cepEnderecoCliente.value, 
                     logradouroEnderecoCliente.value, numeroEnderecoCliente.value, bairroEnderecoCliente.value, complEnderecoCliente.value, 
                     estadoEnderecoCliente.value, cidadeEnderecoCliente.value, inputFormaPgto.value, uiUtils.converterMoedaParaNumber(inputValorEntrada.value), 
@@ -502,6 +510,10 @@ function fecharForm() {
     formPanel.style.display = 'none';
     actionButton.innerHTML = '<i class="fas fa-plus"></i>';
     toggleForm = !toggleForm;
+}
+
+function statusChange(e) {
+    inputDataEntrega.parentElement.style.display = e.target.value == 'ENTREGUE' ? 'inline-block' : 'none';
 }
 
 function toggleInputEntrada(e) {

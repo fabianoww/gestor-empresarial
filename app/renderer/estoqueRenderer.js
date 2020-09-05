@@ -37,7 +37,7 @@ let btnPagUltima = null;
 let lblTextoPaginacao = null;
 let paginacaoPanel = null;
 
-let custoItem;
+let custoItem = 0;
 
 // Inicialização da tela
 exports.initTela = initTela;
@@ -182,6 +182,11 @@ function atualizarTela() {
                     imagemCol.innerHTML = `<i class="fas fa-camera"></i>`;
                     imagemCol.addEventListener("click", exibirImagemPopup);
                 }
+                
+                let venderCol = row.insertCell();
+                venderCol.innerHTML = `<i class="fas fa-shopping-cart"></i>`;
+                venderCol.style = 'text-align: center;';
+                venderCol.addEventListener("click", venderClick);
                 
                 let deleteCol = row.insertCell();
                 deleteCol.innerHTML = `<i class="fas fa-trash-alt"></i>`;
@@ -442,6 +447,34 @@ function apagar(id, desc, cb) {
         ]);
 }
 
+function venderClick(event) {
+    let id = event.target.parentElement.parentElement.children[0].textContent;
+    let desc = event.target.parentElement.parentElement.children[1].textContent;
+    vender(id, desc, atualizarTela);
+}
+
+function vender(id, desc, cb) {
+    uiUtils.showPopup('Atenção!', `Será gerado um registro de recebimento para o valor do produto! Deseja prosseguir?`, '200px', '350px', 
+        [
+            {label: 'Sim', cb: (event) => {
+                estoqueDao.venderItem(id, (id, err) => {
+                    if (err) {
+                        let msgErro = `Ocorreu um erro ao vender o item de estoque: ${err}`;
+                        console.error(msgErro);
+                        M.toast({html: msgErro,  classes: 'rounded toastErro'});
+                    }
+                    else {
+                        M.toast({html: 'Item de estoque vendido com sucesso!',  classes: 'rounded toastSucesso'});
+                        cb();
+                    }
+                    return;
+                });
+                uiUtils.closePopup(event);
+            }},
+            {label: 'Não', cor:'#bfbfbf', cb: uiUtils.closePopup}
+        ]);
+}
+
 function descartarclick() {
     if (inputId.value) {
         // Edição
@@ -476,7 +509,7 @@ function addInsumoClick() {
             deleteCol.style = 'text-align: center;';
             deleteCol.addEventListener("click", apagarInsumo);
 
-
+            console.log(custoItem);
             lblCustoTotal.innerHTML = `Custo do material: ${uiUtils.converterNumberParaMoeda(custoItem)}`;
 
             inputInsumo.value = '';

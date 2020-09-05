@@ -1,4 +1,5 @@
 const dbDao = require('./dbDao');
+const uiUtils = require('../utils/uiUtils');
 
 exports.salvar = function(estoque, cb) {
     let statements = [];
@@ -198,4 +199,31 @@ exports.carregarInsumos = function(idEstoque, cb) {
         JOIN estoque_insumos ei ON ip.id_estoque_insumo = ei.id
         JOIN insumo i ON i.id = ei.id_insumo
         WHERE id_estoque_produto = ?`, [idEstoque], cb);
+}
+
+exports.venderItem = function(id, cb) {
+    let statements = [];
+
+    // Registrando o recebimento pela venda
+    statements[statements.length] = {
+        query: `INSERT INTO movimentacao_caixa (descricao, categoria, debito_credito, data, valor) 
+            SELECT 'Venda de ' || descricao, 'Recebimento', 'C', '${uiUtils.converterData(new Date())}', valor FROM estoque_produtos WHERE id = ?`,
+        params: [id], 
+        cb: (err) => {
+            if (err) {
+                console.debug(`Erro ao registrar o recebimento da venda: ${err}`);
+            }
+        }};
+
+    // Inativando o item de estoque
+    statements[statements.length] = {
+        query: 'UPDATE estoque_produtos SET ativo = 0 WHERE id = ?',
+        params: [id], 
+        cb: (err) => {
+            if (err) {
+                console.debug(`Erro ao inativar o item de estoque: ${err}`);
+            }
+        }};
+    
+    dbDao.executeInTransaction(statements, cb);
 }

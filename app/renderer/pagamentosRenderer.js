@@ -2,7 +2,7 @@ const MovimentacaoCaixa = require('../model/movimentacaoCaixa');
 const movimentacaoCaixaDao = require('../dao/movimentacaoCaixaDao');
 const uiUtils = require('../utils/uiUtils');
 
-let fluxoCaixaTable = null;
+let pagamentosTable = null;
 let actionButton = null;
 let descartarButton = null;
 let form = null;
@@ -31,13 +31,13 @@ let paginacaoPanel = null;
 exports.initTela = initTela;
 
 function initTela() {
-    fluxoCaixaTable = document.querySelector('#fluxo-caixa-table');
+    pagamentosTable = document.querySelector('#pagamentos-table');
     actionButton = document.querySelector('#action-btn');
     descartarButton = document.querySelector('#descartar-form-btn');
-    form = document.querySelector('#fluxo-caixa-form');
-    formShield = document.querySelector('#fluxo-caixa-crud-shield');
+    form = document.querySelector('#pagamentos-form');
+    formShield = document.querySelector('#pagamentos-crud-shield');
     formTitle = document.querySelector('#titulo-form');
-    inputId = document.querySelector('#fluxo-caixa-id');
+    inputId = document.querySelector('#pagamentos-id');
     inputDesc = document.querySelector('#desc');
     inputCategoria = document.querySelector('#categoria');
     inputData = document.querySelector('#data');
@@ -72,15 +72,6 @@ function initTela() {
         element.addEventListener('keypress', uiUtils.apenasDigitos);
         element.addEventListener('keyup', uiUtils.formatarMonetario);
     });
-
-    // Inicializando autocomplete
-    movimentacaoCaixaDao.carregarCategorias((categorias) => {
-        let data = {};
-        categorias.forEach(categoria => data[categoria] = null);
-        M.Autocomplete.init(document.querySelectorAll('.autocomplete'), {
-            data: data
-        });
-    })
     
     // Inicializando os campos select
     var elems = document.querySelectorAll('select');
@@ -91,14 +82,14 @@ function initTela() {
 
 function atualizarTela() {
     // Limpando tabela
-    while(fluxoCaixaTable.rows.length > 1) {
-        fluxoCaixaTable.deleteRow(1);
+    while(pagamentosTable.rows.length > 1) {
+        pagamentosTable.deleteRow(1);
     }
 
-    movimentacaoCaixaDao.carregarMovimentacoes(filtro.value, paginaAtual-1, tamanhoPagina, (result, err) => {
+    movimentacaoCaixaDao.carregarMovimentacoes(filtro.value, 'D', paginaAtual-1, tamanhoPagina, (result, err) => {
 
         if (err) {
-            let msgErro = `Ocorreu um erro ao carregar as movimentações de caixa: ${err}`;
+            let msgErro = `Ocorreu um erro ao carregar os pagamentos: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
             return;
@@ -116,10 +107,9 @@ function atualizarTela() {
         
         if (result) {
             result.registros.forEach(registro => {
-                let row = fluxoCaixaTable.insertRow();
+                let row = pagamentosTable.insertRow();
                 row.insertCell().innerHTML = registro.id;
                 row.insertCell().innerHTML = registro.descricao;
-                row.insertCell().innerHTML = registro.debito_credito;
                 row.insertCell().innerHTML = registro.categoria;
                 row.insertCell().innerHTML = registro.data;
     
@@ -151,7 +141,7 @@ function exibirFormularioNovo() {
     }
 
     // Exibir formulário de cadastro
-    formTitle.innerHTML = 'Nova movimentação de caixa';
+    formTitle.innerHTML = 'Novo pagamento';
     formShield.style.display = 'block';
     actionButton.innerHTML = '<i class="fas fa-save"></i>';
     inputDesc.focus();
@@ -173,14 +163,13 @@ function carregarFormEdicao(event) {
     // Setando campos
     inputId.value = element.children[0].textContent;
     inputDesc.value = element.children[1].textContent;
-    //uiUtils.setRadioValue(inputTipo, element.children[2].textContent)
-    inputCategoria.value = element.children[3].textContent;
-    inputData.value = element.children[4].textContent;
-    inputValor.value = element.children[5].textContent;
+    inputCategoria.value = element.children[2].textContent;
+    inputData.value = element.children[3].textContent;
+    inputValor.value = element.children[4].textContent;
     M.updateTextFields();
     
     // Exibir formulário de cadastro
-    formTitle.innerHTML = 'Editar movimentação de caixa';
+    formTitle.innerHTML = 'Editar pagamento';
     formShield.style.display = 'block';
     actionButton.innerHTML = '<i class="fas fa-save"></i>';
     inputDesc.focus();
@@ -191,11 +180,11 @@ function inserir(movimentacaoCaixa) {
     
     movimentacaoCaixaDao.salvar(movimentacaoCaixa, (id, err) => {
         if (id) {
-            M.toast({html: 'Movimentação de caixa inserida com sucesso!',  classes: 'rounded toastSucesso'});
+            M.toast({html: 'Pagamento inserido com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
         else {
-            let msgErro = `Ocorreu um erro ao inserir uma nova movimentação de caixa: ${err}`;
+            let msgErro = `Ocorreu um erro ao inserir um novo pagamento: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
@@ -210,12 +199,12 @@ function atualizar(movimentacaoCaixa) {
     
     movimentacaoCaixaDao.atualizar(movimentacaoCaixa, (ie, err) => {
         if (err) {
-            let msgErro = `Ocorreu um erro ao atualizar a movimentação de caixa: ${err}`;
+            let msgErro = `Ocorreu um erro ao atualizar o pagamento: ${err}`;
             console.error(msgErro);
             M.toast({html: msgErro,  classes: 'rounded toastErro'});
         }
         else {
-            M.toast({html: 'Movimentação de caixa atualizada com sucesso!',  classes: 'rounded toastSucesso'});
+            M.toast({html: 'Pagamento atualizado com sucesso!',  classes: 'rounded toastSucesso'});
             atualizarTela();
         }
 
@@ -290,17 +279,17 @@ function apagarClick(event) {
 }
 
 function apagar(id, desc, cb) {    
-    uiUtils.showPopup('Atenção!', `Deseja realmente apagar a movimentação de caixa "${desc}"?`, '200px', '300px', 
+    uiUtils.showPopup('Atenção!', `Deseja realmente apagar o pagamento "${desc}"?`, '200px', '300px', 
         [
             {label: 'Sim', cb: (event) => {
                 movimentacaoCaixaDao.remover(id, (id, err) => {
                     if (err) {
-                        let msgErro = `Ocorreu um erro ao remover a movimentação de caixa: ${err}`;
+                        let msgErro = `Ocorreu um erro ao remover o pagamento: ${err}`;
                         console.error(msgErro);
                         M.toast({html: msgErro,  classes: 'rounded toastErro'});
                     }
                     else {
-                        M.toast({html: 'Movimentação de caixa removida com sucesso!',  classes: 'rounded toastSucesso'});
+                        M.toast({html: 'Pagamento removido com sucesso!',  classes: 'rounded toastSucesso'});
                         cb();
                     }
                     return;
