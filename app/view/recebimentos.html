@@ -1,0 +1,65 @@
+<div id="recebimentos-panel" class="crud-panel">
+    <h2>Recebimentos</h2>
+    
+    <div class="filtro input-field col s6">
+        <input id="filtro" type="text" max="100">
+        <label for="filtro">Filtro</label>
+    </div>
+
+    <table id="recebimentos-table">
+        <tr>
+            <th style="width: 70px;">ID</th>
+            <th style="text-align: left;">Descrição</th>
+            <th style="width: 200px;">Categoria</th>
+            <th style="width: 100px;">Data</th>
+            <th style="width: 150px; text-align: right;">Valor</th>
+            <th style="width: 50px;"></th>
+        </tr>
+    </table>
+</div>
+
+<div id="paginacao-panel">
+    <div id="btn-pag-primeira" title="Primeira página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-circle-left"></i></div>
+    <div id="btn-pag-anterior" title="Página anterior" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-left"></i></div>
+    <div id="pag-texto"></div>
+    <div id="btn-pag-proxima" title="Próxima página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-right"></i></div>
+    <div id="btn-pag-ultima" title="Última página" class="btb-paginacao" role="button" tabindex="0"><i class="fas fa-chevron-circle-right"></i></div>
+</div>
+
+<div id="action-btn" class="floating-action-button"><i class="fas fa-plus"></i></div>
+
+<div id="recebimentos-crud-shield" class="shield">
+    <div class="crud-form-panel">
+        <form id="recebimentos-form">
+            <h5 id="titulo-form"></h5>
+            <input id="recebimentos-id" type="hidden"/>
+            <div class="input-field col s6">
+                <input id="desc" type="text" class="validate" required>
+                <label for="desc">Descrição</label>
+                <span class="helper-text" data-error="Informe a descrição"></span>
+            </div>
+            <div class="input-field col s12">
+                <select id="categoria">
+                    <option value="">Escolha uma opção</option>
+                    <option value="Aporte financeiro">Aporte financeiro</option>
+                    <option value="Recebimento">Recebimento</option>
+                </select>
+                <label>Categoria</label>
+                <span class="helper-text" data-error="Selecione uma categoria"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="data" type="text" class="datepicker" required>
+                <label for="data">Data</label>
+                <span class="helper-text" data-error="Informe a data"></span>
+            </div>
+            <div class="input-field col s6">
+                <input id="valor" type="text" class="validate monetario" required>
+                <label for="valor">Valor</label>
+                <span class="helper-text" data-error="Informe o valor"></span>
+            </div>
+        </form>
+    </div>
+    <div id="descartar-form-btn"><i class="fas fa-trash-alt"></i></div>
+</div>
+
+<script>require('../renderer/recebimentosRenderer')</script>
