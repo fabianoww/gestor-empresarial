@@ -13,6 +13,9 @@ e esse projeto é aderente ao [Versionamento Semântico](http://semver.org/).
 
 - [#9](https://github.com/fabianoww/gestor-empresarial/issues/9)
   Encomendas - Na listagem de encomendas, foi adicionado um destaque em verde nos itens que já foram entregues.
+
+- [#14](https://github.com/fabianoww/gestor-empresarial/issues/14)
+  Estoque - Adicionada funcionalidade para vender um item de estoque (ícone carrinho de compras). Ao vender o item, será gerado um recebimento no valor atual do produto.
    
 ### Modificado  
 - [#8](https://github.com/fabianoww/gestor-empresarial/issues/8)
