@@ -5,7 +5,7 @@ Todas as mudanças relevantes neste projeto estão documentadas neste arquivo.
 O formato adotado neste arquivo é baseado no [Mantenha um Changelog](https://keepachangelog.com/pt-BR/1.0.0/)
 e esse projeto é aderente ao [Versionamento Semântico](http://semver.org/).
  
-## [Não publicado] - 2020-08-16
+## [v1.1.0] - 2020-09-05
  
 ### Adicionado
 - [#8](https://github.com/fabianoww/gestor-empresarial/issues/8)
