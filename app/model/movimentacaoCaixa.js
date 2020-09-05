@@ -8,7 +8,6 @@ class MovimentacaoCaixa {
     }
 
     obterTipo() {
-      console.log(`Tipo atual: ${this.categoria}`);
       switch(this.categoria) {
         case 'Compra de insumo':
         case 'Despesa fixa':

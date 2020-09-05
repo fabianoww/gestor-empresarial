@@ -22,6 +22,9 @@ e esse projeto é aderente ao [Versionamento Semântico](http://semver.org/).
   Encomendas - Foram alterados os critérios para ordenação da listagem de encomendas de modo a considerar a seguintes regras:
     1. Não entregues primeiro, já entregues depois
     2. Data da encomenda, em ordem decrescente (da mais recente para a mais antiga)
+    
+- [#11](https://github.com/fabianoww/gestor-empresarial/issues/11)
+  A tela de "Fluxo de Caixa" foi dividida em duas telas: "Pagamentos" e "Recebimentos".
 
 - [#13](https://github.com/fabianoww/gestor-empresarial/issues/13)
   Fluxo de caixa - No formulário para inclusão/alteração de um fluxo de caixa, foram ocultados os campos para seleção de Receita/Despesa. Essa informação será inferida com base na categoria escolhida.
